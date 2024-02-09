@@ -9,8 +9,11 @@ public class User : EntityBase
     public string Email { get; set; }
 
     [Required]
-    [Length(8, 20)]
+    [MaxLength(100)]
     public string Password { get; set; }
+
+    [MaxLength(20)]
+    public string Salt { get; set; }
 
     public List<Post> Posts { get; set; } = [];
 }

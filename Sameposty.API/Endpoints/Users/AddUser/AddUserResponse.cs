@@ -2,5 +2,9 @@
 
 public class AddUserResponse
 {
-    public int NewUserId { get; set; }
+    public int Id { get; set; }
+
+    public string Username { get; set; }
+
+    public string Token { get; set; }
 }

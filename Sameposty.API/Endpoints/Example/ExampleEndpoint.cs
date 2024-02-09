@@ -9,7 +9,6 @@ public class ExampleEndpoint(IExample example) : Endpoint<GetExampleRequest, Exa
     {
         Verbs(Http.GET);
         Routes("example/{number}");
-        AllowAnonymous();
     }
 
     public override async Task HandleAsync(GetExampleRequest req, CancellationToken ct)

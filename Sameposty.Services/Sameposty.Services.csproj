@@ -10,4 +10,13 @@
     <ProjectReference Include="..\Sameposty.DataAccess\Sameposty.DataAccess.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TokenService\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FastEndpoints.Security" Version="5.22.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="8.0.1" />
+  </ItemGroup>
+
 </Project>
