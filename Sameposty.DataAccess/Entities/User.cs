@@ -12,6 +12,10 @@ public class User : EntityBase
     [MaxLength(100)]
     public string Password { get; set; }
 
+    [Required]
+    [MaxLength(10)]
+    public string NIP { get; set; }
+
     [MaxLength(20)]
     public string Salt { get; set; }
 
