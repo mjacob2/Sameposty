@@ -4,7 +4,7 @@ using Sameposty.DataAccess.Queries.Posts;
 
 namespace Sameposty.API.Endpoints.Posts.GetPosts;
 
-public class GetPostsEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequest<GetPostsResponse>
+public class GetPostsEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequest
 {
     public override void Configure()
     {
@@ -14,6 +14,8 @@ public class GetPostsEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutReq
 
     public override async Task HandleAsync(CancellationToken ct)
     {
+        int articleID = Query<int>("t");
+
         var user = User;
 
         var claims = User.Claims.ToArray();
@@ -23,6 +25,6 @@ public class GetPostsEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutReq
 
         var response = new GetPostsResponse(posts);
 
-        await SendOkAsync(response, ct);
+        await SendOkAsync(posts, ct);
     }
 }

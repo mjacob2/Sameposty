@@ -16,6 +16,12 @@ public class User : EntityBase
     [MaxLength(10)]
     public string NIP { get; set; }
 
+    /// <summary>
+    /// Every new User must be onboarding. Set to false, when onboarding finish.
+    /// </summary>
+    [Required]
+    public bool IsOnboarding { get; set; } = true;
+
     [MaxLength(20)]
     public string Salt { get; set; }
 
