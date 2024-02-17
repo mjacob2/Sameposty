@@ -6,7 +6,7 @@ public static class JWTFactory
     private static readonly string[] collection = ["Admin", "Manager"];
     private static readonly string[] collection0 = ["ManageUsers", "ManageInventory"];
 
-    public static string GenerateJwt()
+    public static string GenerateJwt(string id)
     {
         return JWTBearer.CreateToken(
             signingKey: "hfgrtgdhgjhtudfghtyrewnhfjejwhufgdhgufghidgjid",
@@ -16,7 +16,7 @@ public static class JWTFactory
                 u.Roles.Add("Manager");
                 u.Permissions.AddRange(collection0);
                 u.Claims.Add(new("UserName", "ko"));
-                u["UserID"] = "001";
+                u["UserId"] = id;
             });
     }
 }

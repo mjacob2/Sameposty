@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Sameposty.DataAccess.DatabaseContext;
 using Sameposty.DataAccess.Executors;
 using Sameposty.Services.ExampleS;
+using Sameposty.Services.PostsGenerator;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,7 @@ builder.Services
 builder.Services.AddDbContext<SamepostyDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection")));
 builder.Services.AddTransient<IQueryExecutor, QueryExecutor>();
 builder.Services.AddTransient<ICommandExecutor, CommandExecutor>();
+builder.Services.AddScoped<IPostsGenerator, PostsGenerator>();
 
 builder.Services.AddScoped<IExample, Example>();
 

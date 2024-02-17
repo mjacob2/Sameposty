@@ -12,18 +12,14 @@ public class User : EntityBase
     [MaxLength(100)]
     public string Password { get; set; }
 
+    [MaxLength(20)]
+    public string Salt { get; set; }
+
     [Required]
     [MaxLength(10)]
     public string NIP { get; set; }
 
-    /// <summary>
-    /// Every new User must be onboarding. Set to false, when onboarding finish.
-    /// </summary>
-    [Required]
-    public bool IsOnboarding { get; set; } = true;
-
-    [MaxLength(20)]
-    public string Salt { get; set; }
+    public string CompanyDescription { get; set; } = string.Empty;
 
     public List<Post> Posts { get; set; } = [];
 }

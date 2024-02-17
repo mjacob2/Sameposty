@@ -33,7 +33,7 @@ public class UserLoginEndpoint(IQueryExecutor queryExecutor) : Endpoint<LoginReq
             ThrowError("Niepoprawne hasło");
         }
 
-        string jwtToken = JWTFactory.GenerateJwt();
+        string jwtToken = JWTFactory.GenerateJwt(userFromDb.Id.ToString());
 
         await SendAsync(new
         {

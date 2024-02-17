@@ -14,13 +14,12 @@ public class GetPostsEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutReq
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        int articleID = Query<int>("t");
+        var loggedUserId = User.FindFirst("UserId").Value;
 
-        var user = User;
+        var loggedUserIdInt = int.Parse(loggedUserId);
 
-        var claims = User.Claims.ToArray();
+        var query = new GetPostsQuery(loggedUserIdInt);
 
-        var query = new GetPostsQuery();
         var posts = await queryExecutor.ExecuteQuery(query);
 
         var response = new GetPostsResponse(posts);

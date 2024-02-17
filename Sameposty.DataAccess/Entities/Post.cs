@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Sameposty.DataAccess.Entities;
 public class Post : EntityBase
@@ -14,7 +15,8 @@ public class Post : EntityBase
     [Required]
     public DateTime PublishDate { get; set; }
 
-    public User User { get; set; }
+    [JsonIgnore]
+    public virtual User User { get; set; }
 
     public int UserId { get; set; }
 }

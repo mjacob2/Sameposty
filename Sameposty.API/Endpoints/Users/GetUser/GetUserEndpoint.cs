@@ -4,26 +4,22 @@ using Sameposty.DataAccess.Queries.Users;
 
 namespace Sameposty.API.Endpoints.Users.GetUser;
 
-public class GetUserEndpoint(IQueryExecutor queryExecutor) : Endpoint<GetUserRequest>
+public class GetUserEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequest
 {
     public override void Configure()
     {
         Get("user");
     }
 
-    public override async Task HandleAsync(GetUserRequest req, CancellationToken ct)
+    public override async Task HandleAsync(CancellationToken ct)
     {
-        var user = User;
-        //TODO prevent from getting user id different than currently logged in in TOKEN!
+        var loggedUserId = User.FindFirst("UserId").Value;
 
-        int id = Query<int>("t");
+        var id = int.Parse(loggedUserId);
 
-        //var id2 = int.Parse(id);
+        var getUserFromDbQuery = new GetUserByIdQuery() { Id = id };
+        var user = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
-        var query = new GetUserByIdQuery() { Id = id };
-
-        var userFromDb = await queryExecutor.ExecuteQuery(query);
-
-        await SendOkAsync(userFromDb, ct);
+        await SendOkAsync(user, ct);
     }
 }

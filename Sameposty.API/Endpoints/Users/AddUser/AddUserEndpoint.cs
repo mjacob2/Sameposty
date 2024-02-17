@@ -43,7 +43,7 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
 
         var newUserFromDb = await commandExecutor.ExecuteCommand(command);
 
-        string jwtToken = JWTFactory.GenerateJwt();
+        string jwtToken = JWTFactory.GenerateJwt(newUserFromDb.Id.ToString());
 
         var response = new AddUserResponse()
         {
