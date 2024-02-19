@@ -5,9 +5,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>false</InvariantGlobalization>
+    <UserSecretsId>1fbc5a22-d69e-495a-8ce4-6502fa365e8f</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Betalgo.OpenAI" Version="7.4.6" />
     <PackageReference Include="FastEndpoints" Version="5.22.0" />
     <PackageReference Include="FastEndpoints.Swagger" Version="5.22.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
@@ -17,6 +19,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Sameposty.Services\Sameposty.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

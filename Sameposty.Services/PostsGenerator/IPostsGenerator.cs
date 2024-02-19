@@ -3,5 +3,5 @@
 namespace Sameposty.Services.PostsGenerator;
 public interface IPostsGenerator
 {
-    List<Post> GenerateInitialPosts(int userId);
+    Task<List<Post>> GenerateInitialPostsAsync(int userId, string companyDescription);
 }

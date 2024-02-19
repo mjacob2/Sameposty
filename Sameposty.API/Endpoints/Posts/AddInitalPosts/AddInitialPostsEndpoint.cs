@@ -22,7 +22,7 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
         var getUserFromDbQuery = new GetUserByIdQuery() { Id = id };
         var userFromDb = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
-        var posts = postsGenerator.GenerateInitialPosts(userFromDb.Id);
+        var posts = await postsGenerator.GenerateInitialPostsAsync(userFromDb.Id, userFromDb.CompanyDescription);
 
         userFromDb.Posts = posts;
 

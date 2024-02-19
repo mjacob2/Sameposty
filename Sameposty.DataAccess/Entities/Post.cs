@@ -6,11 +6,15 @@ public class Post : EntityBase
 {
     [Required]
     [MaxLength(100)]
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(500)]
-    public string Description { get; set; }
+    [MaxLength(1000)]
+    public string Description { get; set; } = string.Empty;
+
+    [Required]
+    [MaxLength(200)]
+    public string ImageUrl { get; set; } = string.Empty;
 
     [Required]
     public DateTime PublishDate { get; set; }

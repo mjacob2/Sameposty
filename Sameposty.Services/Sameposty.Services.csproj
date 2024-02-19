@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Betalgo.OpenAI" Version="7.4.6" />
     <PackageReference Include="FastEndpoints.Security" Version="5.22.0" />
     <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="8.0.1" />
   </ItemGroup>
