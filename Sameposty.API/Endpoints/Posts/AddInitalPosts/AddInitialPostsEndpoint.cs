@@ -16,7 +16,6 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
     public override async Task HandleAsync(CancellationToken ct)
     {
         var loggedUserId = User.FindFirst("UserId").Value;
-
         var id = int.Parse(loggedUserId);
 
         var getUserFromDbQuery = new GetUserByIdQuery() { Id = id };
@@ -27,8 +26,8 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
         userFromDb.Posts = posts;
 
         var updateUserCommand = new UpdateUserCommand() { Parameter = userFromDb };
-        var newPosts = await commandExecutor.ExecuteCommand(updateUserCommand);
+        await commandExecutor.ExecuteCommand(updateUserCommand);
 
-        await SendOkAsync(newPosts, ct);
+        await SendOkAsync(posts, ct);
     }
 }

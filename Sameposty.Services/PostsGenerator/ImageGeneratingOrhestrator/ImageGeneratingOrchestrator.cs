@@ -17,6 +17,6 @@ public class ImageGeneratingOrchestrator(IImageGenerator imageGenerator, IImageS
 
     private static string GeneratePrompt(string companyDescription)
     {
-        return $"For a smll, local company, create an image or photograph, that will be used to post on their social media. This company is described by these words: {companyDescription}. Photo should be realistic and interesting, similar to what could be taken by this company.";
+        return $"For a small, local company, create an image or photograph, that will be used to post on their social media. This company is described by these words: {companyDescription}. Photo should be realistic and interesting, similar to what could be taken by this company.";
     }
 }

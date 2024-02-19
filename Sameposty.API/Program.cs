@@ -10,7 +10,7 @@ using Sameposty.Services.PostsGenerator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageGenerator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
-using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.PostDescriptionGenerator;
+using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +40,7 @@ builder.Services.AddTransient<ICommandExecutor, CommandExecutor>();
 builder.Services.AddScoped<IPostsGenerator, PostsGenerator>();
 builder.Services.AddOpenAIService();
 builder.Services.AddScoped<IImageGenerator, ImageGenerator>();
-builder.Services.AddScoped<IPostDescriptionGenerator, PostDescriptionGenerator>();
+builder.Services.AddScoped<ITextGenerator, TextGenerator>();
 builder.Services.AddScoped<IImageSaver>(sp =>
 {
     var webHostEnvironment = sp.GetRequiredService<IWebHostEnvironment>();

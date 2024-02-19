@@ -1,34 +1,37 @@
-﻿using Sameposty.DataAccess.Entities;
+﻿using System.Collections.Concurrent;
+using Sameposty.DataAccess.Entities;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
-using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.PostDescriptionGenerator;
+using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
 
 namespace Sameposty.Services.PostsGenerator;
-public class PostsGenerator(IPostDescriptionGenerator postDescriptionGenerator, IImageGeneratingOrchestrator imageGenerating) : IPostsGenerator
+public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGeneratingOrchestrator imageGenerating) : IPostsGenerator
 {
-    private int numberOfInitialPosts = 1;
+    private readonly int numberOfInitialPosts = 4;
 
-    private readonly List<Post> posts = [];
+    private readonly ConcurrentBag<Post> posts = [];
 
     public async Task<List<Post>> GenerateInitialPostsAsync(int userId, string companyDescription)
     {
-        while (numberOfInitialPosts > 0)
-        {
-            var description = await postDescriptionGenerator.GeneratePostDescription(companyDescription);
-            var imageName = await imageGenerating.GenerateImage(companyDescription);
-
-            var post = new Post()
+        var tasks = Enumerable.Range(0, numberOfInitialPosts)
+            .Select(async _ =>
             {
-                CreatedDate = DateTime.Now,
-                UserId = userId,
-                Description = description,
-                Title = "Jakiś taki fajny tytuł",
-                ImageUrl = $"https://localhost:7109/{imageName}",
-            };
+                var description = await postDescriptionGenerator.GeneratePostDescription(companyDescription);
+                var imageName = await imageGenerating.GenerateImage(companyDescription);
 
-            posts.Add(post);
-            numberOfInitialPosts--;
-        }
+                var post = new Post()
+                {
+                    CreatedDate = DateTime.Now,
+                    UserId = userId,
+                    Description = description,
+                    Title = "Jakiś taki fajny tytuł",
+                    ImageUrl = $"https://localhost:7109/{imageName}",
+                };
 
-        return posts;
+                posts.Add(post);
+            });
+
+        await Task.WhenAll(tasks);
+
+        return posts.ToList();
     }
 }
