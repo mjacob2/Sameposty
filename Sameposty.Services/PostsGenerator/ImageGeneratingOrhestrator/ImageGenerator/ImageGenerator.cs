@@ -9,10 +9,10 @@ public class ImageGenerator(IOpenAIService openAiService) : IImageGenerator
     {
         var imageResult = await openAiService.Image.CreateImage(new ImageCreateRequest
         {
-            Model = Models.Dall_e_2, //TODO zmienić ma dale 3 w produkcji
+            Model = Models.Dall_e_3, //TODO zmienić ma dale 3 w produkcji
             Prompt = prompt,
             N = 1,
-            Size = StaticValues.ImageStatics.Size.Size256, //TODO zmienić na 1025 w produkcji
+            Size = StaticValues.ImageStatics.Size.Size1024, //TODO zmienić na 1025 w produkcji
             ResponseFormat = "url",
             //Quality = "hd",
         });
