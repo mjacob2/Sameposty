@@ -1,8 +1,11 @@
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using FastEndpoints;
 using FastEndpoints.Security;
 using FastEndpoints.Swagger;
 using Microsoft.EntityFrameworkCore;
 using OpenAI.Extensions;
+using Sameposty.API.Models;
 using Sameposty.DataAccess.DatabaseContext;
 using Sameposty.DataAccess.Executors;
 using Sameposty.Services.ExampleS;
@@ -17,10 +20,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(opt =>
 {
     opt.AddDefaultPolicy(
-        builder =>
+        corsbuilder =>
         {
-            builder
-            .WithOrigins("https://localhost:4200")
+            corsbuilder
+            .WithOrigins(builder.Configuration.GetConnectionString("AngularClientBaseUrlProduction")
+            ?? throw new ArgumentNullException("AngularClientBaseUrlProduction not provided"), builder.Configuration.GetConnectionString("AngularClientBaseUrlDevelopment")
+            ?? throw new ArgumentNullException("AngularClientBaseUrlDevelopment not provided"))
             .AllowAnyHeader()
             .AllowCredentials()
             .AllowAnyMethod();
@@ -29,24 +34,41 @@ builder.Services.AddCors(opt =>
 
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication();
-builder.Services
-    .AddFastEndpoints()
-    .AddJWTBearerAuth("hfgrtgdhgjhtudfghtyrewnhfjejwhufgdhgufghidgjid")
-    .AddAuthorization()
-    .SwaggerDocument();
-builder.Services.AddDbContext<SamepostyDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection")));
+
+var secrets = new Secrets();
+var dbConnectionString = "";
+
+if (builder.Environment.IsDevelopment())
+{
+    secrets = builder.Configuration.GetSection("Secrets").Get<Secrets>() ?? throw new ArgumentNullException("No local secrets.json provided or error while mapping");
+    dbConnectionString = builder.Configuration.GetConnectionString("LocalDbConnection") ?? throw new ArgumentNullException("No LocalDbConnection provided in sppsettings.json");
+}
+
+if (builder.Environment.IsProduction())
+{
+    Uri keyVaultUrl = new(builder.Configuration.GetConnectionString("KeyVaultURL") ?? throw new ArgumentNullException("KeyVaultURL not provided"));
+    var credential = new DefaultAzureCredential();
+    builder.Configuration.AddAzureKeyVault(keyVaultUrl, credential);
+    var client = new SecretClient(keyVaultUrl, credential);
+
+    dbConnectionString = client.GetSecret("ProductionDbConnectionString").Value.Value ?? throw new ArgumentNullException("No DbConnectionString provided in Azure Key Vault");
+    secrets.OpenAiApiKey = client.GetSecret("OpenAiApiKey").Value.Value ?? throw new ArgumentNullException("No OpenAiApiKey provided in Azure Key Vault");
+    secrets.JWTBearerTokenSignKey = client.GetSecret("JWTBearerTokenSignKey").Value.Value ?? throw new ArgumentNullException("No JWTBearerTokenSignKey provided in Azure Key Vault");
+}
+
+builder.Services.AddDbContext<SamepostyDbContext>(options =>
+            options.UseSqlServer(dbConnectionString));
+
+AddFastEndpoints(builder, secrets.JWTBearerTokenSignKey);
+
 builder.Services.AddTransient<IQueryExecutor, QueryExecutor>();
 builder.Services.AddTransient<ICommandExecutor, CommandExecutor>();
 builder.Services.AddScoped<IPostsGenerator, PostsGenerator>();
-builder.Services.AddOpenAIService();
+builder.Services.AddOpenAIService(settings => { settings.ApiKey = secrets.OpenAiApiKey; });
+
 builder.Services.AddScoped<IImageGenerator, ImageGenerator>();
 builder.Services.AddScoped<ITextGenerator, TextGenerator>();
-builder.Services.AddScoped<IImageSaver>(sp =>
-{
-    var webHostEnvironment = sp.GetRequiredService<IWebHostEnvironment>();
-    string wwwrootPath = webHostEnvironment.WebRootPath;
-    return new ImageSaver(wwwrootPath, sp.GetService<HttpClient>());
-});
+AddImageServer(builder);
 builder.Services.AddScoped<IImageGeneratingOrchestrator, ImageGeneratingOrchestrator>();
 builder.Services.AddHttpClient();
 
@@ -64,3 +86,22 @@ app.UseFastEndpoints()
 
 
 app.Run();
+
+static void AddImageServer(WebApplicationBuilder builder)
+{
+    builder.Services.AddScoped<IImageSaver>(sp =>
+    {
+        var webHostEnvironment = sp.GetRequiredService<IWebHostEnvironment>();
+        string wwwrootPath = webHostEnvironment.WebRootPath;
+        return new ImageSaver(wwwrootPath, sp.GetRequiredService<HttpClient>());
+    });
+}
+
+static void AddFastEndpoints(WebApplicationBuilder builder, string key)
+{
+    builder.Services
+        .AddFastEndpoints()
+        .AddJWTBearerAuth(key)
+        .AddAuthorization()
+        .SwaggerDocument();
+}

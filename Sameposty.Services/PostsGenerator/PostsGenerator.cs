@@ -15,8 +15,11 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
         var tasks = Enumerable.Range(0, numberOfInitialPosts)
             .Select(async _ =>
             {
-                var description = await postDescriptionGenerator.GeneratePostDescription(companyDescription);
-                var imageName = await imageGenerating.GenerateImage(companyDescription);
+                //var description = await postDescriptionGenerator.GeneratePostDescription(companyDescription);
+                //var imageName = await imageGenerating.GenerateImage(companyDescription);
+
+                var description = "";
+                var imageName = "SampleImageName";
 
                 var post = new Post()
                 {
@@ -24,7 +27,8 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
                     UserId = userId,
                     Description = description,
                     Title = "Jakiś taki fajny tytuł",
-                    ImageUrl = $"https://localhost:7109/{imageName}",
+                    //ImageUrl = $"https://localhost:7109/{imageName}",
+                    ImageUrl = "https://sameposty-api.azurewebsites.net/AddImage.png"
                 };
 
                 posts.Add(post);

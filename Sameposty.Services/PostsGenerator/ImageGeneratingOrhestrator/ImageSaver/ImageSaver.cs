@@ -1,8 +1,6 @@
 ﻿namespace Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
-public class ImageSaver(string wwwrootPath, HttpClient httpClient) : IImageSaver
+public class ImageSaver(string wwwRootPath, HttpClient httpClient) : IImageSaver
 {
-    private readonly string wwwRootPath = wwwrootPath;
-
     public async Task<string> SaveImage(string imageUrl)
     {
         byte[] imageBytes = await DownloadImageAsync(imageUrl);

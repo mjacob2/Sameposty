@@ -21,6 +21,11 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
         var getUserFromDbQuery = new GetUserByIdQuery() { Id = id };
         var userFromDb = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
+        if (string.IsNullOrEmpty(userFromDb.CompanyDescription))
+        {
+            ThrowError("Nie podano informacji o firmie");
+        }
+
         var posts = await postsGenerator.GenerateInitialPostsAsync(userFromDb.Id, userFromDb.CompanyDescription);
 
         userFromDb.Posts = posts;

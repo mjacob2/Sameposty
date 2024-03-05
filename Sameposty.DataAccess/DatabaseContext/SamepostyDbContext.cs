@@ -7,4 +7,8 @@ public class SamepostyDbContext(DbContextOptions<SamepostyDbContext> options) : 
     public DbSet<User> Users { get; set; }
 
     public DbSet<Post> Posts { get; set; }
+
+    public DbSet<SocialMediaConnection> SocialMediaConnections { get; set; }
+
+    public DbSet<BasicInformation> BasicInformations { get; set; }
 }

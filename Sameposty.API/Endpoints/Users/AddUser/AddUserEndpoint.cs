@@ -37,6 +37,15 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
             Password = passwordHashed,
             Salt = salt,
             NIP = req.NIP,
+            BasicInformation = new BasicInformation()
+            {
+                Assets = string.Empty,
+                Branch = string.Empty,
+                CreatedDate = DateTime.Now,
+                Goals = string.Empty,
+                ProductsAndServices = string.Empty,
+            },
+
         };
 
         var command = new AddUserCommand() { Parameter = user };

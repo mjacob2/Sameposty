@@ -22,4 +22,8 @@ public class User : EntityBase
     public string CompanyDescription { get; set; } = string.Empty;
 
     public List<Post> Posts { get; set; } = [];
+
+    public List<SocialMediaConnection> SocialMediaConnections { get; set; } = [];
+
+    public BasicInformation BasicInformation { get; set; }
 }
