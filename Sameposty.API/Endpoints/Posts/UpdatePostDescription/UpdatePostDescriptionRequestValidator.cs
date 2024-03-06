@@ -12,7 +12,7 @@ public class UpdatePostDescriptionRequestValidator : Validator<UpdatePostDescrip
             .WithMessage("Opis nie może być pusty")
             .NotEmpty()
             .WithMessage("Opis nie może być pusty")
-            .MaximumLength(500)
-            .WithMessage("Opis nie więcej niż 500 znaków");
+            .MaximumLength(1000)
+            .WithMessage("Opis nie więcej niż 1000 znaków");
     }
 }

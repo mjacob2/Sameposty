@@ -5,6 +5,7 @@ using OpenAI.Interfaces;
 namespace Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageGenerator;
 public class ImageGenerator(IOpenAIService openAiService) : IImageGenerator
 {
+
     public async Task<string> GenerateImageUrl(string prompt)
     {
         var imageResult = await openAiService.Image.CreateImage(new ImageCreateRequest

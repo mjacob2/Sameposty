@@ -38,6 +38,7 @@ builder.Services.AddAuthentication();
 var secrets = new Secrets();
 var dbConnectionString = "";
 
+
 if (builder.Environment.IsDevelopment())
 {
     secrets = builder.Configuration.GetSection("Secrets").Get<Secrets>() ?? throw new ArgumentNullException("No local secrets.json provided or error while mapping");
@@ -63,10 +64,15 @@ AddFastEndpoints(builder, secrets.JWTBearerTokenSignKey);
 
 builder.Services.AddTransient<IQueryExecutor, QueryExecutor>();
 builder.Services.AddTransient<ICommandExecutor, CommandExecutor>();
-builder.Services.AddScoped<IPostsGenerator, PostsGenerator>();
+builder.Services.AddScoped<IPostsGenerator>(sp =>
+{
+    var apiBaseUrl = builder.Configuration.GetConnectionString("ApiBaseUrl") ?? throw new ArgumentNullException("No ApiBaseUrl provided in sppsettings.json");
+    return new PostsGenerator(sp.GetRequiredService<ITextGenerator>(), sp.GetRequiredService<IImageGeneratingOrchestrator>(), apiBaseUrl);
+});
 builder.Services.AddOpenAIService(settings => { settings.ApiKey = secrets.OpenAiApiKey; });
 
 builder.Services.AddScoped<IImageGenerator, ImageGenerator>();
+
 builder.Services.AddScoped<ITextGenerator, TextGenerator>();
 AddImageServer(builder);
 builder.Services.AddScoped<IImageGeneratingOrchestrator, ImageGeneratingOrchestrator>();

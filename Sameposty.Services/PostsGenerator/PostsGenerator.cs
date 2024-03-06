@@ -4,31 +4,27 @@ using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
 
 namespace Sameposty.Services.PostsGenerator;
-public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGeneratingOrchestrator imageGenerating) : IPostsGenerator
+public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGeneratingOrchestrator imageGenerating, string baseApiUrl) : IPostsGenerator
 {
-    private readonly int numberOfInitialPosts = 4;
+    private readonly int numberOfInitialPosts = 1;
 
     private readonly ConcurrentBag<Post> posts = [];
 
-    public async Task<List<Post>> GenerateInitialPostsAsync(int userId, string companyDescription)
+    public async Task<List<Post>> GenerateInitialPostsAsync(GeneratePostRequest request)
     {
         var tasks = Enumerable.Range(0, numberOfInitialPosts)
             .Select(async _ =>
             {
-                //var description = await postDescriptionGenerator.GeneratePostDescription(companyDescription);
-                //var imageName = await imageGenerating.GenerateImage(companyDescription);
-
-                var description = "";
-                var imageName = "SampleImageName";
+                var description = await postDescriptionGenerator.GeneratePostDescription(request);
+                var imageName = await imageGenerating.GenerateImage(request);
 
                 var post = new Post()
                 {
                     CreatedDate = DateTime.Now,
-                    UserId = userId,
+                    UserId = request.UserId,
                     Description = description,
                     Title = "Jakiś taki fajny tytuł",
-                    //ImageUrl = $"https://localhost:7109/{imageName}",
-                    ImageUrl = "https://sameposty-api.azurewebsites.net/AddImage.png"
+                    ImageUrl = $"{baseApiUrl}/{imageName}",
                 };
 
                 posts.Add(post);
@@ -36,6 +32,8 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
 
         await Task.WhenAll(tasks);
 
+#pragma warning disable IDE0305 // Simplify collection initialization
         return posts.ToList();
+#pragma warning restore IDE0305 // Simplify collection initialization
     }
 }

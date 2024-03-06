@@ -13,7 +13,7 @@ namespace Sameposty.DataAccess.Migrations
 {
     [DbContext(typeof(SamepostyDbContext))]
     [Migration("20240305155849_initial")]
-    partial class initial
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
