@@ -9,11 +9,13 @@ using Sameposty.API.Models;
 using Sameposty.DataAccess.DatabaseContext;
 using Sameposty.DataAccess.Executors;
 using Sameposty.Services.ExampleS;
+using Sameposty.Services.FacebookTokenManager;
 using Sameposty.Services.PostsGenerator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageGenerator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
+using Sameposty.Services.PostsPublishers.FacebookPostsPublisher;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +57,8 @@ if (builder.Environment.IsProduction())
     dbConnectionString = client.GetSecret("ProductionDbConnectionString").Value.Value ?? throw new ArgumentNullException("No DbConnectionString provided in Azure Key Vault");
     secrets.OpenAiApiKey = client.GetSecret("OpenAiApiKey").Value.Value ?? throw new ArgumentNullException("No OpenAiApiKey provided in Azure Key Vault");
     secrets.JWTBearerTokenSignKey = client.GetSecret("JWTBearerTokenSignKey").Value.Value ?? throw new ArgumentNullException("No JWTBearerTokenSignKey provided in Azure Key Vault");
+    secrets.SamepostyFacebookAppSecret = client.GetSecret("SamepostyFacebookAppSecret").Value.Value ?? throw new ArgumentNullException("No SamepostyFacebookAppSecret provided in Azure Key Vault");
+    secrets.SamepostyFacebookAppId = client.GetSecret("SamepostyFacebookAppId").Value.Value ?? throw new ArgumentNullException("No SamepostyFacebookAppId provided in Azure Key Vault");
 }
 
 builder.Services.AddDbContext<SamepostyDbContext>(options =>
@@ -76,6 +80,19 @@ builder.Services.AddScoped<IImageGenerator, ImageGenerator>();
 builder.Services.AddScoped<ITextGenerator, TextGenerator>();
 AddImageServer(builder);
 builder.Services.AddScoped<IImageGeneratingOrchestrator, ImageGeneratingOrchestrator>();
+builder.Services.AddScoped<IFacebookTokenManager>(options =>
+{
+    var s = new FacebookTokenManagerSecrets()
+    {
+        SamepostyFacebookAppId = secrets.SamepostyFacebookAppId,
+        SamepostyFacebookAppSecret = secrets.SamepostyFacebookAppSecret,
+    };
+
+    return new FacebookTokenManager(s, options.GetRequiredService<HttpClient>());
+});
+
+builder.Services.AddScoped<IFacebookPostsPublisher, FacebookPostsPublisher>();
+
 builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<IExample, Example>();

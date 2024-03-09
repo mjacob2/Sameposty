@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sameposty.DataAccess.DatabaseContext;
 
@@ -11,9 +12,11 @@ using Sameposty.DataAccess.DatabaseContext;
 namespace Sameposty.DataAccess.Migrations
 {
     [DbContext(typeof(SamepostyDbContext))]
-    partial class SamepostyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240306214648_ExtendSocialMediaConnectors")]
+    partial class ExtendSocialMediaConnectors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,9 +126,8 @@ namespace Sameposty.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Platform")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Platform")
+                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");

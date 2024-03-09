@@ -5,4 +5,8 @@ public class Secrets
     public string OpenAiApiKey { get; set; }
 
     public string JWTBearerTokenSignKey { get; set; }
+
+    public string SamepostyFacebookAppSecret { get; set; }
+
+    public string SamepostyFacebookAppId { get; set; }
 }
