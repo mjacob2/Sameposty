@@ -8,7 +8,6 @@ using OpenAI.Extensions;
 using Sameposty.API.Models;
 using Sameposty.DataAccess.DatabaseContext;
 using Sameposty.DataAccess.Executors;
-using Sameposty.Services.ExampleS;
 using Sameposty.Services.FacebookTokenManager;
 using Sameposty.Services.PostsGenerator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
@@ -39,12 +38,13 @@ builder.Services.AddAuthentication();
 
 var secrets = new Secrets();
 var dbConnectionString = "";
-
+var baseApiUrl = "";
 
 if (builder.Environment.IsDevelopment())
 {
     secrets = builder.Configuration.GetSection("Secrets").Get<Secrets>() ?? throw new ArgumentNullException("No local secrets.json provided or error while mapping");
     dbConnectionString = builder.Configuration.GetConnectionString("LocalDbConnection") ?? throw new ArgumentNullException("No LocalDbConnection provided in sppsettings.json");
+    baseApiUrl = "";
 }
 
 if (builder.Environment.IsProduction())
@@ -94,8 +94,7 @@ builder.Services.AddScoped<IFacebookTokenManager>(options =>
 builder.Services.AddScoped<IFacebookPostsPublisher, FacebookPostsPublisher>();
 
 builder.Services.AddHttpClient();
-
-builder.Services.AddScoped<IExample, Example>();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

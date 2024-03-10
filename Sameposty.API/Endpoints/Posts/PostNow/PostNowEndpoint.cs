@@ -1,4 +1,5 @@
 ﻿using FastEndpoints;
+using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Posts;
@@ -8,7 +9,7 @@ using Sameposty.Services.PostsPublishers.FacebookPostsPublisher.Models;
 
 namespace Sameposty.API.Endpoints.Posts.PostNow;
 
-public class PostNowEndpoint(IQueryExecutor queryExecutor, IFacebookPostsPublisher facebookPostsPublisher) : Endpoint<PostNowRequest>
+public class PostNowEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IFacebookPostsPublisher facebookPostsPublisher) : Endpoint<PostNowRequest>
 {
     public override void Configure()
     {
@@ -28,15 +29,29 @@ public class PostNowEndpoint(IQueryExecutor queryExecutor, IFacebookPostsPublish
 
         var publishedPostId = await PostToFacebook(facebookPostsPublisher, post, facebookConnection); //TODO save this id to database for later
 
-        await SendOkAsync(publishedPostId, ct);
+        if (publishedPostId != null)
+        {
+            post.IsPublished = true;
+            post.PublishedDate = DateTime.Now;
+            post.PlatformPostId = publishedPostId;
+
+            var updatePostCommand = new UpdatePostCommand() { Parameter = post };
+            await commandExecutor.ExecuteCommand(updatePostCommand);
+
+            await SendOkAsync(publishedPostId, ct);
+        }
+        else
+        {
+            ThrowError("Wystąpił błąd podczas publikowania posta. Spróbuj ponownie później.");
+        }
+
     }
 
     private static async Task<string> PostToFacebook(IFacebookPostsPublisher facebookPostsPublisher, Post post, SocialMediaConnection facebookConnection)
     {
         var postToPublish = new FacegookPostToPublish()
         {
-            //ImageUrl = post.ImageUrl,
-            ImageUrl = "https://middlers.pl/images/Marek-Jakubicki-doradca-kredytowy-Wroclaw-2.png",
+            ImageUrl = post.ImageUrl,
             Message = post.Description,
         };
 

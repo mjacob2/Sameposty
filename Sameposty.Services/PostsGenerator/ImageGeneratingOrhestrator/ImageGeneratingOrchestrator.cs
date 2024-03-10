@@ -10,7 +10,7 @@ public class ImageGeneratingOrchestrator(IImageGenerator imageGenerator, IImageS
 
         var imageUrl = await imageGenerator.GenerateImageUrl(prompt);
 
-        var imageName = await imageSaver.SaveImage(imageUrl);
+        var imageName = await imageSaver.SaveImageFromUrl(imageUrl);
 
         return imageName;
     }

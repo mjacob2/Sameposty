@@ -17,7 +17,13 @@ public class Post : EntityBase
     public string ImageUrl { get; set; } = string.Empty;
 
     [Required]
-    public DateTime PublishDate { get; set; }
+    public DateTime ShedulePublishDate { get; set; }
+
+    public DateTime? PublishedDate { get; set; }
+
+    public string PlatformPostId { get; set; } = string.Empty;
+
+    public bool IsPublished { get; set; }
 
     [JsonIgnore]
     public virtual User User { get; set; }

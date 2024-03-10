@@ -1,12 +1,13 @@
 ﻿using FastEndpoints;
 using Sameposty.DataAccess.Commands.Users;
+using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.PostsGenerator;
 
 namespace Sameposty.API.Endpoints.Posts.AddInitalPosts;
 
-public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator) : EndpointWithoutRequest
+public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator, IHostEnvironment environment) : EndpointWithoutRequest
 {
     public override void Configure()
     {
@@ -35,7 +36,16 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
             Goals = userFromDb.BasicInformation.Goals,
         };
 
-        var posts = await postsGenerator.GenerateInitialPostsAsync(generatePostRequest);
+        var posts = new List<Post>();
+
+        if (environment.IsProduction())
+        {
+            posts = await postsGenerator.GenerateInitialPostsAsync(generatePostRequest);
+        }
+        else
+        {
+            posts = AddStubbedPosts(id);
+        }
 
         userFromDb.Posts = posts;
 
@@ -43,5 +53,25 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
         await commandExecutor.ExecuteCommand(updateUserCommand);
 
         await SendOkAsync(posts, ct);
+    }
+
+    private static List<Post> AddStubbedPosts(int userId)
+    {
+        var posts = new List<Post>();
+
+        var post = new Post()
+        {
+            CreatedDate = DateTime.Now,
+            UserId = userId,
+            Description = "",
+            Title = "",
+            ImageUrl = $"",
+            IsPublished = false,
+            ShedulePublishDate = DateTime.Today,
+        };
+
+        posts.Add(post);
+
+        return posts;
     }
 }

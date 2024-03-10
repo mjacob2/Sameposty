@@ -1,5 +1,7 @@
 ﻿namespace Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
 public interface IImageSaver
 {
-    Task<string> SaveImage(string imageUrl);
+    Task<string> SaveImageFromUrl(string imageUrl);
+
+    Task<string> SaveImageFromBytes(byte[] imageBytes, string fileExtension, CancellationToken ct);
 }
