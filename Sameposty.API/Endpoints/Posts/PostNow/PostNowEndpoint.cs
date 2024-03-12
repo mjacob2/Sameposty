@@ -24,10 +24,10 @@ public class PostNowEndpoint(IQueryExecutor queryExecutor, ICommandExecutor comm
         var getPostQuery = new GetPostByIdQuery() { PostId = req.PostId };
         var post = await queryExecutor.ExecuteQuery(getPostQuery);
 
-        var facebookConnectionQuery = new GetSocialMediaConnectionByUserId() { UserId = userId };
+        var facebookConnectionQuery = new GetSocialMediaConnectionByUserId() { UserId = userId, Platform = SocialMediaConnection.SocialMediaPlatform.Facebook };
         var facebookConnection = await queryExecutor.ExecuteQuery(facebookConnectionQuery);
 
-        var publishedPostId = await PostToFacebook(facebookPostsPublisher, post, facebookConnection); //TODO save this id to database for later
+        var publishedPostId = await PostToFacebook(facebookPostsPublisher, post, facebookConnection);
 
         if (publishedPostId != null)
         {
