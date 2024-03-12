@@ -6,7 +6,7 @@ using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator
 namespace Sameposty.Services.PostsGenerator;
 public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGeneratingOrchestrator imageGenerating, string baseApiUrl) : IPostsGenerator
 {
-    private readonly int numberOfInitialPosts = 2;
+    private readonly int numberOfInitialPosts = 1;
 
     private readonly ConcurrentBag<Post> posts = [];
 
