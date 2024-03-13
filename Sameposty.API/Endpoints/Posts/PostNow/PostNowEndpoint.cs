@@ -24,8 +24,23 @@ public class PostNowEndpoint(IQueryExecutor queryExecutor, ICommandExecutor comm
         var getPostQuery = new GetPostByIdQuery() { PostId = req.PostId };
         var post = await queryExecutor.ExecuteQuery(getPostQuery);
 
+        if (string.IsNullOrEmpty(post.ImageUrl))
+        {
+            ThrowError("Post nie ma zdjęcia!");
+        }
+
+        if (string.IsNullOrEmpty(post.Description))
+        {
+            ThrowError("Post nie ma opisu!");
+        }
+
         var facebookConnectionQuery = new GetSocialMediaConnectionByUserId() { UserId = userId, Platform = SocialMediaConnection.SocialMediaPlatform.Facebook };
         var facebookConnection = await queryExecutor.ExecuteQuery(facebookConnectionQuery);
+
+        if (facebookConnection == null)
+        {
+            ThrowError("Najpierw połącz się z platformą social media!");
+        }
 
         var publishedPostId = await PostToFacebook(facebookPostsPublisher, post, facebookConnection);
 
