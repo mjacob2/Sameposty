@@ -15,6 +15,7 @@ public class ImageGenerator(IOpenAIService openAiService) : IImageGenerator
             Size = StaticValues.ImageStatics.Size.Size1024,
             ResponseFormat = "url",
             Quality = "hd",
+            Style = "natural",
         });
 
         var image = imageResult.Results.FirstOrDefault();

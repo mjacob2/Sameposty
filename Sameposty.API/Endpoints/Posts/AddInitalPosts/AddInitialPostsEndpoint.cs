@@ -38,14 +38,9 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
 
         var posts = new List<Post>();
 
-        if (environment.IsProduction())
-        {
-            posts = await postsGenerator.GenerateInitialPostsAsync(generatePostRequest);
-        }
-        else
-        {
-            posts = AddStubbedPosts(id);
-        }
+        posts = environment.IsProduction() && userFromDb.Email != "admin"
+            ? await postsGenerator.GenerateInitialPostsAsync(generatePostRequest)
+            : postsGenerator.GenerateStubbedPosts(generatePostRequest);
 
         userFromDb.Posts = posts;
 
@@ -53,25 +48,5 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
         await commandExecutor.ExecuteCommand(updateUserCommand);
 
         await SendOkAsync(posts, ct);
-    }
-
-    private static List<Post> AddStubbedPosts(int userId)
-    {
-        var posts = new List<Post>();
-
-        var post = new Post()
-        {
-            CreatedDate = DateTime.Now,
-            UserId = userId,
-            Description = "",
-            Title = "",
-            ImageUrl = $"",
-            IsPublished = false,
-            ShedulePublishDate = DateTime.Today,
-        };
-
-        posts.Add(post);
-
-        return posts;
     }
 }

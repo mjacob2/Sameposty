@@ -26,7 +26,7 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
                     Title = "",
                     ImageUrl = $"{baseApiUrl}/{imageName}",
                     IsPublished = false,
-                    ShedulePublishDate = DateTime.Today.AddDays(index + 1),
+                    ShedulePublishDate = DateTime.Today.AddDays(1).Date.AddHours(9),
                 };
 
                 posts.Add(post);
@@ -37,5 +37,25 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
 #pragma warning disable IDE0305 // Simplify collection initialization
         return posts.ToList();
 #pragma warning restore IDE0305 // Simplify collection initialization
+    }
+
+    public List<Post> GenerateStubbedPosts(GeneratePostRequest request)
+    {
+        var posts = new List<Post>();
+
+        var post = new Post()
+        {
+            CreatedDate = DateTime.Now,
+            UserId = request.UserId,
+            Description = "",
+            Title = "",
+            ImageUrl = $"",
+            IsPublished = false,
+            ShedulePublishDate = DateTime.Today.AddDays(1).Date.AddHours(9),
+        };
+
+        posts.Add(post);
+
+        return posts;
     }
 }

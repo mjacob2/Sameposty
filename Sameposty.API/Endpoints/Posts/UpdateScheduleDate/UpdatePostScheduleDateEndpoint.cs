@@ -3,16 +3,16 @@ using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
 
-namespace Sameposty.API.Endpoints.Posts.UpdatePostDescription;
+namespace Sameposty.API.Endpoints.Posts.UpdateScheduleDate;
 
-public class UpdatePostDescriptionEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor) : Endpoint<UpdatePostDescriptionRequest>
+public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor) : Endpoint<UpdatePostSheduledDateRequest>
 {
     public override void Configure()
     {
-        Patch("posts/updateDescription");
+        Patch("posts/updateScheduleDate");
     }
 
-    public override async Task HandleAsync(UpdatePostDescriptionRequest req, CancellationToken ct)
+    public override async Task HandleAsync(UpdatePostSheduledDateRequest req, CancellationToken ct)
     {
         var loggedUserId = User.FindFirst("UserId").Value;
         var id = int.Parse(loggedUserId);
@@ -25,9 +25,9 @@ public class UpdatePostDescriptionEndpoint(ICommandExecutor commandExecutor, IQu
             ThrowError("Brak uprawnień");
         }
 
-        var updateDescriptionCommand = new UpdatePostDescriptionCommand(req.PostId, req.PostDescription);
+        var updateScheduleDateCommand = new UpdatePostScheduleDateCommand(req.PostId, req.Date);
 
-        var updatedPost = await commandExecutor.ExecuteCommand(updateDescriptionCommand);
+        var updatedPost = await commandExecutor.ExecuteCommand(updateScheduleDateCommand);
 
         await SendOkAsync(updatedPost, ct);
     }

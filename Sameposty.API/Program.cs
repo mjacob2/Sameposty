@@ -9,6 +9,7 @@ using Sameposty.API.Models;
 using Sameposty.DataAccess.DatabaseContext;
 using Sameposty.DataAccess.Executors;
 using Sameposty.Services.FacebookTokenManager;
+using Sameposty.Services.FileRemover;
 using Sameposty.Services.PostsGenerator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageGenerator;
@@ -79,6 +80,7 @@ builder.Services.AddScoped<IImageGenerator, ImageGenerator>();
 
 builder.Services.AddScoped<ITextGenerator, TextGenerator>();
 AddImageServer(builder);
+AddFileRemover(builder);
 builder.Services.AddScoped<IImageGeneratingOrchestrator, ImageGeneratingOrchestrator>();
 builder.Services.AddScoped<IFacebookTokenManager>(options =>
 {
@@ -116,6 +118,16 @@ static void AddImageServer(WebApplicationBuilder builder)
         var webHostEnvironment = sp.GetRequiredService<IWebHostEnvironment>();
         string wwwrootPath = webHostEnvironment.WebRootPath;
         return new ImageSaver(wwwrootPath, sp.GetRequiredService<HttpClient>());
+    });
+}
+
+static void AddFileRemover(WebApplicationBuilder builder)
+{
+    builder.Services.AddScoped<IFileRemover>(sp =>
+    {
+        var webHostEnvironment = sp.GetRequiredService<IWebHostEnvironment>();
+        string wwwrootPath = webHostEnvironment.WebRootPath;
+        return new FileRemover(wwwrootPath);
     });
 }
 

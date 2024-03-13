@@ -4,4 +4,6 @@ namespace Sameposty.Services.PostsGenerator;
 public interface IPostsGenerator
 {
     Task<List<Post>> GenerateInitialPostsAsync(GeneratePostRequest request);
+
+    List<Post> GenerateStubbedPosts(GeneratePostRequest request);
 }
