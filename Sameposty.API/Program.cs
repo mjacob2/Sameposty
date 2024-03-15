@@ -17,6 +17,9 @@ using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
 using Sameposty.Services.PostsPublishers.FacebookPostsPublisher;
 using Hangfire;
+using Sameposty.Services.PostsPublishers;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,14 +99,18 @@ builder.Services.AddScoped<IFacebookPostsPublisher, FacebookPostsPublisher>();
 
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IPostPublisher, PostPublisher>();
 
 builder.Services.AddHangfire(config => config
+
 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
 .UseSimpleAssemblyNameTypeSerializer()
-.UseRecommendedSerializerSettings()
+.UseRecommendedSerializerSettings(o => o.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
 .UseSqlServerStorage(dbConnectionString));
 
 builder.Services.AddHangfireServer();
+
+
 
 var app = builder.Build();
 

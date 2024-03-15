@@ -1,4 +1,5 @@
 ﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
 
@@ -14,12 +15,18 @@ public class ImageSaver(string wwwRootPath, HttpClient httpClient) : IImageSaver
 
         string fileName = Guid.NewGuid().ToString();
 
-        fileName += "image.png";
+        fileName += "image.jpg";
 
-        var encoder = new PngEncoder()
+        //var encoder = new PngEncoder()
+        //{
+        //    CompressionLevel = PngCompressionLevel.BestCompression,
+        //};
+
+        var encoder = new JpegEncoder()
         {
-            CompressionLevel = PngCompressionLevel.BestCompression,
+            Quality = 70, // Adjust quality level (0-100), lower value means more compression
         };
+
 
         string filePath = Path.Combine(wwwRootPath, fileName);
 
