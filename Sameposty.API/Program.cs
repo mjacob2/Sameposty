@@ -16,6 +16,7 @@ using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageGenerato
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
 using Sameposty.Services.PostsPublishers.FacebookPostsPublisher;
+using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,6 +97,14 @@ builder.Services.AddScoped<IFacebookPostsPublisher, FacebookPostsPublisher>();
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddHangfire(config => config
+.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+.UseSimpleAssemblyNameTypeSerializer()
+.UseRecommendedSerializerSettings()
+.UseSqlServerStorage(dbConnectionString));
+
+builder.Services.AddHangfireServer();
+
 var app = builder.Build();
 
 app.UseStaticFiles();
@@ -105,6 +114,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseFastEndpoints()
     .UseSwaggerGen();
+app.UseHangfireDashboard();
 
 
 app.Run();
