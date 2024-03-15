@@ -22,6 +22,11 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
         var getUserFromDbQuery = new GetUserByIdQuery() { Id = id };
         var userFromDb = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
+        if (userFromDb.Privilege.CanGenerateInitialPosts == false)
+        {
+            ThrowError("Aby wygenerować więcej wspaniałych postów, zapraszamy do skorzystania z abonamentu.");
+        }
+
         if (userFromDb.BasicInformation == null)
         {
             ThrowError("Nie podano informacji o firmie");
@@ -43,6 +48,11 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
             : postsGenerator.GenerateStubbedPosts(generatePostRequest);
 
         userFromDb.Posts = posts;
+
+        if (userFromDb.Role == DataAccess.Entities.Roles.FreeUser)
+        {
+            userFromDb.Privilege.CanGenerateInitialPosts = false;
+        }
 
         var updateUserCommand = new UpdateUserCommand() { Parameter = userFromDb };
         await commandExecutor.ExecuteCommand(updateUserCommand);

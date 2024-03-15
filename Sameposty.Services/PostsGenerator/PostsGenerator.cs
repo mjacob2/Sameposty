@@ -4,10 +4,8 @@ using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
 
 namespace Sameposty.Services.PostsGenerator;
-public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGeneratingOrchestrator imageGenerating, string baseApiUrl) : IPostsGenerator
+public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGeneratingOrchestrator imageGenerating, string baseApiUrl, int numberOfInitialPosts) : IPostsGenerator
 {
-    private readonly int numberOfInitialPosts = 1;
-
     private readonly ConcurrentBag<Post> posts = [];
 
     public async Task<List<Post>> GenerateInitialPostsAsync(GeneratePostRequest request)

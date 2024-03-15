@@ -1,22 +1,25 @@
 ﻿using FastEndpoints;
+using Sameposty.API.Endpoints.Posts.PostNow;
 using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.DataAccess.Queries.SocialMediaConnections;
+using Sameposty.Services.FileRemover;
+using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
 using Sameposty.Services.PostsPublishers.FacebookPostsPublisher;
 using Sameposty.Services.PostsPublishers.FacebookPostsPublisher.Models;
 
-namespace Sameposty.API.Endpoints.Posts.PostNow;
+namespace Sameposty.API.Endpoints.Posts.PublishPostNow;
 
-public class PostNowEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IFacebookPostsPublisher facebookPostsPublisher) : Endpoint<PostNowRequest>
+public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IFacebookPostsPublisher facebookPostsPublisher, IFileRemover fileRemover, IImageSaver imageSaver) : Endpoint<PublishPostNowRequest>
 {
     public override void Configure()
     {
         Post("postNow");
     }
 
-    public override async Task HandleAsync(PostNowRequest req, CancellationToken ct)
+    public override async Task HandleAsync(PublishPostNowRequest req, CancellationToken ct)
     {
         var loggedUserId = User.FindFirst("UserId").Value;
         var userId = int.Parse(loggedUserId);
@@ -42,13 +45,18 @@ public class PostNowEndpoint(IQueryExecutor queryExecutor, ICommandExecutor comm
             ThrowError("Najpierw połącz się z platformą social media!");
         }
 
-        var publishedPostId = await PostToFacebook(facebookPostsPublisher, post, facebookConnection);
+        var publishedPostId = await PublishToFacebook(facebookPostsPublisher, post, facebookConnection);
 
         if (publishedPostId != null)
         {
+            var imageThumbnailUrl = await imageSaver.DownsizePNG(post.ImageUrl);
+
+            fileRemover.RemovePostImage(post.ImageUrl);
+
             post.IsPublished = true;
             post.PublishedDate = DateTime.Now;
             post.PlatformPostId = publishedPostId;
+            post.ImageUrl = imageThumbnailUrl;
 
             var updatePostCommand = new UpdatePostCommand() { Parameter = post };
             await commandExecutor.ExecuteCommand(updatePostCommand);
@@ -62,7 +70,7 @@ public class PostNowEndpoint(IQueryExecutor queryExecutor, ICommandExecutor comm
 
     }
 
-    private static async Task<string> PostToFacebook(IFacebookPostsPublisher facebookPostsPublisher, Post post, SocialMediaConnection facebookConnection)
+    private static async Task<string> PublishToFacebook(IFacebookPostsPublisher facebookPostsPublisher, Post post, SocialMediaConnection facebookConnection)
     {
         var postToPublish = new FacegookPostToPublish()
         {

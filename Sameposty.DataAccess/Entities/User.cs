@@ -25,5 +25,9 @@ public class User : EntityBase
 
     public List<SocialMediaConnection> SocialMediaConnections { get; set; } = [];
 
-    public BasicInformation BasicInformation { get; set; }
+    public BasicInformation BasicInformation { get; set; } = new();
+
+    public Privilege Privilege { get; set; } = new();
+
+    public Roles Role { get; set; } = Roles.FreeUser;
 }

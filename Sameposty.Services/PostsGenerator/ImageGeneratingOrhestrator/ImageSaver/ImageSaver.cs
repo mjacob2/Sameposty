@@ -1,5 +1,6 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Processing;
 
 namespace Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
 public class ImageSaver(string wwwRootPath, HttpClient httpClient) : IImageSaver
@@ -13,7 +14,7 @@ public class ImageSaver(string wwwRootPath, HttpClient httpClient) : IImageSaver
 
         string fileName = Guid.NewGuid().ToString();
 
-        fileName += ".png";
+        fileName += "image.png";
 
         var encoder = new PngEncoder()
         {
@@ -25,6 +26,26 @@ public class ImageSaver(string wwwRootPath, HttpClient httpClient) : IImageSaver
         image.Save(filePath, encoder);
 
         return fileName;
+    }
+
+    public async Task<string> DownsizePNG(string imageUrl)
+    {
+        byte[] imageBytes = await DownloadImageAsync(imageUrl);
+        using var imageStream = new MemoryStream(imageBytes);
+        using var image = Image.Load(imageStream);
+        image.Mutate(x => x
+        .Resize(50, 50, KnownResamplers.Lanczos3)
+        .Crop(new Rectangle(0, 0, 50, 50)));
+
+
+        string fileName = Guid.NewGuid().ToString() + ".png";
+        string folderPath = Path.Combine(wwwRootPath, "Thumbnails");
+        Directory.CreateDirectory(folderPath);
+        string resizedImagePath = Path.Combine(folderPath, fileName);
+
+        await image.SaveAsync(resizedImagePath);
+
+        return resizedImagePath;
     }
 
     public async Task<string> SaveImageFromBytes(byte[] imageBytes, string fileExtension, CancellationToken ct)

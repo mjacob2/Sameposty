@@ -12,6 +12,7 @@ public class GetUserByIdQuery : QueryBase<User>
         .Include(u => u.Posts.Where(p => p.IsPublished == false))
         .Include(u => u.SocialMediaConnections)
         .Include(u => u.BasicInformation)
+        .Include(u => u.Privilege)
         .FirstOrDefaultAsync(u => u.Id == Id);
 
     }

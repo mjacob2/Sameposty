@@ -3,25 +3,19 @@ public class FileRemover(string webRootPath) : IFileRemover
 {
     public void RemovePostImage(string fileName)
     {
-        try
+
+        fileName = ExtractFilename(fileName);
+
+        string filePath = Path.Combine(webRootPath, fileName);
+
+        if (File.Exists(filePath))
         {
-            fileName = ExtractFilename(fileName);
-
-            string filePath = Path.Combine(webRootPath, fileName);
-
-            if (File.Exists(filePath))
-            {
-                File.Delete(filePath);
-                Console.WriteLine($"File '{fileName}' deleted successfully.");
-            }
-            else
-            {
-                Console.WriteLine($"File '{fileName}' does not exist.");
-            }
+            File.Delete(filePath);
+            Console.WriteLine($"File '{fileName}' deleted successfully.");
         }
-        catch (Exception ex)
+        else
         {
-            Console.WriteLine($"An error occurred: {ex.Message}");
+            Console.WriteLine($"File '{fileName}' does not exist.");
         }
 
     }

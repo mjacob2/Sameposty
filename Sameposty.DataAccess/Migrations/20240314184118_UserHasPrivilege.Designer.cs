@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sameposty.DataAccess.DatabaseContext;
 
@@ -11,9 +12,11 @@ using Sameposty.DataAccess.DatabaseContext;
 namespace Sameposty.DataAccess.Migrations
 {
     [DbContext(typeof(SamepostyDbContext))]
-    partial class SamepostyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240314184118_UserHasPrivilege")]
+    partial class UserHasPrivilege
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,13 +139,7 @@ namespace Sameposty.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Privileges");
                 });
@@ -211,10 +208,6 @@ namespace Sameposty.DataAccess.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Salt")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -247,17 +240,6 @@ namespace Sameposty.DataAccess.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Sameposty.DataAccess.Entities.Privilege", b =>
-                {
-                    b.HasOne("Sameposty.DataAccess.Entities.User", "User")
-                        .WithOne("Privilege")
-                        .HasForeignKey("Sameposty.DataAccess.Entities.Privilege", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Sameposty.DataAccess.Entities.SocialMediaConnection", b =>
                 {
                     b.HasOne("Sameposty.DataAccess.Entities.User", "User")
@@ -275,9 +257,6 @@ namespace Sameposty.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Posts");
-
-                    b.Navigation("Privilege")
-                        .IsRequired();
 
                     b.Navigation("SocialMediaConnections");
                 });

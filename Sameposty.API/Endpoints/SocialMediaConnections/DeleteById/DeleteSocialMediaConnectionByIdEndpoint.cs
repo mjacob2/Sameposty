@@ -20,7 +20,7 @@ public class DeleteSocialMediaConnectionByIdEndpoint(IQueryExecutor queryExecuto
         var getConnectionCommand = new GetSocialMediaConnectionByIdQuery() { SocialMediaConnectionId = req.Id };
         var socialMediaConnectionToDelete = await queryExecutor.ExecuteQuery(getConnectionCommand);
 
-        if(socialMediaConnectionToDelete.UserId != userId)
+        if (socialMediaConnectionToDelete.UserId != userId)
         {
             ThrowError("Nie możesz tego usunąć!");
         }

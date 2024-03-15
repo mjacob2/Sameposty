@@ -25,9 +25,8 @@ builder.Services.AddCors(opt =>
         corsbuilder =>
         {
             corsbuilder
-            .WithOrigins(builder.Configuration.GetConnectionString("AngularClientBaseUrlProduction")
-            ?? throw new ArgumentNullException("AngularClientBaseUrlProduction not provided"), builder.Configuration.GetConnectionString("AngularClientBaseUrlDevelopment")
-            ?? throw new ArgumentNullException("AngularClientBaseUrlDevelopment not provided"))
+            .WithOrigins(builder.Configuration.GetConnectionString("AngularClientBaseURl")
+            ?? throw new ArgumentNullException("AngularClientBaseURl not provided"))
             .AllowAnyHeader()
             .AllowCredentials()
             .AllowAnyMethod();
@@ -39,13 +38,11 @@ builder.Services.AddAuthentication();
 
 var secrets = new Secrets();
 var dbConnectionString = "";
-var baseApiUrl = "";
 
 if (builder.Environment.IsDevelopment())
 {
     secrets = builder.Configuration.GetSection("Secrets").Get<Secrets>() ?? throw new ArgumentNullException("No local secrets.json provided or error while mapping");
     dbConnectionString = builder.Configuration.GetConnectionString("LocalDbConnection") ?? throw new ArgumentNullException("No LocalDbConnection provided in sppsettings.json");
-    baseApiUrl = "";
 }
 
 if (builder.Environment.IsProduction())
@@ -72,7 +69,8 @@ builder.Services.AddTransient<ICommandExecutor, CommandExecutor>();
 builder.Services.AddScoped<IPostsGenerator>(sp =>
 {
     var apiBaseUrl = builder.Configuration.GetConnectionString("ApiBaseUrl") ?? throw new ArgumentNullException("No ApiBaseUrl provided in sppsettings.json");
-    return new PostsGenerator(sp.GetRequiredService<ITextGenerator>(), sp.GetRequiredService<IImageGeneratingOrchestrator>(), apiBaseUrl);
+    int numberFirstPostsGenerated = builder.Configuration.GetValue<int>("Settings:NumberFirstPostsGenerated");
+    return new PostsGenerator(sp.GetRequiredService<ITextGenerator>(), sp.GetRequiredService<IImageGeneratingOrchestrator>(), apiBaseUrl, numberFirstPostsGenerated);
 });
 builder.Services.AddOpenAIService(settings => { settings.ApiKey = secrets.OpenAiApiKey; });
 

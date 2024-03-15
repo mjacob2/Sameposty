@@ -12,6 +12,8 @@ public class SamepostyDbContext(DbContextOptions<SamepostyDbContext> options) : 
 
     public DbSet<BasicInformation> BasicInformations { get; set; }
 
+    public DbSet<Privilege> Privileges { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SocialMediaConnection>()
@@ -19,6 +21,13 @@ public class SamepostyDbContext(DbContextOptions<SamepostyDbContext> options) : 
             .HasConversion(
                 v => v.ToString(),
                 v => (SocialMediaConnection.SocialMediaPlatform)Enum.Parse(typeof(SocialMediaConnection.SocialMediaPlatform), v)
+            );
+
+        modelBuilder.Entity<User>()
+            .Property(p => p.Role)
+            .HasConversion(
+                v => v.ToString(),
+                v => (Roles)Enum.Parse(typeof(Roles), v)
             );
 
         base.OnModelCreating(modelBuilder);
