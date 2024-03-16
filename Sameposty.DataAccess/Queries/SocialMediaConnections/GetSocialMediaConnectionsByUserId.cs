@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sameposty.DataAccess.DatabaseContext;
 using Sameposty.DataAccess.Entities;
-using static Sameposty.DataAccess.Entities.SocialMediaConnection;
 
 namespace Sameposty.DataAccess.Queries.SocialMediaConnections;
 
