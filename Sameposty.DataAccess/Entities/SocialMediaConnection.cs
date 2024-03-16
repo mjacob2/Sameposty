@@ -4,12 +4,6 @@ using System.Text.Json.Serialization;
 namespace Sameposty.DataAccess.Entities;
 public class SocialMediaConnection
 {
-    public enum SocialMediaPlatform
-    {
-        Facebook,
-        Instagram
-    }
-
     public int Id { get; set; }
 
     public SocialMediaPlatform Platform { get; set; }

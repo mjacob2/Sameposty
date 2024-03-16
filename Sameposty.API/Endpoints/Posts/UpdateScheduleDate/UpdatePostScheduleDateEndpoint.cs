@@ -1,11 +1,14 @@
 ﻿using FastEndpoints;
+using Hangfire;
 using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Executors;
+using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.DataAccess.Queries.Users;
+using Sameposty.Services.PostsPublishers.Orhestrator;
 
 namespace Sameposty.API.Endpoints.Posts.UpdateScheduleDate;
 
-public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor) : Endpoint<UpdatePostSheduledDateRequest>
+public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IPostPublishOrhestrator postPublisher) : Endpoint<UpdatePostSheduledDateRequest>
 {
     public override void Configure()
     {
@@ -14,16 +17,22 @@ public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQ
 
     public override async Task HandleAsync(UpdatePostSheduledDateRequest req, CancellationToken ct)
     {
-        var loggedUserId = User.FindFirst("UserId").Value;
-        var id = int.Parse(loggedUserId);
-
-        var getUserFromDbQuery = new GetUserByIdQuery() { Id = id };
+        var id = User.FindFirst("UserId").Value;
+        var loggedUserId = int.Parse(id);
+        var getUserFromDbQuery = new GetUserByIdQuery() { Id = loggedUserId };
         var userFromDb = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
-        if (userFromDb.Id != id)
+        var getPostFromDbQuery = new GetPostByIdQuery() { PostId = req.PostId };
+        var postFromDb = await queryExecutor.ExecuteQuery(getPostFromDbQuery);
+
+        if (postFromDb.UserId != loggedUserId)
         {
             ThrowError("Brak uprawnień");
         }
+
+        BackgroundJob.Delete(postFromDb.JobPublishId);
+
+        postFromDb.JobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(postFromDb, userFromDb.SocialMediaConnections), new DateTimeOffset(req.Date));
 
         var updateScheduleDateCommand = new UpdatePostScheduleDateCommand(req.PostId, req.Date);
 

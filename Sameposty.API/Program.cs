@@ -3,6 +3,7 @@ using Azure.Security.KeyVault.Secrets;
 using FastEndpoints;
 using FastEndpoints.Security;
 using FastEndpoints.Swagger;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using OpenAI.Extensions;
 using Sameposty.API.Models;
@@ -15,7 +16,9 @@ using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageGenerator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
-using Sameposty.Services.PostsPublishers.FacebookPostsPublisher;
+using Sameposty.Services.PostsPublishers.FacebookPublisher;
+using Sameposty.Services.PostsPublishers.Orhestrator;
+using Sameposty.Services.PostsPublishers.PostsPublisher;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,9 +95,21 @@ builder.Services.AddScoped<IFacebookTokenManager>(options =>
 });
 
 builder.Services.AddScoped<IFacebookPostsPublisher, FacebookPostsPublisher>();
+builder.Services.AddScoped<IPostsPublisher, PostsPublisher>();
 
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IPostPublishOrhestrator, PostPublishOrhestrator>();
+
+builder.Services.AddHangfire(config => config
+.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+.UseSimpleAssemblyNameTypeSerializer()
+.UseRecommendedSerializerSettings(o => o.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
+.UseSqlServerStorage(dbConnectionString));
+
+builder.Services.AddHangfireServer();
+
+
 
 var app = builder.Build();
 
@@ -105,6 +120,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseFastEndpoints()
     .UseSwaggerGen();
+app.UseHangfireDashboard();
 
 
 app.Run();

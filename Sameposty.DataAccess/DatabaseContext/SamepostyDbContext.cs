@@ -14,13 +14,15 @@ public class SamepostyDbContext(DbContextOptions<SamepostyDbContext> options) : 
 
     public DbSet<Privilege> Privileges { get; set; }
 
+    public DbSet<PublishResult> PublishResults { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<SocialMediaConnection>()
             .Property(p => p.Platform)
             .HasConversion(
                 v => v.ToString(),
-                v => (SocialMediaConnection.SocialMediaPlatform)Enum.Parse(typeof(SocialMediaConnection.SocialMediaPlatform), v)
+                v => (SocialMediaPlatform)Enum.Parse(typeof(SocialMediaPlatform), v)
             );
 
         modelBuilder.Entity<User>()
@@ -28,6 +30,13 @@ public class SamepostyDbContext(DbContextOptions<SamepostyDbContext> options) : 
             .HasConversion(
                 v => v.ToString(),
                 v => (Roles)Enum.Parse(typeof(Roles), v)
+            );
+
+        modelBuilder.Entity<PublishResult>()
+            .Property(p => p.Platform)
+            .HasConversion(
+                v => v.ToString(),
+                v => (SocialMediaPlatform)Enum.Parse(typeof(SocialMediaPlatform), v)
             );
 
         base.OnModelCreating(modelBuilder);

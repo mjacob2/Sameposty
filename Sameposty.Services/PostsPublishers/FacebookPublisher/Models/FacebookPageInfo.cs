@@ -1,4 +1,4 @@
-﻿namespace Sameposty.Services.PostsPublishers.FacebookPostsPublisher.Models;
+﻿namespace Sameposty.Services.PostsPublishers.FacebookPublisher.Models;
 public class FacebookPageInfo
 {
     public string PageId { get; set; }

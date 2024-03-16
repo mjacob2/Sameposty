@@ -1,4 +1,4 @@
-﻿using static Sameposty.DataAccess.Entities.SocialMediaConnection;
+﻿using Sameposty.DataAccess.Entities;
 
 namespace Sameposty.API.Endpoints.SocialMediaConnections;
 

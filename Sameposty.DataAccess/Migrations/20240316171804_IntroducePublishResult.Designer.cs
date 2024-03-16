@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sameposty.DataAccess.DatabaseContext;
 
@@ -11,9 +12,11 @@ using Sameposty.DataAccess.DatabaseContext;
 namespace Sameposty.DataAccess.Migrations
 {
     [DbContext(typeof(SamepostyDbContext))]
-    partial class SamepostyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240316171804_IntroducePublishResult")]
+    partial class IntroducePublishResult
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -177,12 +180,7 @@ namespace Sameposty.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("PublishResults");
                 });
@@ -298,17 +296,6 @@ namespace Sameposty.DataAccess.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Sameposty.DataAccess.Entities.PublishResult", b =>
-                {
-                    b.HasOne("Sameposty.DataAccess.Entities.Post", "User")
-                        .WithMany("PublishResults")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Sameposty.DataAccess.Entities.SocialMediaConnection", b =>
                 {
                     b.HasOne("Sameposty.DataAccess.Entities.User", "User")
@@ -318,11 +305,6 @@ namespace Sameposty.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Sameposty.DataAccess.Entities.Post", b =>
-                {
-                    b.Navigation("PublishResults");
                 });
 
             modelBuilder.Entity("Sameposty.DataAccess.Entities.User", b =>
