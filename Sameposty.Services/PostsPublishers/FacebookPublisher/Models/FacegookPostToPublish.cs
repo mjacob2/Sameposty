@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Sameposty.Services.PostsPublishers.FacebookPostsPublisher.Models;
+namespace Sameposty.Services.PostsPublishers.FacebookPublisher.Models;
 public class FacegookPostToPublish
 {
     [JsonPropertyName("url")]

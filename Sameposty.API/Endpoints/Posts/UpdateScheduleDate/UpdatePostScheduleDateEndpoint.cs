@@ -1,16 +1,14 @@
-﻿using System.Text.Json;
-using FastEndpoints;
+﻿using FastEndpoints;
 using Hangfire;
-using Newtonsoft.Json;
 using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.DataAccess.Queries.Users;
-using Sameposty.Services.PostsPublishers;
+using Sameposty.Services.PostsPublishers.Orhestrator;
 
 namespace Sameposty.API.Endpoints.Posts.UpdateScheduleDate;
 
-public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IPostPublisher postPublisher) : Endpoint<UpdatePostSheduledDateRequest>
+public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IPostPublishOrhestrator postPublisher) : Endpoint<UpdatePostSheduledDateRequest>
 {
     public override void Configure()
     {
@@ -34,7 +32,7 @@ public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQ
 
         BackgroundJob.Delete(postFromDb.JobPublishId);
 
-        postFromDb.JobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(postFromDb, userFromDb.SocialMediaConnections), req.Date);
+        postFromDb.JobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(postFromDb, userFromDb.SocialMediaConnections), new DateTimeOffset(req.Date));
 
         var updateScheduleDateCommand = new UpdatePostScheduleDateCommand(req.PostId, req.Date);
 

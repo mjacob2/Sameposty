@@ -5,11 +5,11 @@ using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.PostsGenerator;
-using Sameposty.Services.PostsPublishers;
+using Sameposty.Services.PostsPublishers.Orhestrator;
 
 namespace Sameposty.API.Endpoints.Posts.AddInitalPosts;
 
-public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator, IHostEnvironment environment, IPostPublisher postPublisher) : EndpointWithoutRequest
+public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator, IHostEnvironment environment, IPostPublishOrhestrator postPublisher) : EndpointWithoutRequest
 {
     public override void Configure()
     {
@@ -50,7 +50,7 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
 
         foreach (var post in posts)
         {
-            var jobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(post, userFromDb.SocialMediaConnections), post.ShedulePublishDate);
+            var jobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(post, userFromDb.SocialMediaConnections), new DateTimeOffset(post.ShedulePublishDate));
 
             post.JobPublishId = jobPublishId;
         }

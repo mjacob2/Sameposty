@@ -1,19 +1,17 @@
 ﻿using FastEndpoints;
 using Sameposty.API.Endpoints.Posts.PostNow;
-using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.DataAccess.Queries.SocialMediaConnections;
-using Sameposty.Services.FileRemover;
-using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
-using Sameposty.Services.PostsPublishers.FacebookPostsPublisher;
-using Sameposty.Services.PostsPublishers.FacebookPostsPublisher.Models;
+using Sameposty.Services.PostsPublishers.Orhestrator;
 
 namespace Sameposty.API.Endpoints.Posts.PublishPostNow;
 
-public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IFacebookPostsPublisher facebookPostsPublisher, IFileRemover fileRemover, IImageSaver imageSaver) : Endpoint<PublishPostNowRequest>
+public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostPublishOrhestrator postPublisher) : Endpoint<PublishPostNowRequest>
 {
+
+
     public override void Configure()
     {
         Post("postNow");
@@ -37,53 +35,26 @@ public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, ICommandExecut
             ThrowError("Post nie ma opisu!");
         }
 
-        var facebookConnectionQuery = new GetSocialMediaConnectionByUserId() { UserId = userId, Platform = SocialMediaConnection.SocialMediaPlatform.Facebook };
-        var facebookConnection = await queryExecutor.ExecuteQuery(facebookConnectionQuery);
+        var facebookConnectionQuery = new GetSocialMediaConnectionsByUserId() { UserId = userId, Platform = SocialMediaPlatform.Facebook };
+        var connections = await queryExecutor.ExecuteQuery(facebookConnectionQuery);
 
-        if (facebookConnection == null)
+        if (connections.Count == 0)
         {
-            ThrowError("Najpierw połącz się z platformą social media!");
+            ThrowError("Najpierw połącz się z jakąś platformą social media!");
         }
 
-        var publishedPostId = await PublishToFacebook(facebookPostsPublisher, post, facebookConnection);
+        var results = new List<PublishResult>();
 
-        if (publishedPostId != null)
+        try
         {
-            var imageThumbnailUrl = await imageSaver.DownsizePNG(post.ImageUrl);
-
-            fileRemover.RemovePostImage(post.ImageUrl);
-
-            post.IsPublished = true;
-            post.PublishedDate = DateTime.Now;
-            post.PlatformPostId = publishedPostId;
-            post.ImageUrl = imageThumbnailUrl;
-
-            var updatePostCommand = new UpdatePostCommand() { Parameter = post };
-            await commandExecutor.ExecuteCommand(updatePostCommand);
-
-            await SendOkAsync(publishedPostId, ct);
+            results = await postPublisher.PublishPostToAll(post, connections);
         }
-        else
+        catch (Exception ex)
         {
-            ThrowError("Wystąpił błąd podczas publikowania posta. Spróbuj ponownie później.");
+            ThrowError(ex.Message);
         }
 
-    }
 
-    private static async Task<string> PublishToFacebook(IFacebookPostsPublisher facebookPostsPublisher, Post post, SocialMediaConnection facebookConnection)
-    {
-        var postToPublish = new FacegookPostToPublish()
-        {
-            ImageUrl = post.ImageUrl,
-            Message = post.Description,
-        };
-
-        var pageInfo = new FacebookPageInfo()
-        {
-            LongLivedPageAccessToken = facebookConnection.AccesToken,
-            PageId = facebookConnection.PageId,
-        };
-
-        return await facebookPostsPublisher.PublishPost(postToPublish, pageInfo);
+        await SendOkAsync(results, ct);
     }
 }

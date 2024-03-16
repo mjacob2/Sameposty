@@ -27,6 +27,8 @@ public class Post : EntityBase
 
     public string JobPublishId { get; set; } = string.Empty;
 
+    public List<PublishResult> PublishResults { get; set; }
+
     [JsonIgnore]
     public User User { get; set; }
 
