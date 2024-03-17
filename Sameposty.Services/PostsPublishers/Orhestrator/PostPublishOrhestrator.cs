@@ -13,8 +13,6 @@ public class PostPublishOrhestrator(IPostsPublisher postsPublisher, IImageSaver 
     [AutomaticRetry(Attempts = 0)]
     public async Task<List<PublishResult>> PublishPostToAll(Post post, List<SocialMediaConnection> connections)
     {
-        CheckArguments(post, connections);
-
         var publishingResults = await postsPublisher.PublishPost(post, connections);
 
         var imageThumbnailUrl = await imageSaver.DownsizePNG(post.ImageUrl);
@@ -37,23 +35,5 @@ public class PostPublishOrhestrator(IPostsPublisher postsPublisher, IImageSaver 
 
         var updatePostCommand = new UpdatePostCommand() { Parameter = post };
         await commandExecutor.ExecuteCommand(updatePostCommand);
-    }
-
-    private static void CheckArguments(Post post, List<SocialMediaConnection> connections)
-    {
-        if (string.IsNullOrEmpty(post.ImageUrl))
-        {
-            throw new ArgumentException($"Post id: {post.Id} nie ma zdjęcia!");
-        }
-
-        if (string.IsNullOrEmpty(post.Description))
-        {
-            throw new ArgumentException($"Post id: {post.Id} nie ma opisu!");
-        }
-
-        if (connections.Count == 0)
-        {
-            throw new ArgumentException($"Post id: {post.Id}: Brak połączenia z jakąkolwiek social media");
-        }
     }
 }

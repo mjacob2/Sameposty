@@ -1,4 +1,5 @@
 ﻿using FastEndpoints;
+using Hangfire;
 using Sameposty.API.Endpoints.Posts.PostNow;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
@@ -10,8 +11,6 @@ namespace Sameposty.API.Endpoints.Posts.PublishPostNow;
 
 public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostPublishOrhestrator postPublisher) : Endpoint<PublishPostNowRequest>
 {
-
-
     public override void Configure()
     {
         Post("postNow");
@@ -48,6 +47,7 @@ public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, ICommandExecut
         try
         {
             results = await postPublisher.PublishPostToAll(post, connections);
+            BackgroundJob.Delete(post.JobPublishId);
         }
         catch (Exception ex)
         {
