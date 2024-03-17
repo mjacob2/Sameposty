@@ -1,4 +1,5 @@
 ﻿using FastEndpoints;
+using Hangfire;
 using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Posts;
@@ -25,6 +26,7 @@ public class DeletePostEndpoint(IQueryExecutor queryExecutor, ICommandExecutor c
         {
             ThrowError("Nie możesz tego usunąć!");
         }
+        BackgroundJob.Delete(postToDelete.JobPublishId);
 
         var deleteCommand = new DeletePostCommand() { Parameter = postToDelete };
         var deletedPost = await commandExecutor.ExecuteCommand(deleteCommand);

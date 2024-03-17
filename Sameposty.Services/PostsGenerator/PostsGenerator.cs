@@ -1,16 +1,17 @@
 ﻿using System.Collections.Concurrent;
 using Sameposty.DataAccess.Entities;
+using Sameposty.Services.Configurator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
 
 namespace Sameposty.Services.PostsGenerator;
-public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGeneratingOrchestrator imageGenerating, string baseApiUrl, int numberOfInitialPosts) : IPostsGenerator
+public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGeneratingOrchestrator imageGenerating, IConfigurator configurator) : IPostsGenerator
 {
     private readonly ConcurrentBag<Post> posts = [];
 
     public async Task<List<Post>> GenerateInitialPostsAsync(GeneratePostRequest request)
     {
-        var tasks = Enumerable.Range(0, numberOfInitialPosts)
+        var tasks = Enumerable.Range(0, configurator.NumberFirstPostsGenerated)
             .Select(async index =>
             {
                 var post = await GeneratePost(request, index + 1);
@@ -38,7 +39,7 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
             UserId = request.UserId,
             Description = description,
             Title = "",
-            ImageUrl = $"{baseApiUrl}/{imageName}",
+            ImageUrl = $"{configurator.ApiBaseUrl}/{imageName}",
             IsPublished = false,
             ShedulePublishDate = DateTime.Today.AddDays(index).Date.AddHours(9),
         };
@@ -50,7 +51,7 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
     {
         var posts = new List<Post>();
 
-        var post = new Post()
+        var post1 = new Post()
         {
             CreatedDate = DateTime.Now,
             UserId = request.UserId,
@@ -61,7 +62,19 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
             ShedulePublishDate = DateTime.Today.AddDays(1).Date.AddHours(9),
         };
 
-        posts.Add(post);
+        var post2 = new Post()
+        {
+            CreatedDate = DateTime.Now,
+            UserId = request.UserId,
+            Description = "",
+            Title = "",
+            ImageUrl = $"",
+            IsPublished = false,
+            ShedulePublishDate = DateTime.Today.AddDays(2).Date.AddHours(9),
+        };
+
+        posts.Add(post1);
+        posts.Add(post2);
 
         return posts;
     }

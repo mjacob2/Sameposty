@@ -11,29 +11,46 @@ public class PostPublishOrhestrator(IPostsPublisher postsPublisher, IImageSaver 
 {
 
     [AutomaticRetry(Attempts = 0)]
-    public async Task<List<PublishResult>> PublishPostToAll(Post post, List<SocialMediaConnection> connections)
+    public async Task<List<PublishResult>> PublishPostToAll(Post post, List<SocialMediaConnection> connections, string baseApiUrl)
     {
         var publishingResults = await postsPublisher.PublishPost(post, connections);
 
-        var imageThumbnailUrl = await imageSaver.DownsizePNG(post.ImageUrl);
+        var imageThumbnailName = string.Empty;
 
-        fileRemover.RemovePostImage(post.ImageUrl);
+        if (!string.IsNullOrEmpty(post.ImageUrl))
+        {
+            imageThumbnailName = await imageSaver.DownsizePNG(post.ImageUrl);
+
+            fileRemover.RemovePostImage(post.ImageUrl);
+        }
 
         post.PublishResults = publishingResults;
 
-        await UpdatePost(post, imageThumbnailUrl);
+        await UpdatePost(post, imageThumbnailName, baseApiUrl);
+
+        BackgroundJob.Delete(post.JobPublishId);
 
         return publishingResults;
     }
 
-    private async Task UpdatePost(Post post, string imageThumbnailUrl)
+    private async Task UpdatePost(Post post, string imageThumbnailUrl, string baseApiUrl)
     {
+        post.Description = new string(post.Description.Take(100).ToArray());
         post.IsPublished = true;
-        post.PublishedDate = DateTime.Now;
+        post.JobPublishId = string.Empty;
+        post.PublishedDate = GetNowInPoland();
         post.PlatformPostId = "published";
-        post.ImageUrl = imageThumbnailUrl;
+        post.ImageUrl = $"{baseApiUrl}/Thumbnails/{imageThumbnailUrl}";
 
         var updatePostCommand = new UpdatePostCommand() { Parameter = post };
         await commandExecutor.ExecuteCommand(updatePostCommand);
+    }
+
+    private static DateTime GetNowInPoland()
+    {
+        DateTime utcNow = DateTime.UtcNow;
+        TimeZoneInfo cetZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+        DateTime cetTime = TimeZoneInfo.ConvertTimeFromUtc(utcNow, cetZone);
+        return cetTime;
     }
 }

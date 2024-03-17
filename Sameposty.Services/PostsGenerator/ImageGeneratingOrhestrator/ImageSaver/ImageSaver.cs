@@ -1,9 +1,10 @@
-﻿using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Jpeg;
+﻿using Sameposty.Services.Configurator;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
 
 namespace Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
-public class ImageSaver(string wwwRootPath, HttpClient httpClient) : IImageSaver
+public class ImageSaver(IConfigurator configurator, HttpClient httpClient) : IImageSaver
 {
     public async Task<string> SaveImageFromUrl(string imageUrl)
     {
@@ -14,20 +15,20 @@ public class ImageSaver(string wwwRootPath, HttpClient httpClient) : IImageSaver
 
         string fileName = Guid.NewGuid().ToString();
 
-        fileName += "image.jpg";
+        fileName += "image.png";
 
-        //var encoder = new PngEncoder()
-        //{
-        //    CompressionLevel = PngCompressionLevel.BestCompression,
-        //};
-
-        var encoder = new JpegEncoder()
+        var encoder = new PngEncoder()
         {
-            Quality = 70, // Adjust quality level (0-100), lower value means more compression
+            CompressionLevel = PngCompressionLevel.BestCompression,
         };
 
+        //var encoder = new JpegEncoder()
+        //{
+        //    Quality = 70, // Adjust quality level (0-100), lower value means more compression
+        //};
 
-        string filePath = Path.Combine(wwwRootPath, fileName);
+
+        string filePath = Path.Combine(configurator.WwwRoot, fileName);
 
         image.Save(filePath, encoder);
 
@@ -44,14 +45,14 @@ public class ImageSaver(string wwwRootPath, HttpClient httpClient) : IImageSaver
         .Crop(new Rectangle(0, 0, 50, 50)));
 
 
-        string fileName = Guid.NewGuid().ToString() + ".png";
-        string folderPath = Path.Combine(wwwRootPath, "Thumbnails");
-        Directory.CreateDirectory(folderPath);
-        string resizedImagePath = Path.Combine(folderPath, fileName);
+        string fileName = Guid.NewGuid().ToString();
 
-        await image.SaveAsync(resizedImagePath);
+        fileName += "image.png";
+        string filePath = Path.Combine(configurator.WwwRoot, "Thumbnails", fileName);
 
-        return resizedImagePath;
+        image.Save(filePath);
+
+        return fileName;
     }
 
     public async Task<string> SaveImageFromBytes(byte[] imageBytes, string fileExtension, CancellationToken ct)
@@ -74,7 +75,7 @@ public class ImageSaver(string wwwRootPath, HttpClient httpClient) : IImageSaver
 
     private async Task SaveBytesToFileAsync(byte[] bytes, string fileName)
     {
-        string filePath = Path.Combine(wwwRootPath, fileName);
+        string filePath = Path.Combine(configurator.WwwRoot, fileName);
 
         await File.WriteAllBytesAsync(filePath, bytes);
     }

@@ -1,15 +1,15 @@
 ﻿using FastEndpoints;
-using Hangfire;
 using Sameposty.API.Endpoints.Posts.PostNow;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.DataAccess.Queries.SocialMediaConnections;
+using Sameposty.Services.Configurator;
 using Sameposty.Services.PostsPublishers.Orhestrator;
 
 namespace Sameposty.API.Endpoints.Posts.PublishPostNow;
 
-public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostPublishOrhestrator postPublisher) : Endpoint<PublishPostNowRequest>
+public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, IPostPublishOrhestrator postPublisher, IConfigurator configurator) : Endpoint<PublishPostNowRequest>
 {
     public override void Configure()
     {
@@ -37,17 +37,16 @@ public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, ICommandExecut
         var facebookConnectionQuery = new GetSocialMediaConnectionsByUserId() { UserId = userId, Platform = SocialMediaPlatform.Facebook };
         var connections = await queryExecutor.ExecuteQuery(facebookConnectionQuery);
 
-        if (connections.Count == 0)
-        {
-            ThrowError("Najpierw połącz się z jakąś platformą social media!");
-        }
+        //if (connections.Count == 0)
+        //{
+        //    ThrowError("Najpierw połącz się z jakąś platformą social media!");
+        //}
 
         var results = new List<PublishResult>();
 
         try
         {
-            results = await postPublisher.PublishPostToAll(post, connections);
-            BackgroundJob.Delete(post.JobPublishId);
+            results = await postPublisher.PublishPostToAll(post, connections, configurator.ApiBaseUrl);
         }
         catch (Exception ex)
         {

@@ -10,7 +10,8 @@ public class GetArchivedPostsByUserId : QueryBase<List<Post>>
     public override async Task<List<Post>> Execute(SamepostyDbContext db)
     {
         return await db.Posts.Where(x => x.UserId == UserId && x.IsPublished)
-            .Include(x => x.PublishResults)
-            .ToListAsync();
+        .OrderByDescending(x => x.PublishedDate)
+        .Include(x => x.PublishResults)
+        .ToListAsync();
     }
 }

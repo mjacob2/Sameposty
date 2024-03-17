@@ -6,9 +6,11 @@ using FastEndpoints.Swagger;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using OpenAI.Extensions;
+using Sameposty.API;
 using Sameposty.API.Models;
 using Sameposty.DataAccess.DatabaseContext;
 using Sameposty.DataAccess.Executors;
+using Sameposty.Services.Configurator;
 using Sameposty.Services.FacebookTokenManager;
 using Sameposty.Services.FileRemover;
 using Sameposty.Services.PostsGenerator;
@@ -64,24 +66,16 @@ if (builder.Environment.IsProduction())
 
 builder.Services.AddDbContext<SamepostyDbContext>(options =>
             options.UseSqlServer(dbConnectionString));
-
 AddFastEndpoints(builder, secrets.JWTBearerTokenSignKey);
-
 builder.Services.AddTransient<IQueryExecutor, QueryExecutor>();
 builder.Services.AddTransient<ICommandExecutor, CommandExecutor>();
-builder.Services.AddScoped<IPostsGenerator>(sp =>
-{
-    var apiBaseUrl = builder.Configuration.GetConnectionString("ApiBaseUrl") ?? throw new ArgumentNullException("No ApiBaseUrl provided in sppsettings.json");
-    int numberFirstPostsGenerated = builder.Configuration.GetValue<int>("Settings:NumberFirstPostsGenerated");
-    return new PostsGenerator(sp.GetRequiredService<ITextGenerator>(), sp.GetRequiredService<IImageGeneratingOrchestrator>(), apiBaseUrl, numberFirstPostsGenerated);
-});
+builder.Services.AddScoped<IPostsGenerator, PostsGenerator>();
+builder.Services.AddScoped<IPostPublishOrhestrator, PostPublishOrhestrator>();
 builder.Services.AddOpenAIService(settings => { settings.ApiKey = secrets.OpenAiApiKey; });
-
 builder.Services.AddScoped<IImageGenerator, ImageGenerator>();
-
 builder.Services.AddScoped<ITextGenerator, TextGenerator>();
-AddImageServer(builder);
-AddFileRemover(builder);
+builder.Services.AddScoped<IImageSaver, ImageSaver>();
+builder.Services.AddScoped<IFileRemover, FileRemover>();
 builder.Services.AddScoped<IImageGeneratingOrchestrator, ImageGeneratingOrchestrator>();
 builder.Services.AddScoped<IFacebookTokenManager>(options =>
 {
@@ -96,20 +90,15 @@ builder.Services.AddScoped<IFacebookTokenManager>(options =>
 
 builder.Services.AddScoped<IFacebookPostsPublisher, FacebookPostsPublisher>();
 builder.Services.AddScoped<IPostsPublisher, PostsPublisher>();
-
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<IPostPublishOrhestrator, PostPublishOrhestrator>();
+builder.Services.AddSingleton<IConfigurator, Configurator>();
 
 builder.Services.AddHangfire(config => config
-.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
 .UseSimpleAssemblyNameTypeSerializer()
 .UseRecommendedSerializerSettings(o => o.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
 .UseSqlServerStorage(dbConnectionString));
-
 builder.Services.AddHangfireServer();
-
-
 
 var app = builder.Build();
 
@@ -120,30 +109,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseFastEndpoints()
     .UseSwaggerGen();
-app.UseHangfireDashboard();
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new MyAuthorizationFilter() }
+});
 
 
 app.Run();
-
-static void AddImageServer(WebApplicationBuilder builder)
-{
-    builder.Services.AddScoped<IImageSaver>(sp =>
-    {
-        var webHostEnvironment = sp.GetRequiredService<IWebHostEnvironment>();
-        string wwwrootPath = webHostEnvironment.WebRootPath;
-        return new ImageSaver(wwwrootPath, sp.GetRequiredService<HttpClient>());
-    });
-}
-
-static void AddFileRemover(WebApplicationBuilder builder)
-{
-    builder.Services.AddScoped<IFileRemover>(sp =>
-    {
-        var webHostEnvironment = sp.GetRequiredService<IWebHostEnvironment>();
-        string wwwrootPath = webHostEnvironment.WebRootPath;
-        return new FileRemover(wwwrootPath);
-    });
-}
 
 static void AddFastEndpoints(WebApplicationBuilder builder, string key)
 {

@@ -1,12 +1,14 @@
-﻿namespace Sameposty.Services.FileRemover;
-public class FileRemover(string webRootPath) : IFileRemover
+﻿using Sameposty.Services.Configurator;
+
+namespace Sameposty.Services.FileRemover;
+public class FileRemover(IConfigurator configurator) : IFileRemover
 {
     public void RemovePostImage(string fileName)
     {
 
         fileName = ExtractFilename(fileName);
 
-        string filePath = Path.Combine(webRootPath, fileName);
+        string filePath = Path.Combine(configurator.WwwRoot, fileName);
 
         if (File.Exists(filePath))
         {

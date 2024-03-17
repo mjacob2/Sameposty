@@ -8,7 +8,7 @@ using Sameposty.Services.PostsPublishers.Orhestrator;
 
 namespace Sameposty.API.Endpoints.Posts.UpdateScheduleDate;
 
-public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IPostPublishOrhestrator postPublisher) : Endpoint<UpdatePostSheduledDateRequest>
+public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IPostPublishOrhestrator postPublisher, IConfiguration configuration) : Endpoint<UpdatePostSheduledDateRequest>
 {
     public override void Configure()
     {
@@ -32,7 +32,11 @@ public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQ
 
         BackgroundJob.Delete(postFromDb.JobPublishId);
 
-        postFromDb.JobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(postFromDb, userFromDb.SocialMediaConnections), new DateTimeOffset(req.Date));
+        var baseApiUrl = configuration.GetConnectionString("ApiBaseUrl") ?? throw new ArgumentNullException("No ApiBaseUrl provided in sppsettings.json");
+
+        DateTimeOffset cetDateTimeOffset = new(req.Date, TimeSpan.FromHours(1)); // Assuming req.Date is in CET (Central European Time)
+
+        postFromDb.JobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(postFromDb, userFromDb.SocialMediaConnections, baseApiUrl), cetDateTimeOffset);
 
         var updateScheduleDateCommand = new UpdatePostScheduleDateCommand(req.PostId, req.Date);
 
