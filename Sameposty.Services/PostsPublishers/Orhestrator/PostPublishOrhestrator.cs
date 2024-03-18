@@ -35,7 +35,7 @@ public class PostPublishOrhestrator(IPostsPublisher postsPublisher, IImageSaver 
 
     private async Task UpdatePost(Post post, string imageThumbnailUrl, string baseApiUrl)
     {
-        post.Description = new string(post.Description.Take(100).ToArray());
+        post.Description = new string(post.Description.Take(150).ToArray()) + "...";
         post.IsPublished = true;
         post.JobPublishId = string.Empty;
         post.PublishedDate = GetNowInPoland();

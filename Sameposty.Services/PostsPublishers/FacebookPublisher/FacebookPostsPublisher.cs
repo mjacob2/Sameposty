@@ -57,11 +57,15 @@ public class FacebookPostsPublisher(HttpClient http) : IFacebookPostsPublisher
         }
         else
         {
+
+            string responseBody = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonSerializer.Deserialize<FacebookPostPublishErrorResponse>(responseBody);
+
             PublishResult result = new()
             {
                 PublishedPostId = string.Empty,
                 CreatedDate = DateTime.Now,
-                Error = "Wystapił błąd przy publikacji posta na Facebook. Póki co to wszystko co wiemy :(",
+                Error = $"{responseObject.Error.ErrorUserTitle}, {responseObject.Error.ErrorUserMessage}",
                 IsPublishedSuccess = false,
                 Platform = SocialMediaPlatform.Facebook,
                 UserId = post.UserId,
