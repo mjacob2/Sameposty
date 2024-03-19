@@ -97,7 +97,7 @@ builder.Services.AddScoped<IEmailService>(options =>
         EmailInfoPassword = secrets.EmailInfoPassword,
     };
 
-    return new EmailService(s);
+    return new EmailService(s, options.GetRequiredService<IConfigurator>());
 });
 
 builder.Services.AddScoped<IFacebookPostsPublisher, FacebookPostsPublisher>();

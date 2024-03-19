@@ -9,4 +9,6 @@ public class Configurator(IConfiguration configuration, IWebHostEnvironment webH
     public string WwwRoot { get; private set; } = webHostEnvironment.WebRootPath;
 
     public int NumberFirstPostsGenerated { get; private set; } = configuration.GetValue<int>("Settings:NumberFirstPostsGenerated");
+
+    public string AngularClientBaseURl { get; private set; } = configuration.GetConnectionString("AngularClientBaseURl") ?? throw new ArgumentNullException("No AngularClientBaseURl provided in sppsettings.json");
 }

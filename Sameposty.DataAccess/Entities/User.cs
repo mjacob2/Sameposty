@@ -30,4 +30,6 @@ public class User : EntityBase
     public Privilege Privilege { get; set; } = new();
 
     public Roles Role { get; set; } = Roles.FreeUser;
+
+    public bool IsVerified { get; set; }
 }

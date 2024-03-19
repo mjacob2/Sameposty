@@ -19,14 +19,17 @@ public class UserLoginEndpoint(IQueryExecutor queryExecutor, IEmailService email
     public override async Task HandleAsync(LoginRequest req, CancellationToken ct)
     {
 
-        await email.SendRegisterConfirmationEmail(req.Email);
-
         var getUserByEmail = new GetUserByEmailQuery() { Email = req.Email };
         var userFromDb = await queryExecutor.ExecuteQuery(getUserByEmail);
 
         if (userFromDb == null)
         {
-            ThrowError("Email nie istnieje");
+            ThrowError("E-mail nie istnieje");
+        }
+
+        if (!userFromDb.IsVerified)
+        {
+            ThrowError("Wysłaliśmy e-mail z potwierdzeniem rejestracji. Sprawdź swoją pocztę.");
         }
 
         var passwordFromRequest = Hasher.HashPassword(req.Password, userFromDb.Salt);
