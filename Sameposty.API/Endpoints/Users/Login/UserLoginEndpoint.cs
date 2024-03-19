@@ -2,12 +2,13 @@
 using Microsoft.AspNetCore.Identity.Data;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
+using Sameposty.Services.EmailService;
 using Sameposty.Services.Hasher;
 using Sameposty.Services.JWTService;
 
 namespace Sameposty.API.Endpoints.Users.Login;
 
-public class UserLoginEndpoint(IQueryExecutor queryExecutor) : Endpoint<LoginRequest>
+public class UserLoginEndpoint(IQueryExecutor queryExecutor, IEmailService email) : Endpoint<LoginRequest>
 {
     public override void Configure()
     {
@@ -17,6 +18,9 @@ public class UserLoginEndpoint(IQueryExecutor queryExecutor) : Endpoint<LoginReq
 
     public override async Task HandleAsync(LoginRequest req, CancellationToken ct)
     {
+
+        await email.SendRegisterConfirmationEmail(req.Email);
+
         var getUserByEmail = new GetUserByEmailQuery() { Email = req.Email };
         var userFromDb = await queryExecutor.ExecuteQuery(getUserByEmail);
 

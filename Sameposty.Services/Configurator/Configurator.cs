@@ -9,7 +9,4 @@ public class Configurator(IConfiguration configuration, IWebHostEnvironment webH
     public string WwwRoot { get; private set; } = webHostEnvironment.WebRootPath;
 
     public int NumberFirstPostsGenerated { get; private set; } = configuration.GetValue<int>("Settings:NumberFirstPostsGenerated");
-
-
-
 }

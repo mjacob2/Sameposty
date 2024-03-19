@@ -11,6 +11,7 @@ using Sameposty.API.Models;
 using Sameposty.DataAccess.DatabaseContext;
 using Sameposty.DataAccess.Executors;
 using Sameposty.Services.Configurator;
+using Sameposty.Services.EmailService;
 using Sameposty.Services.FacebookTokenManager;
 using Sameposty.Services.FileRemover;
 using Sameposty.Services.PostsGenerator;
@@ -62,6 +63,7 @@ if (builder.Environment.IsProduction())
     secrets.JWTBearerTokenSignKey = client.GetSecret("JWTBearerTokenSignKey").Value.Value ?? throw new ArgumentNullException("No JWTBearerTokenSignKey provided in Azure Key Vault");
     secrets.SamepostyFacebookAppSecret = client.GetSecret("SamepostyFacebookAppSecret").Value.Value ?? throw new ArgumentNullException("No SamepostyFacebookAppSecret provided in Azure Key Vault");
     secrets.SamepostyFacebookAppId = client.GetSecret("SamepostyFacebookAppId").Value.Value ?? throw new ArgumentNullException("No SamepostyFacebookAppId provided in Azure Key Vault");
+    secrets.EmailInfoPassword = client.GetSecret("EmailInfoPassword").Value.Value ?? throw new ArgumentNullException("No EmailInfoPassword provided in Azure Key Vault");
 }
 
 builder.Services.AddDbContext<SamepostyDbContext>(options =>
@@ -86,6 +88,16 @@ builder.Services.AddScoped<IFacebookTokenManager>(options =>
     };
 
     return new FacebookTokenManager(s, options.GetRequiredService<HttpClient>());
+});
+
+builder.Services.AddScoped<IEmailService>(options =>
+{
+    var s = new EmailServiceSecrets()
+    {
+        EmailInfoPassword = secrets.EmailInfoPassword,
+    };
+
+    return new EmailService(s);
 });
 
 builder.Services.AddScoped<IFacebookPostsPublisher, FacebookPostsPublisher>();

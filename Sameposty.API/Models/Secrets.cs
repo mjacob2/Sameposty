@@ -9,4 +9,6 @@ public class Secrets
     public string SamepostyFacebookAppSecret { get; set; }
 
     public string SamepostyFacebookAppId { get; set; }
+
+    public string EmailInfoPassword { get; set; }
 }
