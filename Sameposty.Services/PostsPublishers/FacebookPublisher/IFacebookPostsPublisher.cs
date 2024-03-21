@@ -3,5 +3,5 @@
 namespace Sameposty.Services.PostsPublishers.FacebookPublisher;
 public interface IFacebookPostsPublisher
 {
-    public Task<PublishResult> PublishPost(Post post, SocialMediaConnection connection);
+    public Task<PublishResult> PublishPost(Post post, FacebookConnection connection);
 }

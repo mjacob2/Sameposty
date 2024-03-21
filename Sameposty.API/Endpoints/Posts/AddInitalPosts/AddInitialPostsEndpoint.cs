@@ -21,15 +21,15 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
     {
         var loggedUserId = User.FindFirst("UserId").Value;
         var id = int.Parse(loggedUserId);
-        var getUserFromDbQuery = new GetUserByIdQuery() { Id = id };
+        var getUserFromDbQuery = new GetUserByIdQuery(id);
         var userFromDb = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
-        if (userFromDb.Privilege.CanGenerateInitialPosts == false)
+        if (userFromDb.Privilege.CanGenerateInitialPosts == false && userFromDb.Role != DataAccess.Entities.Roles.Admin)
         {
             ThrowError("Aby wygenerować więcej wspaniałych postów, zapraszamy do skorzystania z abonamentu.");
         }
 
-        if (userFromDb.BasicInformation == null)
+        if (userFromDb.BasicInformation == null && userFromDb.Role != DataAccess.Entities.Roles.Admin)
         {
             ThrowError("Nie podano informacji o firmie");
         }
@@ -51,8 +51,18 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
 
         foreach (var post in posts)
         {
+            var request = new PublishPostToAllRequest()
+            {
+                BaseApiUrl = configurator.ApiBaseUrl,
+                Post = post,
+                Connections = new()
+                {
+                    FacebookConnection = userFromDb.FacebookConnection,
+                    InstagramConnection = userFromDb.InstagramConnection,
+                },
 
-            var jobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(post, userFromDb.SocialMediaConnections, configurator.ApiBaseUrl), new DateTimeOffset(post.ShedulePublishDate));
+            };
+            var jobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(request), new DateTimeOffset(post.ShedulePublishDate));
 
             post.JobPublishId = jobPublishId;
         }

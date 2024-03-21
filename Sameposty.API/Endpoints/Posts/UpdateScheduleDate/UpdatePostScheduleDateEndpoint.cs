@@ -4,11 +4,12 @@ using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.DataAccess.Queries.Users;
+using Sameposty.Services.Configurator;
 using Sameposty.Services.PostsPublishers.Orhestrator;
 
 namespace Sameposty.API.Endpoints.Posts.UpdateScheduleDate;
 
-public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IPostPublishOrhestrator postPublisher, IConfiguration configuration) : Endpoint<UpdatePostSheduledDateRequest>
+public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IPostPublishOrhestrator postPublisher, IConfigurator configurator) : Endpoint<UpdatePostSheduledDateRequest>
 {
     public override void Configure()
     {
@@ -19,7 +20,7 @@ public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQ
     {
         var id = User.FindFirst("UserId").Value;
         var loggedUserId = int.Parse(id);
-        var getUserFromDbQuery = new GetUserByIdQuery() { Id = loggedUserId };
+        var getUserFromDbQuery = new GetUserByIdQuery(loggedUserId);
         var userFromDb = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
         var getPostFromDbQuery = new GetPostByIdQuery() { PostId = req.PostId };
@@ -32,11 +33,20 @@ public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQ
 
         BackgroundJob.Delete(postFromDb.JobPublishId);
 
-        var baseApiUrl = configuration.GetConnectionString("ApiBaseUrl") ?? throw new ArgumentNullException("No ApiBaseUrl provided in sppsettings.json");
-
         DateTimeOffset cetDateTimeOffset = new(req.Date, TimeSpan.FromHours(1)); // Assuming req.Date is in CET (Central European Time)
 
-        postFromDb.JobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(postFromDb, userFromDb.SocialMediaConnections, baseApiUrl), cetDateTimeOffset);
+        var request = new PublishPostToAllRequest()
+        {
+            BaseApiUrl = configurator.ApiBaseUrl,
+            Post = postFromDb,
+            Connections = new()
+            {
+                FacebookConnection = userFromDb.FacebookConnection,
+                InstagramConnection = userFromDb.InstagramConnection,
+            },
+        };
+
+        postFromDb.JobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(request), cetDateTimeOffset);
 
         var updateScheduleDateCommand = new UpdatePostScheduleDateCommand(req.PostId, req.Date);
 

@@ -17,8 +17,11 @@ public class GetUserEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequ
 
         var id = int.Parse(loggedUserId);
 
-        var getUserFromDbQuery = new GetUserByIdQuery() { Id = id };
+        var getUserFromDbQuery = new GetUserByIdQuery(id);
         var user = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
+
+        user.Password = string.Empty;
+        user.Salt = string.Empty;
 
         await SendOkAsync(user, ct);
     }

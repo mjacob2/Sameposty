@@ -3,7 +3,7 @@ using Sameposty.API.Endpoints.Posts.PostNow;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Posts;
-using Sameposty.DataAccess.Queries.SocialMediaConnections;
+using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.Configurator;
 using Sameposty.Services.PostsPublishers.Orhestrator;
 
@@ -21,32 +21,43 @@ public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, IPostPublishOr
         var loggedUserId = User.FindFirst("UserId").Value;
         var userId = int.Parse(loggedUserId);
 
-        var getPostQuery = new GetPostByIdQuery() { PostId = req.PostId };
-        var post = await queryExecutor.ExecuteQuery(getPostQuery);
+        var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByIdWithConnectionsQuery(userId));
 
-        if (string.IsNullOrEmpty(post.ImageUrl))
+        var getPostQuery = new GetPostByIdQuery() { PostId = req.PostId };
+        var postToPublish = await queryExecutor.ExecuteQuery(getPostQuery);
+
+        if (postToPublish.UserId != userId)
+        {
+            ThrowError("Ten post nie należy do Ciebie! Nie możesz go opublikować!");
+        }
+
+        if (string.IsNullOrEmpty(postToPublish.ImageUrl))
         {
             ThrowError("Post nie ma zdjęcia!");
         }
 
-        if (string.IsNullOrEmpty(post.Description))
+        if (string.IsNullOrEmpty(postToPublish.Description))
         {
             ThrowError("Post nie ma opisu!");
         }
 
-        var facebookConnectionQuery = new GetSocialMediaConnectionsByUserId() { UserId = userId, Platform = SocialMediaPlatform.Facebook };
-        var connections = await queryExecutor.ExecuteQuery(facebookConnectionQuery);
-
-        //if (connections.Count == 0)
-        //{
-        //    ThrowError("Najpierw połącz się z jakąś platformą social media!");
-        //}
 
         var results = new List<PublishResult>();
 
         try
         {
-            results = await postPublisher.PublishPostToAll(post, connections, configurator.ApiBaseUrl);
+            var publishRequest = new PublishPostToAllRequest()
+            {
+                BaseApiUrl = configurator.ApiBaseUrl,
+                Post = postToPublish,
+                Connections = new Services.PostsPublishers.ConnectionsModel()
+                {
+                    FacebookConnection = userFromDb.FacebookConnection,
+                    InstagramConnection = userFromDb.InstagramConnection,
+                },
+
+            };
+            results = await postPublisher.PublishPostToAll(publishRequest);
         }
         catch (Exception ex)
         {

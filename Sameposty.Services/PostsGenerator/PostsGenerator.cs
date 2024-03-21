@@ -62,19 +62,7 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
             ShedulePublishDate = DateTime.Today.AddDays(1).Date.AddHours(9),
         };
 
-        var post2 = new Post()
-        {
-            CreatedDate = DateTime.Now,
-            UserId = request.UserId,
-            Description = "",
-            Title = "",
-            ImageUrl = $"",
-            IsPublished = false,
-            ShedulePublishDate = DateTime.Today.AddDays(2).Date.AddHours(9),
-        };
-
         posts.Add(post1);
-        posts.Add(post2);
 
         return posts;
     }

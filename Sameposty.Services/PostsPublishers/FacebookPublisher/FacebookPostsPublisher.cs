@@ -9,7 +9,7 @@ public class FacebookPostsPublisher(HttpClient http) : IFacebookPostsPublisher
 {
     private readonly string FacebookApiBaseUrl = "https://graph.facebook.com/v19.0/";
 
-    public async Task<PublishResult> PublishPost(Post post, SocialMediaConnection connection)
+    public async Task<PublishResult> PublishPost(Post post, FacebookConnection connection)
     {
         ArgumentNullException.ThrowIfNull(post);
         ArgumentNullException.ThrowIfNull(connection);

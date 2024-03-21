@@ -18,7 +18,7 @@ public class UpdateUserCompanyDescriptionEndpoint(IQueryExecutor queryExecutor, 
 
         var id = int.Parse(loggedUserId);
 
-        var getUserFromDbQuery = new GetUserByIdQuery() { Id = id };
+        var getUserFromDbQuery = new GetUserByIdQuery(id);
         var user = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
         if (user == null)

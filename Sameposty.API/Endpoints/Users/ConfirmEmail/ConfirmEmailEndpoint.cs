@@ -16,7 +16,7 @@ public class ConfirmEmailEndpoint(IQueryExecutor queryExecutor, ICommandExecutor
         var loggedUserId = User.FindFirst("UserId").Value;
         var userId = int.Parse(loggedUserId);
 
-        var getUserFromDbQuery = new GetUserByIdQuery() { Id = userId };
+        var getUserFromDbQuery = new GetUserByIdQuery(userId);
         var user = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
         user.IsVerified = true;

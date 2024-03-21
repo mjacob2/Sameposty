@@ -11,24 +11,24 @@ public class PostPublishOrhestrator(IPostsPublisher postsPublisher, IImageSaver 
 {
 
     [AutomaticRetry(Attempts = 0)]
-    public async Task<List<PublishResult>> PublishPostToAll(Post post, List<SocialMediaConnection> connections, string baseApiUrl)
+    public async Task<List<PublishResult>> PublishPostToAll(PublishPostToAllRequest request)
     {
-        var publishingResults = await postsPublisher.PublishPost(post, connections);
+        var publishingResults = await postsPublisher.PublishPost(request.Post, request.Connections);
 
         var imageThumbnailName = string.Empty;
 
-        if (!string.IsNullOrEmpty(post.ImageUrl))
+        if (!string.IsNullOrEmpty(request.Post.ImageUrl))
         {
-            imageThumbnailName = await imageSaver.DownsizePNG(post.ImageUrl);
+            imageThumbnailName = await imageSaver.DownsizePNG(request.Post.ImageUrl);
 
-            fileRemover.RemovePostImage(post.ImageUrl);
+            fileRemover.RemovePostImage(request.Post.ImageUrl);
         }
 
-        post.PublishResults = publishingResults;
+        request.Post.PublishResults = publishingResults;
 
-        await UpdatePost(post, imageThumbnailName, baseApiUrl);
+        BackgroundJob.Delete(request.Post.JobPublishId);
 
-        BackgroundJob.Delete(post.JobPublishId);
+        await UpdatePost(request.Post, imageThumbnailName, request.BaseApiUrl);
 
         return publishingResults;
     }

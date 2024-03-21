@@ -17,7 +17,7 @@ public class UpdatePostDescriptionEndpoint(ICommandExecutor commandExecutor, IQu
         var loggedUserId = User.FindFirst("UserId").Value;
         var id = int.Parse(loggedUserId);
 
-        var getUserFromDbQuery = new GetUserByIdQuery() { Id = id };
+        var getUserFromDbQuery = new GetUserByIdQuery(id);
         var userFromDb = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
         if (userFromDb.Id != id)

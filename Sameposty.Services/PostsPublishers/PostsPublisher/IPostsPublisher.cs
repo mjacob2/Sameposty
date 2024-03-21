@@ -3,5 +3,5 @@
 namespace Sameposty.Services.PostsPublishers.PostsPublisher;
 public interface IPostsPublisher
 {
-    Task<List<PublishResult>> PublishPost(Post post, List<SocialMediaConnection> connections);
+    Task<List<PublishResult>> PublishPost(Post post, ConnectionsModel connections);
 }

@@ -9,7 +9,7 @@ using Sameposty.Services.JWTService;
 
 namespace Sameposty.API.Endpoints.Users.AddUser;
 
-public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IEmailService email) : Endpoint<AddUserRequest>
+public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IEmailService email, ILogger<AddUserEndpoint> logger) : Endpoint<AddUserRequest>
 {
     public override void Configure()
     {
@@ -20,6 +20,9 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
 
     public override async Task HandleAsync(AddUserRequest req, CancellationToken ct)
     {
+
+        logger.LogWarning("I enter AddUserEndpoint");
+
         var getUserByEmail = new GetUserByEmailQuery() { Email = req.Email };
         var userFromDb = await queryExecutor.ExecuteQuery(getUserByEmail);
 
@@ -45,6 +48,8 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
         var newUserFromDb = await commandExecutor.ExecuteCommand(command);
 
         string jwtToken = JWTFactory.GenerateJwt(newUserFromDb.Id.ToString());
+
+        logger.LogWarning($"created token: {jwtToken}");
 
         await email.SendRegisterConfirmationEmail(req.Email, jwtToken);
 

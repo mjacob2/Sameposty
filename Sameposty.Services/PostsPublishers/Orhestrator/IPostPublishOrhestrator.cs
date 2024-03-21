@@ -3,5 +3,5 @@
 namespace Sameposty.Services.PostsPublishers.Orhestrator;
 public interface IPostPublishOrhestrator
 {
-    Task<List<PublishResult>> PublishPostToAll(Post post, List<SocialMediaConnection> connections, string baseApiUrl);
+    Task<List<PublishResult>> PublishPostToAll(PublishPostToAllRequest request);
 }

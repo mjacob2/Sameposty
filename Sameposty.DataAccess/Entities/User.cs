@@ -23,9 +23,11 @@ public class User : EntityBase
 
     public List<Post> Posts { get; set; } = [];
 
-    public List<SocialMediaConnection> SocialMediaConnections { get; set; } = [];
-
     public BasicInformation BasicInformation { get; set; } = new();
+
+    public FacebookConnection? FacebookConnection { get; set; }
+
+    public InstagramConnection? InstagramConnection { get; set; }
 
     public Privilege Privilege { get; set; } = new();
 
