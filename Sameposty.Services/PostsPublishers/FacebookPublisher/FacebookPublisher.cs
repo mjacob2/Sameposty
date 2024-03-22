@@ -5,9 +5,9 @@ using Sameposty.DataAccess.Entities;
 using Sameposty.Services.PostsPublishers.FacebookPublisher.Models;
 
 namespace Sameposty.Services.PostsPublishers.FacebookPublisher;
-public class FacebookPostsPublisher(HttpClient http) : IFacebookPostsPublisher
+public class FacebookPublisher(HttpClient http) : IFacebookPublisher
 {
-    private readonly string FacebookApiBaseUrl = "https://graph.facebook.com/v19.0/";
+    private readonly string FacebookApiBaseUrl = "https://graph.facebook.com/v19.0";
 
     public async Task<PublishResult> PublishPost(Post post, FacebookConnection connection)
     {
@@ -26,7 +26,7 @@ public class FacebookPostsPublisher(HttpClient http) : IFacebookPostsPublisher
             PageId = connection.PageId,
         };
 
-        string apiUrl = $"{FacebookApiBaseUrl}{pageInfo.PageId}/photos";
+        string apiUrl = $"{FacebookApiBaseUrl}/{pageInfo.PageId}/photos";
 
         string jsonContent = JsonSerializer.Serialize(postToPublish);
 

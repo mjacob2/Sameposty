@@ -20,6 +20,7 @@ using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageGenerato
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
 using Sameposty.Services.PostsPublishers.FacebookPublisher;
+using Sameposty.Services.PostsPublishers.InstagramPublisher;
 using Sameposty.Services.PostsPublishers.Orhestrator;
 using Sameposty.Services.PostsPublishers.PostsPublisher;
 
@@ -100,7 +101,8 @@ builder.Services.AddScoped<IEmailService>(options =>
     return new EmailService(s, options.GetRequiredService<IConfigurator>());
 });
 
-builder.Services.AddScoped<IFacebookPostsPublisher, FacebookPostsPublisher>();
+builder.Services.AddScoped<IFacebookPublisher, FacebookPublisher>();
+builder.Services.AddScoped<IInstagramPublisher, InstagramPublisher>();
 builder.Services.AddScoped<IPostsPublisher, PostsPublisher>();
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();

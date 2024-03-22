@@ -24,7 +24,7 @@ public class AddInstagramConnectionEndpoint(ICommandExecutor commandExecutor, IF
         var instagramConnectionToAdd = new InstagramConnection()
         {
             AccesToken = longLivedUserToken,
-            PageId = req.InstagramUserId,
+            PageId = req.PageId,
             PageName = req.PageName,
             UserId = userId,
         };
