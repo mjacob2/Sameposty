@@ -5,27 +5,27 @@ using Sameposty.DataAccess.Queries.FacebookConnections;
 
 namespace Sameposty.API.Endpoints.FacebookConnections.Delete;
 
-public class DeleteFacebookConnectionEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor) : Endpoint<Request>
+public class DeleteFacebookConnectionEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor) : EndpointWithoutRequest
 {
     public override void Configure()
     {
         Delete("facebookConnection");
     }
 
-    public override async Task HandleAsync(Request req, CancellationToken ct)
+    public override async Task HandleAsync(CancellationToken ct)
     {
         var loggedUserId = User.FindFirst("UserId").Value;
         var userId = int.Parse(loggedUserId);
 
-        var facebookConnectionToDelete = await queryExecutor.ExecuteQuery(new GetFacebookConnectionByIdQuery(userId));
+        var facebookConnectionToDelete = await queryExecutor.ExecuteQuery(new GetFacebookConnectionByUserIdQuery(userId));
 
         if (facebookConnectionToDelete.UserId != userId)
         {
             ThrowError("Nie możesz tego usunąć!");
         }
 
-        var deletedConnection = await commandExecutor.ExecuteCommand(new DeleteFacebookConnectionCommand() { Parameter = facebookConnectionToDelete });
+        await commandExecutor.ExecuteCommand(new DeleteFacebookConnectionCommand() { Parameter = facebookConnectionToDelete });
 
-        await SendOkAsync(deletedConnection, ct);
+        await SendOkAsync("deleted", ct);
     }
 }

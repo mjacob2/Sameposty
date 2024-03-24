@@ -9,11 +9,11 @@ public class PostsPublisher(IFacebookPublisher facebookPublisher, IInstagramPubl
     {
         var results = new List<PublishResult>();
 
-        //if (connections.FacebookConnection != null)
-        //{
-        //    var result = await facebookPublisher.PublishPost(post, connections.FacebookConnection);
-        //    results.Add(result);
-        //}
+        if (connections.FacebookConnection != null)
+        {
+            var result = await facebookPublisher.PublishPost(post, connections.FacebookConnection);
+            results.Add(result);
+        }
 
         if (connections.InstagramConnection != null)
         {

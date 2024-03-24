@@ -65,7 +65,7 @@ public class FacebookPublisher(HttpClient http) : IFacebookPublisher
             {
                 PublishedPostId = string.Empty,
                 CreatedDate = DateTime.Now,
-                Error = $"{responseObject.Error.ErrorUserTitle}, {responseObject.Error.ErrorUserMessage}",
+                Error = $"{responseObject.Error.ErrorUserTitle}, {responseObject.Error.ErrorUserMessage} {responseObject.Error.Message}" ?? "Wystapił niezidentyfikowany błąd!",
                 IsPublishedSuccess = false,
                 Platform = SocialMediaPlatform.Facebook,
                 UserId = post.UserId,
