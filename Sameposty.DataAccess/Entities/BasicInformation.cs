@@ -5,23 +5,37 @@ namespace Sameposty.DataAccess.Entities;
 public class BasicInformation : EntityBase
 {
     [Required]
-    [MaxLength(200)]
-    public string Branch { get; set; } = string.Empty;
+    [MaxLength(1000)]
+    public string BrandName { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(500)]
+    [MaxLength(1000)]
+    public string Audience { get; set; } = string.Empty;
+
+    [Required]
+    [MaxLength(1000)]
+    public string Mission { get; set; } = string.Empty;
+
+    [Required]
+    [MaxLength(1000)]
     public string ProductsAndServices { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(500)]
+    [MaxLength(1000)]
     public string Goals { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength(500)]
+    [MaxLength(1000)]
     public string Assets { get; set; } = string.Empty;
 
     public int UserId { get; set; }
 
     [JsonIgnore]
     public User User { get; set; }
+
+
+
+    [Required]
+    [MaxLength(200)]
+    public string Branch { get; set; } = string.Empty; // obsolete
 }

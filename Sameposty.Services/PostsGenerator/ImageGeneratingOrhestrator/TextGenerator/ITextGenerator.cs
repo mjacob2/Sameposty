@@ -2,4 +2,6 @@
 public interface ITextGenerator
 {
     Task<string> GeneratePostDescription(GeneratePostRequest request);
+
+    Task<string> GeneratePromptForImageForPost(string productsAndServices);
 }

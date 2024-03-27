@@ -29,10 +29,12 @@ public class UpdateBasicInformationByIdEndpoint(ICommandExecutor commandExecutor
             ThrowError("Nie masz uprawnienień do aktualizacji tego zasobu");
         }
 
-        basicInformationFromDb.Assets = req.Assets;
-        basicInformationFromDb.Branch = req.Branch;
-        basicInformationFromDb.Goals = req.Goals;
+        basicInformationFromDb.BrandName = req.BrandName;
+        basicInformationFromDb.Audience = req.Audience;
+        basicInformationFromDb.Mission = req.Mission;
         basicInformationFromDb.ProductsAndServices = req.ProductsAndServices;
+        basicInformationFromDb.Goals = req.Goals;
+        basicInformationFromDb.Assets = req.Assets;
 
         var updateCommand = new UpdateBasicInformationByIdCommand() { Parameter = basicInformationFromDb };
 

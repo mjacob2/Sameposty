@@ -18,6 +18,8 @@ public class SamepostyDbContext(DbContextOptions<SamepostyDbContext> options) : 
 
     public DbSet<InstagramConnection> InstagramConnections { get; set; }
 
+    public DbSet<Prompt> Prompts { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 

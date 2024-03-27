@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 namespace Sameposty.Services.PostsPublishers.InstagramPublisher.Models;
-internal class InstagramErrorResponse
+public class InstagramErrorResponse
 {
     [JsonPropertyName("error")]
     public ErrorDetails Error { get; set; }

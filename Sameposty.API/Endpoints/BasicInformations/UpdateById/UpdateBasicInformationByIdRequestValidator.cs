@@ -7,36 +7,52 @@ public class UpdateBasicInformationByIdRequestValidator : Validator<UpdateBasicI
 {
     public UpdateBasicInformationByIdRequestValidator()
     {
-        RuleFor(x => x.Branch)
+        RuleFor(x => x.BrandName)
             .NotNull()
-            .WithMessage("Branża nie może być pusta")
+            .WithMessage("Nazwa firmy nie może być pusta")
             .NotEmpty()
-            .WithMessage("Branża nie może być pusty")
-            .MaximumLength(200)
-            .WithMessage("Branża nie więcej niż 200 znaków");
+            .WithMessage("Nazwa firmy nie może być pusta")
+            .MaximumLength(1000)
+            .WithMessage("Nazwa firmy nie więcej niż 1000 znaków");
+
+        RuleFor(x => x.Audience)
+            .NotNull()
+            .WithMessage("Klienci firmy nie może być puste")
+            .NotEmpty()
+            .WithMessage("Klienci firmy nie może być pusty")
+            .MaximumLength(1000)
+            .WithMessage("Klienci firmy nie więcej niż 1000 znaków");
+
+        RuleFor(x => x.Mission)
+            .NotNull()
+            .WithMessage("Misja firmy nie może być pusta")
+            .NotEmpty()
+            .WithMessage("Misja firmy nie może być pusty")
+            .MaximumLength(1000)
+            .WithMessage("Misja firmy nie więcej niż 1000 znaków");
 
         RuleFor(x => x.ProductsAndServices)
             .NotNull()
-            .WithMessage("Produkty/usługi nie może być pusta")
+            .WithMessage("Produkty/usługi nie może być puste")
             .NotEmpty()
             .WithMessage("Produkty/usługi nie może być pusty")
-            .MaximumLength(500)
-            .WithMessage("Produkty/usługi nie więcej niż 500 znaków");
+            .MaximumLength(1000)
+            .WithMessage("Produkty/usługi nie więcej niż 1000 znaków");
 
         RuleFor(x => x.Goals)
             .NotNull()
             .WithMessage("Cel nie może być pusty")
             .NotEmpty()
             .WithMessage("Cel nie może być pusty")
-            .MaximumLength(500)
-            .WithMessage("Cel nie więcej niż 500 znaków");
+            .MaximumLength(1000)
+            .WithMessage("Cel nie więcej niż 1000 znaków");
 
         RuleFor(x => x.Assets)
             .NotNull()
             .WithMessage("Atut nie może być pusty")
             .NotEmpty()
             .WithMessage("Atut nie może być pusty")
-            .MaximumLength(500)
-            .WithMessage("CAtutel nie więcej niż 500 znaków");
+            .MaximumLength(1000)
+            .WithMessage("CAtutel nie więcej niż 1000 znaków");
     }
 }

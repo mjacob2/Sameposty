@@ -20,7 +20,6 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
 
     public override async Task HandleAsync(AddUserRequest req, CancellationToken ct)
     {
-
         logger.LogWarning("I enter AddUserEndpoint");
 
         var getUserByEmail = new GetUserByEmailQuery() { Email = req.Email };

@@ -1,7 +1,6 @@
 ﻿using FastEndpoints;
 using Hangfire;
 using Sameposty.DataAccess.Commands.Users;
-using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.Configurator;
@@ -37,15 +36,15 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
         var generatePostRequest = new GeneratePostRequest()
         {
             UserId = userFromDb.Id,
-            Branch = userFromDb.BasicInformation.Branch,
-            Assets = userFromDb.BasicInformation.Assets,
+            BrandName = userFromDb.BasicInformation.BrandName,
+            Audience = userFromDb.BasicInformation.Audience,
+            Mission = userFromDb.BasicInformation.Mission,
             ProductsAndServices = userFromDb.BasicInformation.ProductsAndServices,
             Goals = userFromDb.BasicInformation.Goals,
+            Assets = userFromDb.BasicInformation.Assets,
         };
 
-        var posts = new List<Post>();
-
-        posts = environment.IsProduction() && userFromDb.Email != "admin"
+        var posts = userFromDb.Email != "admin"
             ? await postsGenerator.GenerateInitialPostsAsync(generatePostRequest)
             : postsGenerator.GenerateStubbedPosts(generatePostRequest);
 

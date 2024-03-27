@@ -4,7 +4,11 @@ public class UpdateBasicInformationByIdRequest
 {
     public int Id { get; set; }
 
-    public string Branch { get; set; }
+    public string BrandName { get; set; }
+
+    public string Audience { get; set; }
+
+    public string Mission { get; set; }
 
     public string ProductsAndServices { get; set; }
 

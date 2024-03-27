@@ -1,5 +1,5 @@
 ﻿namespace Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
 public interface IImageGeneratingOrchestrator
 {
-    Task<string> GenerateImage(GeneratePostRequest request);
+    Task<string> GenerateImage(string postDescription, int postId);
 }

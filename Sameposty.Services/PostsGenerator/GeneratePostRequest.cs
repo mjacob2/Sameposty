@@ -3,11 +3,15 @@ public class GeneratePostRequest
 {
     public required int UserId { get; set; }
 
-    public required string Branch { get; set; }
+    public string BrandName { get; set; }
 
-    public required string ProductsAndServices { get; set; }
+    public string Audience { get; set; }
 
-    public required string Goals { get; set; }
+    public string Mission { get; set; }
 
-    public required string Assets { get; set; }
+    public string ProductsAndServices { get; set; }
+
+    public string Goals { get; set; }
+
+    public string Assets { get; set; }
 }
