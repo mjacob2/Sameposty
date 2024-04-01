@@ -7,12 +7,14 @@ using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
 using Sameposty.Services.PostsPublishers.PostsPublisher;
 
 namespace Sameposty.Services.PostsPublishers.Orhestrator;
-public class PostPublishOrhestrator(IPostsPublisher postsPublisher, IImageSaver imageSaver, IFileRemover fileRemover, ICommandExecutor commandExecutor) : IPostPublishOrhestrator
+public class PostPublishOrchestrator(IPostsPublisher postsPublisher, IImageSaver imageSaver, IFileRemover fileRemover, ICommandExecutor commandExecutor) : IPostPublishOrchestrator
 {
 
     [AutomaticRetry(Attempts = 0)]
     public async Task<List<PublishResult>> PublishPostToAll(PublishPostToAllRequest request)
     {
+        await MarkPostIsPublishingInProgress(request.Post);
+
         var publishingResults = await postsPublisher.PublishPost(request.Post, request.Connections);
 
         var imageThumbnailName = string.Empty;
@@ -31,6 +33,13 @@ public class PostPublishOrhestrator(IPostsPublisher postsPublisher, IImageSaver 
         await UpdatePost(request.Post, imageThumbnailName, request.BaseApiUrl);
 
         return publishingResults;
+    }
+
+    private async Task MarkPostIsPublishingInProgress(Post post)
+    {
+        post.IsPublishingInProgress = true;
+        var updatePostCommand = new UpdatePostCommand() { Parameter = post };
+        await commandExecutor.ExecuteCommand(updatePostCommand);
     }
 
     private async Task UpdatePost(Post post, string imageThumbnailUrl, string baseApiUrl)

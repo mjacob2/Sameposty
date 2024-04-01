@@ -73,7 +73,7 @@ AddFastEndpoints(builder, secrets.JWTBearerTokenSignKey);
 builder.Services.AddTransient<IQueryExecutor, QueryExecutor>();
 builder.Services.AddTransient<ICommandExecutor, CommandExecutor>();
 builder.Services.AddScoped<IPostsGenerator, PostsGenerator>();
-builder.Services.AddScoped<IPostPublishOrhestrator, PostPublishOrhestrator>();
+builder.Services.AddScoped<IPostPublishOrchestrator, PostPublishOrchestrator>();
 builder.Services.AddOpenAIService(settings => { settings.ApiKey = secrets.OpenAiApiKey; });
 builder.Services.AddScoped<IImageGenerator, ImageGenerator>();
 builder.Services.AddScoped<ITextGenerator, TextGenerator>();

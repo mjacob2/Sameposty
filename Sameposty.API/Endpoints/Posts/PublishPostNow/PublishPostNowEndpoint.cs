@@ -9,7 +9,7 @@ using Sameposty.Services.PostsPublishers.Orhestrator;
 
 namespace Sameposty.API.Endpoints.Posts.PublishPostNow;
 
-public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, IPostPublishOrhestrator postPublisher, IConfigurator configurator) : Endpoint<PublishPostNowRequest>
+public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, IPostPublishOrchestrator postPublisher, IConfigurator configurator) : Endpoint<PublishPostNowRequest>
 {
     public override void Configure()
     {

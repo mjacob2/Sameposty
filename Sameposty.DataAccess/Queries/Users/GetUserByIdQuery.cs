@@ -8,7 +8,7 @@ public class GetUserByIdQuery(int id) : QueryBase<User>
     public override async Task<User> Execute(SamepostyDbContext db)
     {
         return await db.Users
-        .Include(u => u.Posts.Where(p => p.IsPublished == false))
+        .Include(u => u.Posts.Where(p => p.IsPublished == false && p.IsPublishingInProgress == false))
         .Include(u => u.FacebookConnection)
         .Include(u => u.InstagramConnection)
         .Include(u => u.BasicInformation)

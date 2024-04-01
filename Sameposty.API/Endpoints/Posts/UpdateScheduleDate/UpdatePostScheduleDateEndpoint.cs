@@ -9,7 +9,7 @@ using Sameposty.Services.PostsPublishers.Orhestrator;
 
 namespace Sameposty.API.Endpoints.Posts.UpdateScheduleDate;
 
-public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IPostPublishOrhestrator postPublisher, IConfigurator configurator) : Endpoint<UpdatePostSheduledDateRequest>
+public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IPostPublishOrchestrator postPublisher, IConfigurator configurator) : Endpoint<UpdatePostSheduledDateRequest>
 {
     public override void Configure()
     {

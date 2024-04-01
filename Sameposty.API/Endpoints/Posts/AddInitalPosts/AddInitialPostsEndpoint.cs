@@ -9,7 +9,7 @@ using Sameposty.Services.PostsPublishers.Orhestrator;
 
 namespace Sameposty.API.Endpoints.Posts.AddInitalPosts;
 
-public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator, IHostEnvironment environment, IPostPublishOrhestrator postPublisher, IConfigurator configurator) : EndpointWithoutRequest
+public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator, IHostEnvironment environment, IPostPublishOrchestrator postPublishOrchestrator, IConfigurator configurator) : EndpointWithoutRequest
 {
     public override void Configure()
     {
@@ -61,7 +61,7 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
                 },
 
             };
-            var jobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(request), new DateTimeOffset(post.ShedulePublishDate));
+            var jobPublishId = BackgroundJob.Schedule(() => postPublishOrchestrator.PublishPostToAll(request), new DateTimeOffset(post.ShedulePublishDate));
 
             post.JobPublishId = jobPublishId;
         }

@@ -23,6 +23,8 @@ public class Post : EntityBase
 
     public bool IsPublished { get; set; }
 
+    public bool IsPublishingInProgress { get; set; }
+
     public string JobPublishId { get; set; } = string.Empty;
 
     public List<PublishResult> PublishResults { get; set; }
