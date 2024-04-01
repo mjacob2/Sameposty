@@ -1,6 +1,6 @@
 ﻿using Sameposty.DataAccess.Entities;
 
-namespace Sameposty.Services.PostsPublishers.Orhestrator;
+namespace Sameposty.Services.PostsPublishers.Orhestrator.Models;
 public class PublishPostToAllRequest
 {
     public string BaseApiUrl { get; set; }

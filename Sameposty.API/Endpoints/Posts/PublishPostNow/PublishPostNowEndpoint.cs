@@ -6,6 +6,7 @@ using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.Configurator;
 using Sameposty.Services.PostsPublishers.Orhestrator;
+using Sameposty.Services.PostsPublishers.Orhestrator.Models;
 
 namespace Sameposty.API.Endpoints.Posts.PublishPostNow;
 

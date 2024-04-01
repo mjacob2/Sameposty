@@ -4,6 +4,7 @@ using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.Services.FileRemover;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
+using Sameposty.Services.PostsPublishers.Orhestrator.Models;
 using Sameposty.Services.PostsPublishers.PostsPublisher;
 
 namespace Sameposty.Services.PostsPublishers.Orhestrator;

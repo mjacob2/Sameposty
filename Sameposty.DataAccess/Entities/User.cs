@@ -34,4 +34,12 @@ public class User : EntityBase
     public Roles Role { get; set; } = Roles.FreeUser;
 
     public bool IsVerified { get; set; }
+
+    public int ImageTokensLimit { get; set; }
+
+    public int ImageTokensUsed { get; set; }
+
+    public int TextTokensLimit { get; set; }
+
+    public int TextTokensUsed { get; set; }
 }

@@ -10,5 +10,9 @@ public class Configurator(IConfiguration configuration, IWebHostEnvironment webH
 
     public int NumberFirstPostsGenerated { get; private set; } = configuration.GetValue<int>("Settings:NumberFirstPostsGenerated");
 
+    public int ImageTokensDefaultLimit { get; private set; } = configuration.GetValue<int>("Settings:ImageTokensDefaultLimit");
+
+    public int TextTokensDefaultLimit { get; private set; } = configuration.GetValue<int>("Settings:TextTokensDefaultLimit");
+
     public string AngularClientBaseURl { get; private set; } = configuration.GetConnectionString("AngularClientBaseURl") ?? throw new ArgumentNullException("No AngularClientBaseURl provided in sppsettings.json");
 }

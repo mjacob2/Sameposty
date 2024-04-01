@@ -3,13 +3,14 @@ using Sameposty.DataAccess.Commands.Users;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
+using Sameposty.Services.Configurator;
 using Sameposty.Services.EmailService;
 using Sameposty.Services.Hasher;
 using Sameposty.Services.JWTService;
 
 namespace Sameposty.API.Endpoints.Users.AddUser;
 
-public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IEmailService email, ILogger<AddUserEndpoint> logger) : Endpoint<AddUserRequest>
+public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IEmailService email, ILogger<AddUserEndpoint> logger, IConfigurator configurator) : Endpoint<AddUserRequest>
 {
     public override void Configure()
     {
@@ -40,6 +41,8 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
             Password = passwordHashed,
             Salt = salt,
             NIP = req.NIP,
+            ImageTokensLimit = configurator.ImageTokensDefaultLimit,
+            TextTokensLimit = configurator.TextTokensDefaultLimit,
         };
 
         var command = new AddUserCommand() { Parameter = user };

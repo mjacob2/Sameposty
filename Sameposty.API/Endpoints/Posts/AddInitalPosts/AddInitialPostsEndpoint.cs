@@ -6,10 +6,11 @@ using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.Configurator;
 using Sameposty.Services.PostsGenerator;
 using Sameposty.Services.PostsPublishers.Orhestrator;
+using Sameposty.Services.PostsPublishers.Orhestrator.Models;
 
 namespace Sameposty.API.Endpoints.Posts.AddInitalPosts;
 
-public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator, IHostEnvironment environment, IPostPublishOrchestrator postPublishOrchestrator, IConfigurator configurator) : EndpointWithoutRequest
+public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator, IPostPublishOrchestrator postPublishOrchestrator, IConfigurator configurator) : EndpointWithoutRequest
 {
     public override void Configure()
     {
@@ -33,6 +34,16 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
             ThrowError("Nie podano informacji o firmie");
         }
 
+        if (userFromDb.ImageTokensLimit < configurator.NumberFirstPostsGenerated)
+        {
+            ThrowError("Brak wystarczającej ilości tokenów do generowania obrazów!");
+        }
+
+        if (userFromDb.TextTokensLimit < configurator.NumberFirstPostsGenerated)
+        {
+            ThrowError("Brak wystarczającej ilości tokenów do generowania tekstów!");
+        }
+
         var generatePostRequest = new GeneratePostRequest()
         {
             UserId = userFromDb.Id,
@@ -44,11 +55,11 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
             Assets = userFromDb.BasicInformation.Assets,
         };
 
-        var posts = userFromDb.Email != "admin"
+        var newPostsGenerated = userFromDb.Email != "admin"
             ? await postsGenerator.GenerateInitialPostsAsync(generatePostRequest)
             : postsGenerator.GenerateStubbedPosts(generatePostRequest);
 
-        foreach (var post in posts)
+        foreach (var post in newPostsGenerated)
         {
             var request = new PublishPostToAllRequest()
             {
@@ -66,8 +77,13 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
             post.JobPublishId = jobPublishId;
         }
 
+        userFromDb.Posts = newPostsGenerated;
 
-        userFromDb.Posts = posts;
+        if (userFromDb.Role != DataAccess.Entities.Roles.Admin)
+        {
+            userFromDb.ImageTokensLimit -= configurator.NumberFirstPostsGenerated;
+            userFromDb.TextTokensLimit -= configurator.NumberFirstPostsGenerated;
+        }
 
         if (userFromDb.Role == DataAccess.Entities.Roles.FreeUser)
         {
@@ -77,6 +93,6 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
         var updateUserCommand = new UpdateUserCommand() { Parameter = userFromDb };
         await commandExecutor.ExecuteCommand(updateUserCommand);
 
-        await SendOkAsync(posts, ct);
+        await SendOkAsync(newPostsGenerated, ct);
     }
 }

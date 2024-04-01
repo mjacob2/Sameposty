@@ -106,7 +106,7 @@ builder.Services.AddScoped<IInstagramPublisher, InstagramPublisher>();
 builder.Services.AddScoped<IPostsPublisher, PostsPublisher>();
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<IConfigurator, Configurator>();
+builder.Services.AddScoped<IConfigurator, Configurator>();
 
 builder.Services.AddHangfire(config => config
 .UseSimpleAssemblyNameTypeSerializer()
