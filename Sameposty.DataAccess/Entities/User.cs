@@ -42,4 +42,14 @@ public class User : EntityBase
     public int TextTokensLimit { get; set; }
 
     public int TextTokensUsed { get; set; }
+
+    public int GetImageTokensLeft()
+    {
+        return ImageTokensLimit - ImageTokensUsed;
+    }
+
+    public int GetTextTokensLeft()
+    {
+        return TextTokensLimit - TextTokensUsed;
+    }
 }

@@ -14,4 +14,6 @@ public class GeneratePostRequest
     public string Goals { get; set; }
 
     public string Assets { get; set; }
+
+    public DateTime ShedulePublishDate { get; set; }
 }

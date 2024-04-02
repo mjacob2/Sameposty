@@ -14,7 +14,9 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
         var tasks = Enumerable.Range(0, configurator.NumberFirstPostsGenerated)
             .Select(async index =>
             {
-                var post = await GeneratePost(request, index + 1);
+                request.ShedulePublishDate = DateTime.Today.AddDays(index + 1).Date.AddHours(9);
+
+                var post = await GeneratePost(request);
                 posts.Add(post);
             });
 
@@ -23,7 +25,7 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
         return posts.ToList();
     }
 
-    public async Task<Post> GeneratePost(GeneratePostRequest request, int index = 0)
+    public async Task<Post> GeneratePost(GeneratePostRequest request)
     {
         var descriptionTask = postDescriptionGenerator.GeneratePostDescription(request);
         var imageTask = imageGenerating.GenerateImage(request.ProductsAndServices, 1);
@@ -41,7 +43,7 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
             Title = "",
             ImageUrl = $"{configurator.ApiBaseUrl}/{imageName}",
             IsPublished = false,
-            ShedulePublishDate = DateTime.Today.AddDays(index).Date.AddHours(9),
+            ShedulePublishDate = request.ShedulePublishDate,
         };
 
         return post;

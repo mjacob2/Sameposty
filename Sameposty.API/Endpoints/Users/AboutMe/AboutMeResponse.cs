@@ -18,4 +18,12 @@ public class AboutMeResponse
     public bool CanEditImageAI { get; set; }
 
     public bool CanGenerateTextAI { get; set; }
+
+    public int ImageTokensLimit { get; set; }
+
+    public int ImageTokensUsed { get; set; }
+
+    public int TextTokensLimit { get; set; }
+
+    public int TextTokensUsed { get; set; }
 }

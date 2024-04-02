@@ -8,11 +8,13 @@ public class GetUserByIdQuery(int id) : QueryBase<User>
     public override async Task<User> Execute(SamepostyDbContext db)
     {
         return await db.Users
-        .Include(u => u.Posts.Where(p => p.IsPublished == false && p.IsPublishingInProgress == false))
-        .Include(u => u.FacebookConnection)
-        .Include(u => u.InstagramConnection)
-        .Include(u => u.BasicInformation)
-        .Include(u => u.Privilege)
-        .FirstOrDefaultAsync(u => u.Id == id);
+    .Include(u => u.Posts.Where(p => p.IsPublished == false && p.IsPublishingInProgress == false)
+                           .OrderBy(p => p.ShedulePublishDate))
+    .Include(u => u.FacebookConnection)
+    .Include(u => u.InstagramConnection)
+    .Include(u => u.BasicInformation)
+    .Include(u => u.Privilege)
+    .FirstOrDefaultAsync(u => u.Id == id);
+
     }
 }

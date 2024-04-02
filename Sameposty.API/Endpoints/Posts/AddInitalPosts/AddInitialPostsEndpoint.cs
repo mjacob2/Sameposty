@@ -34,12 +34,12 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
             ThrowError("Nie podano informacji o firmie");
         }
 
-        if (userFromDb.ImageTokensLimit < configurator.NumberFirstPostsGenerated)
+        if (userFromDb.GetImageTokensLeft() < configurator.NumberFirstPostsGenerated)
         {
             ThrowError("Brak wystarczającej ilości tokenów do generowania obrazów!");
         }
 
-        if (userFromDb.TextTokensLimit < configurator.NumberFirstPostsGenerated)
+        if (userFromDb.GetTextTokensLeft() < configurator.NumberFirstPostsGenerated)
         {
             ThrowError("Brak wystarczającej ilości tokenów do generowania tekstów!");
         }
@@ -81,8 +81,8 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
 
         if (userFromDb.Role != DataAccess.Entities.Roles.Admin)
         {
-            userFromDb.ImageTokensLimit -= configurator.NumberFirstPostsGenerated;
-            userFromDb.TextTokensLimit -= configurator.NumberFirstPostsGenerated;
+            userFromDb.ImageTokensUsed += configurator.NumberFirstPostsGenerated;
+            userFromDb.TextTokensUsed += configurator.NumberFirstPostsGenerated;
         }
 
         if (userFromDb.Role == DataAccess.Entities.Roles.FreeUser)

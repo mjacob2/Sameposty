@@ -29,6 +29,10 @@ public class AboutMeEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequ
             CanEditImageAI = userFromDb.Privilege.CanEditImageAI,
             CanGenerateImageAI = userFromDb.Privilege.CanGenerateImageAI,
             CanGenerateTextAI = userFromDb.Privilege.CanGenerateTextAI,
+            ImageTokensLimit = userFromDb.ImageTokensLimit,
+            ImageTokensUsed = userFromDb.ImageTokensUsed,
+            TextTokensLimit = userFromDb.TextTokensLimit,
+            TextTokensUsed = userFromDb.TextTokensUsed,
         };
 
         await SendOkAsync(resposne, ct);

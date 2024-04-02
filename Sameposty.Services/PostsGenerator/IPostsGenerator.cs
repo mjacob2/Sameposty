@@ -7,5 +7,5 @@ public interface IPostsGenerator
 
     List<Post> GenerateStubbedPosts(GeneratePostRequest request);
 
-    Task<Post> GeneratePost(GeneratePostRequest request, int index);
+    Task<Post> GeneratePost(GeneratePostRequest request);
 }
