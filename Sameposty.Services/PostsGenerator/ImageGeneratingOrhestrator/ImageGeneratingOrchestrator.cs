@@ -26,4 +26,11 @@ public class ImageGeneratingOrchestrator(IImageGenerator imageGenerator, IImageS
 
         return imageName;
     }
+
+    public async Task<string> GenerateImageFromUserPrompt(string prompt)
+    {
+        var imageUrl = await imageGenerator.GenerateImageUrl(prompt);
+        var imageName = await imageSaver.SaveImageFromUrl(imageUrl);
+        return imageName;
+    }
 }
