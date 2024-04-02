@@ -16,7 +16,7 @@ public class GetBasicInformationByUserIdEndpoint(IQueryExecutor queryExecutor) :
         var loggedUserId = User.FindFirst("UserId").Value;
         var id = int.Parse(loggedUserId);
 
-        var getUserFromDbQuery = new GetBasicInformationByUserIdQuery() { UserId = id };
+        var getUserFromDbQuery = new GetBasicInformationByUserIdQuery(id);
         var basicInformationFromDb = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
         if (basicInformationFromDb == null)

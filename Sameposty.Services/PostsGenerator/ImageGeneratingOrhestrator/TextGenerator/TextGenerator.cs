@@ -9,6 +9,27 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
     private readonly int maxTokensUsedToGenerateImagePrompt = 1000;
     private readonly int maxCharCount = 500;
 
+    public async Task<string> ReGeneratePostDescription(ReGeneratePostRequest request)
+    {
+        var text = new ChatCompletionCreateRequest()
+        {
+            Model = Models.Gpt_4_0125_preview,
+            MaxTokens = maxTokensUsedToGenerateImagePrompt,
+            Messages = new List<ChatMessage>
+            {
+                ChatMessage.FromSystem("$\"Jesteś pracownikiem agencji marketingowej i jesteś specjalistą od marketingu w social media. Twoim zadaniem jest tworzyć świetny tekst do posta na Facebook. Musisz pamiętać, jakie teksty były już tworzone dla tej firmy, żeby teksty się nie powtarzały. Tekst nie może być dłuższy niż {maxCharCount} znaków. Tworzysz sam tekst posta. Bez zanych komentarzy ani dopisków."),
+
+                ChatMessage.FromSystem($"Pracujesz dla firmy, której nazwa marketingowa to {request.BrandName} a jej grupa docelowa to: {request.Audience}"),
+
+                ChatMessage.FromUser($"Napisz post w tym temacie: {request.UserPrompt}"),
+            }
+        };
+
+        var response = await openAiService.ChatCompletion.CreateCompletion(text);
+
+        return response.Choices.First().Message.Content;
+    }
+
     public async Task<string> GeneratePromptForImageForPost(string productsAndServices)
     {
         var text = new ChatCompletionCreateRequest()
@@ -71,4 +92,5 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
 
         return response.Choices.First().Message.Content;
     }
+
 }
