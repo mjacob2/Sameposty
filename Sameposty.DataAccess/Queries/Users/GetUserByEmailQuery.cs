@@ -8,6 +8,8 @@ public class GetUserByEmailQuery : QueryBase<User>
     public required string Email { get; set; }
     public override async Task<User> Execute(SamepostyDbContext db)
     {
-        return await db.Users.FirstOrDefaultAsync(x => x.Email == Email);
+        return await db.Users
+            .Include(u => u.BasicInformation)
+            .FirstOrDefaultAsync(x => x.Email == Email);
     }
 }

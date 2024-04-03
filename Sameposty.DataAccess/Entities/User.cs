@@ -29,6 +29,8 @@ public class User : EntityBase
 
     public InstagramConnection? InstagramConnection { get; set; }
 
+    public Subscription? Subscription { get; set; }
+
     public Privilege Privilege { get; set; } = new();
 
     public Roles Role { get; set; } = Roles.FreeUser;

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sameposty.DataAccess.DatabaseContext;
 
@@ -11,9 +12,11 @@ using Sameposty.DataAccess.DatabaseContext;
 namespace Sameposty.DataAccess.Migrations
 {
     [DbContext(typeof(SamepostyDbContext))]
-    partial class SamepostyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240403183525_PostHasApproved")]
+    partial class PostHasApproved
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -301,50 +304,6 @@ namespace Sameposty.DataAccess.Migrations
                     b.ToTable("PublishResults");
                 });
 
-            modelBuilder.Entity("Sameposty.DataAccess.Entities.Subscription", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<double>("AmountPaid")
-                        .HasColumnType("float");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CustomerEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("OrderHasInvoice")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SubscriptionCurrentPeriodEnd")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SubscriptionCurrentPeriodStart")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
-
-                    b.ToTable("Subscriptions");
-                });
-
             modelBuilder.Entity("Sameposty.DataAccess.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -464,15 +423,6 @@ namespace Sameposty.DataAccess.Migrations
                         .HasForeignKey("PostId");
                 });
 
-            modelBuilder.Entity("Sameposty.DataAccess.Entities.Subscription", b =>
-                {
-                    b.HasOne("Sameposty.DataAccess.Entities.User", "User")
-                        .WithOne("Subscription")
-                        .HasForeignKey("Sameposty.DataAccess.Entities.Subscription", "UserId");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Sameposty.DataAccess.Entities.Post", b =>
                 {
                     b.Navigation("PublishResults");
@@ -491,8 +441,6 @@ namespace Sameposty.DataAccess.Migrations
 
                     b.Navigation("Privilege")
                         .IsRequired();
-
-                    b.Navigation("Subscription");
                 });
 #pragma warning restore 612, 618
         }

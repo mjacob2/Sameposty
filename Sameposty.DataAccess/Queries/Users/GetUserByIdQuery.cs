@@ -14,6 +14,7 @@ public class GetUserByIdQuery(int id) : QueryBase<User>
     .Include(u => u.InstagramConnection)
     .Include(u => u.BasicInformation)
     .Include(u => u.Privilege)
+    .Include(u => u.Subscription)
     .FirstOrDefaultAsync(u => u.Id == id);
 
     }

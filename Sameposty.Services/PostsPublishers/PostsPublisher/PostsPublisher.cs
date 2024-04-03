@@ -7,7 +7,13 @@ public class PostsPublisher(IFacebookPublisher facebookPublisher, IInstagramPubl
 {
     public async Task<List<PublishResult>> PublishPost(Post post, ConnectionsModel connections)
     {
+
         var results = new List<PublishResult>();
+
+        if (!post.IsApproved)
+        {
+            return results;
+        }
 
         if (connections.FacebookConnection != null)
         {
@@ -20,8 +26,6 @@ public class PostsPublisher(IFacebookPublisher facebookPublisher, IInstagramPubl
             var result = await instagramPublisher.PublishPost(post, connections.InstagramConnection); results.Add(result);
             results.Add(result);
         }
-
-
 
         return results;
     }

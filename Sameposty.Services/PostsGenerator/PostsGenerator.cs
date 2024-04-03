@@ -14,7 +14,23 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
         var tasks = Enumerable.Range(0, configurator.NumberFirstPostsGenerated)
             .Select(async index =>
             {
-                request.ShedulePublishDate = DateTime.Today.AddDays(index + 1).Date.AddHours(9);
+                request.ShedulePublishDate = DateTime.Today.AddDays(index + 2).Date.AddHours(9);
+
+                var post = await GeneratePost(request);
+                posts.Add(post);
+            });
+
+        await Task.WhenAll(tasks);
+
+        return posts.ToList();
+    }
+
+    public async Task<List<Post>> GeneratePremiumPostsAsync(GeneratePostRequest request)
+    {
+        var tasks = Enumerable.Range(0, configurator.NumberPremiumPostsGenerated)
+            .Select(async index =>
+            {
+                request.ShedulePublishDate = DateTime.Today.AddDays(index + 2).Date.AddHours(9);
 
                 var post = await GeneratePost(request);
                 posts.Add(post);

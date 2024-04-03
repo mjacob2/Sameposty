@@ -30,4 +30,6 @@ public class Post : EntityBase
     public List<PublishResult> PublishResults { get; set; }
 
     public int UserId { get; set; }
+
+    public bool IsApproved { get; set; }
 }

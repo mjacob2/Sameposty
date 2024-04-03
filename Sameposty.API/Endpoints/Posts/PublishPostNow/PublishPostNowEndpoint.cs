@@ -32,6 +32,11 @@ public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, IPostPublishOr
             ThrowError("Ten post nie należy do Ciebie! Nie możesz go opublikować!");
         }
 
+        if (!postToPublish.IsApproved)
+        {
+            ThrowError("Najpierw zatwierdź post!");
+        }
+
         if (string.IsNullOrEmpty(postToPublish.ImageUrl))
         {
             ThrowError("Post nie ma zdjęcia!");
