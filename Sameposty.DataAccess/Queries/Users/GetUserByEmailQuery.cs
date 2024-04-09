@@ -10,6 +10,7 @@ public class GetUserByEmailQuery : QueryBase<User>
     {
         return await db.Users
             .Include(u => u.BasicInformation)
+            .Include(u => u.Subscription)
             .FirstOrDefaultAsync(x => x.Email == Email);
     }
 }

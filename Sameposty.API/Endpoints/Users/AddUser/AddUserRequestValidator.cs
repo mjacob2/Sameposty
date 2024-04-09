@@ -15,7 +15,7 @@ public class AddUserRequestValidator : Validator<AddUserRequest>
             .MaximumLength(50)
             .WithMessage("Email nie więcej niż 50 znaków")
             .EmailAddress()
-            .WithMessage("E-mail ma nieprawidłowy format"); ;
+            .WithMessage("E-mail ma nieprawidłowy format");
 
         RuleFor(x => x.Password)
             .NotNull()

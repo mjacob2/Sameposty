@@ -21,7 +21,10 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
 
     public override async Task HandleAsync(AddUserRequest req, CancellationToken ct)
     {
-        logger.LogWarning("I enter AddUserEndpoint");
+        if (req.Email.Contains('+'))
+        {
+            ThrowError("Nie używaj znaku + w adresie e-mail");
+        }
 
         var getUserByEmail = new GetUserByEmailQuery() { Email = req.Email };
         var userFromDb = await queryExecutor.ExecuteQuery(getUserByEmail);

@@ -26,4 +26,21 @@ public class AboutMeResponse
     public int TextTokensLimit { get; set; }
 
     public int TextTokensUsed { get; set; }
+
+    public AboutMeResponseSubscription? Subscription { get; set; }
+}
+
+public class AboutMeResponseSubscription
+{
+    public string CustomerEmail { get; set; }
+
+    public int OrderId { get; set; }
+
+    public double AmountPaid { get; set; }
+
+    public bool OrderHasInvoice { get; set; }
+
+    public string SubscriptionCurrentPeriodStart { get; set; }
+
+    public string SubscriptionCurrentPeriodEnd { get; set; }
 }

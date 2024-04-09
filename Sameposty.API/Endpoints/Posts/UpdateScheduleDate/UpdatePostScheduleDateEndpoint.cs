@@ -34,7 +34,7 @@ public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQ
 
         BackgroundJob.Delete(postFromDb.JobPublishId);
 
-        DateTimeOffset cetDateTimeOffset = new(req.Date, TimeSpan.FromHours(1)); // Assuming req.Date is in CET (Central European Time)
+        //DateTimeOffset cetDateTimeOffset = new(req.Date, TimeSpan.FromHours(1)); // Assuming req.Date is in CET (Central European Time)
 
         var request = new PublishPostToAllRequest()
         {
@@ -47,7 +47,7 @@ public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQ
             },
         };
 
-        postFromDb.JobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(request), cetDateTimeOffset);
+        postFromDb.JobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(request), new DateTimeOffset(req.Date));
 
         var updateScheduleDateCommand = new UpdatePostScheduleDateCommand(req.PostId, req.Date);
 

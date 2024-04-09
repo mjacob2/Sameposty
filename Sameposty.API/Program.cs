@@ -11,6 +11,7 @@ using Sameposty.API.Models;
 using Sameposty.DataAccess.DatabaseContext;
 using Sameposty.DataAccess.Executors;
 using Sameposty.Services.Configurator;
+using Sameposty.Services.EasyCart;
 using Sameposty.Services.EmailService;
 using Sameposty.Services.FacebookTokenManager;
 using Sameposty.Services.FileRemover;
@@ -79,6 +80,7 @@ builder.Services.AddScoped<IImageGenerator, ImageGenerator>();
 builder.Services.AddScoped<ITextGenerator, TextGenerator>();
 builder.Services.AddScoped<IImageSaver, ImageSaver>();
 builder.Services.AddScoped<IFileRemover, FileRemover>();
+builder.Services.AddScoped<IEasyCart, EasyCart>();
 builder.Services.AddScoped<IImageGeneratingOrchestrator, ImageGeneratingOrchestrator>();
 builder.Services.AddScoped<IFacebookTokenManager>(options =>
 {

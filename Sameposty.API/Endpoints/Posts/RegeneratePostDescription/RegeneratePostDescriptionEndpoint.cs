@@ -1,5 +1,6 @@
 ﻿using FastEndpoints;
 using Sameposty.DataAccess.Commands.Posts;
+using Sameposty.DataAccess.Commands.Users;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.BasicInformations;
 using Sameposty.DataAccess.Queries.Posts;
@@ -50,6 +51,9 @@ public class RegeneratePostDescriptionEndpoint(ITextGenerator textGenerator, IQu
         var updateDescriptionCommand = new UpdatePostCommand() { Parameter = postToUpdate };
 
         await commandExecutor.ExecuteCommand(updateDescriptionCommand);
+
+        userFromDb.TextTokensUsed++;
+        await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = userFromDb });
 
         await SendOkAsync(newDescription, ct);
     }

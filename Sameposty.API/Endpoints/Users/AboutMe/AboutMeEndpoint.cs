@@ -18,7 +18,7 @@ public class AboutMeEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequ
 
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserAboutMeQuery(loggedUserId));
 
-        var resposne = new AboutMeResponse()
+        var response = new AboutMeResponse()
         {
             Id = userFromDb.Id,
             Email = userFromDb.Email,
@@ -35,7 +35,20 @@ public class AboutMeEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequ
             TextTokensUsed = userFromDb.TextTokensUsed,
         };
 
-        await SendOkAsync(resposne, ct);
+        if (userFromDb.Subscription != null)
+        {
+            response.Subscription = new AboutMeResponseSubscription()
+            {
+                CustomerEmail = userFromDb.Subscription.CustomerEmail,
+                OrderId = userFromDb.Subscription.OrderId,
+                AmountPaid = userFromDb.Subscription.AmountPaid,
+                OrderHasInvoice = userFromDb.Subscription.OrderHasInvoice,
+                SubscriptionCurrentPeriodStart = userFromDb.Subscription.SubscriptionCurrentPeriodStart,
+                SubscriptionCurrentPeriodEnd = userFromDb.Subscription.SubscriptionCurrentPeriodEnd,
+            };
+        }
+
+        await SendOkAsync(response, ct);
     }
 
     private static string GetRoleString(Roles role)
