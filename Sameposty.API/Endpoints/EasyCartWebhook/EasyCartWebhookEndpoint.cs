@@ -10,7 +10,7 @@ public class EasyCartWebhookEndpoint(IQueryExecutor queryExecutor, IEmailService
 {
     public override void Configure()
     {
-        Post("easycart");
+        Post("easycartDelete");
         AllowAnonymous();
     }
 

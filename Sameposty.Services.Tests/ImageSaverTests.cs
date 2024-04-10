@@ -1,5 +1,3 @@
-using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
-
 namespace Sameposty.Services.Tests;
 
 public class ImageSaverTests
@@ -17,10 +15,10 @@ public class ImageSaverTests
         //string resizedImagePath = await service.DownsizePNG(imageUrl);
 
         // Assert
-       // Assert.NotNull(resizedImagePath);
+        // Assert.NotNull(resizedImagePath);
         //Assert.True(File.Exists(resizedImagePath));
 
         // Clean up
-       // File.Delete(resizedImagePath);
+        // File.Delete(resizedImagePath);
     }
 }
