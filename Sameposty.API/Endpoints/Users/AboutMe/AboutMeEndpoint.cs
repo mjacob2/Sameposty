@@ -33,6 +33,15 @@ public class AboutMeEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequ
             ImageTokensUsed = userFromDb.ImageTokensUsed,
             TextTokensLimit = userFromDb.TextTokensLimit,
             TextTokensUsed = userFromDb.TextTokensUsed,
+            Name = userFromDb.Name,
+            Street = userFromDb.Street,
+            BuildingNumber = userFromDb.BuildingNumber,
+            City = userFromDb.City,
+            FlatNumber = userFromDb.FlatNumber,
+            IsActive = userFromDb.IsActive,
+            IsSuspended = userFromDb.IsSuspended,
+            PostCode = userFromDb.PostCode,
+            REGON = userFromDb.REGON,
         };
 
         if (userFromDb.Subscription != null)

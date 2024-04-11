@@ -10,18 +10,18 @@ public class StripeTests
         {
             City = "Wrocław",
             Email = "jakubicki.m@gmail.com",
-            Name = "Firma ABC Sp. z o.o.",
+            Name = "Firma AAA Sp. z o.o.",
             NIP = "PL8971809999",
             PostalCode = "12345",
             Street = "Street 1 /3",
         };
 
-       await StripeService.CreateACustomer(req);
+        await StripeService.CreateStripeCustomerCustomer(req);
     }
 
     [Fact]
-    public async Task CreatePaymentMethodTest()
+    public async Task CreateSubscriptionTest()
     {
-        await StripeService.CreatePaymentMethod();
+        await StripeService.CreateSubscription();
     }
 }

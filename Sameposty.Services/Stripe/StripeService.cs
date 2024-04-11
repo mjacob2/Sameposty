@@ -1,15 +1,33 @@
 ﻿using Stripe;
 
 namespace Sameposty.Services.Stripe;
-public class StripeService
+public class StripeService : IStripeService
 {
-    public static async Task CreateACustomer(CreateStripeCustomerRequest req)
+    private static readonly string StripeApiKey = "sk_test_51OjOS6LJdNESLWLIWOKCCgEy7VUlRrW9Ufs8o6smG52WhoFaSLO9SgM0PKPbS8ScwBloaNdfVLBiGbavbYk2r74V00gLxOwkjM";
+    public async Task<string> CreateSubscription(string stripeCustomerId)
     {
-        StripeConfiguration.ApiKey = "sk_test_51OjOS6LJdNESLWLIWOKCCgEy7VUlRrW9Ufs8o6smG52WhoFaSLO9SgM0PKPbS8ScwBloaNdfVLBiGbavbYk2r74V00gLxOwkjM";
+        StripeConfiguration.ApiKey = StripeApiKey;
+
+        var options = new SubscriptionCreateOptions
+        {
+            Customer = stripeCustomerId,
+            Items =
+            [
+                new SubscriptionItemOptions() { Price = "price_1P3iW6LJdNESLWLI7IJLtxNq" },
+            ],
+        };
+        var service = new SubscriptionService();
+        var result = await service.CreateAsync(options);
+        return result.Id;
+    }
+
+    public async Task<string> CreateStripeCustomerCustomer(CreateStripeCustomerRequest req)
+    {
+        StripeConfiguration.ApiKey = StripeApiKey;
 
         var options = new CustomerCreateOptions
         {
-            Source = "tok_1P49UCLJdNESLWLIMUZSWoLx",
+            Source = req.CardTokenId, // token do karty. czy moze być wykorzystywany wielokrotnie?
             Name = req.Name,
             Email = req.Email,
             Shipping = new ShippingOptions()
@@ -26,58 +44,20 @@ public class StripeService
             TaxIdData = [new CustomerTaxIdDataOptions()
             {
                 Type = "eu_vat",
-                Value = req.NIP,
+                Value = "PL" + req.NIP,
             }
             ],
-            PaymentMethod = req.PaymentMethod,
 
         };
         var service = new CustomerService();
-        try
-        {
-            var resposne = await service.CreateAsync(options);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-        }
 
-
-    }
-
-    public static async Task CreatePaymentMethod()
-    {
-        StripeConfiguration.ApiKey = "sk_test_51OjOS6LJdNESLWLIWOKCCgEy7VUlRrW9Ufs8o6smG52WhoFaSLO9SgM0PKPbS8ScwBloaNdfVLBiGbavbYk2r74V00gLxOwkjM";
-
-        var options = new PaymentMethodCreateOptions
-        {
-            Type = "card",
-            Card = new PaymentMethodCardOptions
-            {
-                Number = "4242424242424242",
-                ExpMonth = 8,
-                ExpYear = 2026,
-                Cvc = "314",
-            },
-        };
-        var service = new PaymentMethodService();
-
-        try
-        {
-            var response = await service.CreateAsync(options);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-        }
-
-
-
+        var resposne = await service.CreateAsync(options);
+        return resposne.Id;
     }
 
     public static async Task UpdateCutomer()
     {
-        StripeConfiguration.ApiKey = "sk_test_51OjOS6LJdNESLWLIWOKCCgEy7VUlRrW9Ufs8o6smG52WhoFaSLO9SgM0PKPbS8ScwBloaNdfVLBiGbavbYk2r74V00gLxOwkjM";
+        StripeConfiguration.ApiKey = StripeApiKey;
 
         var options = new CustomerUpdateOptions
         {

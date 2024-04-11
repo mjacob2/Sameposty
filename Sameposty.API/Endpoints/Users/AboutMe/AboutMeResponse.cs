@@ -7,6 +7,24 @@ public class AboutMeResponse
 
     public string NIP { get; set; }
 
+    public string Name { get; set; }
+
+    public string Street { get; set; }
+
+    public string City { get; set; }
+
+    public string BuildingNumber { get; set; }
+
+    public string FlatNumber { get; set; }
+
+    public string PostCode { get; set; }
+
+    public string REGON { get; set; }
+
+    public bool IsSuspended { get; set; }
+
+    public bool IsActive { get; set; }
+
     public string Role { get; set; }
 
     public bool IsVerified { get; set; }

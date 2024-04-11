@@ -6,6 +6,7 @@ using FastEndpoints.Swagger;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using OpenAI.Extensions;
+using REGON.Client;
 using Sameposty.API;
 using Sameposty.API.Models;
 using Sameposty.DataAccess.DatabaseContext;
@@ -24,6 +25,7 @@ using Sameposty.Services.PostsPublishers.FacebookPublisher;
 using Sameposty.Services.PostsPublishers.InstagramPublisher;
 using Sameposty.Services.PostsPublishers.Orhestrator;
 using Sameposty.Services.PostsPublishers.PostsPublisher;
+using Sameposty.Services.Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -90,7 +92,7 @@ builder.Services.AddScoped<IFacebookTokenManager>(options =>
         SamepostyFacebookAppSecret = secrets.SamepostyFacebookAppSecret,
     };
 
-    return new FacebookTokenManager(s, options.GetRequiredService<HttpClient>());
+    return new FacebookTokenManager(s, options.GetRequiredService<System.Net.Http.HttpClient>());
 });
 
 builder.Services.AddScoped<IEmailService>(options =>
@@ -115,6 +117,8 @@ builder.Services.AddHangfire(config => config
 .UseRecommendedSerializerSettings(o => o.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
 .UseSqlServerStorage(dbConnectionString));
 builder.Services.AddHangfireServer();
+builder.Services.AddRegonClient("");
+builder.Services.AddScoped<IStripeService, StripeService>();
 
 var app = builder.Build();
 

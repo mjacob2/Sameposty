@@ -19,6 +19,34 @@ public class User : EntityBase
     [MaxLength(10)]
     public string NIP { get; set; }
 
+    public string Name { get; set; } = string.Empty;
+
+    public string Street { get; set; } = string.Empty;
+
+    public string City { get; set; } = string.Empty;
+
+    public string BuildingNumber { get; set; } = string.Empty;
+
+    public string FlatNumber { get; set; } = string.Empty;
+
+    public string PostCode { get; set; } = string.Empty;
+
+    public string REGON { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Information from REGON API about current status of the company
+    /// </summary>
+    public bool IsSuspended { get; set; }
+
+    /// <summary>
+    /// Information from REGON API about current status of the company
+    /// </summary>
+    public bool IsActive { get; set; }
+
+    public string CardTokenId { get; set; } = string.Empty;
+
+    public string StripeCusomerId { get; set; } = string.Empty;
+
     public string CompanyDescription { get; set; } = string.Empty;
 
     public List<Post> Posts { get; set; } = [];
