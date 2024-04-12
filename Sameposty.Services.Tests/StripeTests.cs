@@ -1,7 +1,7 @@
 ﻿using Sameposty.Services.Stripe;
 
 namespace Sameposty.Services.Tests;
-public class StripeTests
+public class StripeTests(IStripeService stripeService)
 {
     [Fact]
     public async Task CreateUserTest()
@@ -16,12 +16,13 @@ public class StripeTests
             Street = "Street 1 /3",
         };
 
-        await StripeService.CreateStripeCustomerCustomer(req);
+        await stripeService.CreateStripeCustomerCustomer(req);
     }
 
     [Fact]
     public async Task CreateSubscriptionTest()
     {
-        await StripeService.CreateSubscription();
+        var testCustomerId = "abc";
+        await stripeService.CreateSubscription(testCustomerId);
     }
 }

@@ -51,7 +51,6 @@ public class AboutMeEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequ
                 CustomerEmail = userFromDb.Subscription.CustomerEmail,
                 OrderId = userFromDb.Subscription.OrderId,
                 AmountPaid = userFromDb.Subscription.AmountPaid,
-                OrderHasInvoice = userFromDb.Subscription.OrderHasInvoice,
                 SubscriptionCurrentPeriodStart = userFromDb.Subscription.SubscriptionCurrentPeriodStart,
                 SubscriptionCurrentPeriodEnd = userFromDb.Subscription.SubscriptionCurrentPeriodEnd,
             };

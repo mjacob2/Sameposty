@@ -1,6 +1,8 @@
-﻿namespace Sameposty.Services.Stripe;
+﻿using Stripe;
+
+namespace Sameposty.Services.Stripe;
 public interface IStripeService
 {
-    Task<string> CreateStripeCustomerCustomer(CreateStripeCustomerRequest req);
-    Task<string> CreateSubscription(string stripeCustomerId);
+    Task<Customer> CreateStripeCustomerCustomer(CreateStripeCustomerRequest req);
+    Task<Subscription> CreateSubscription(string stripeCustomerId);
 }

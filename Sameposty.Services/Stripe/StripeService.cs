@@ -4,7 +4,7 @@ namespace Sameposty.Services.Stripe;
 public class StripeService : IStripeService
 {
     private static readonly string StripeApiKey = "sk_test_51OjOS6LJdNESLWLIWOKCCgEy7VUlRrW9Ufs8o6smG52WhoFaSLO9SgM0PKPbS8ScwBloaNdfVLBiGbavbYk2r74V00gLxOwkjM";
-    public async Task<string> CreateSubscription(string stripeCustomerId)
+    public async Task<Subscription> CreateSubscription(string stripeCustomerId)
     {
         StripeConfiguration.ApiKey = StripeApiKey;
 
@@ -18,10 +18,10 @@ public class StripeService : IStripeService
         };
         var service = new SubscriptionService();
         var result = await service.CreateAsync(options);
-        return result.Id;
+        return result;
     }
 
-    public async Task<string> CreateStripeCustomerCustomer(CreateStripeCustomerRequest req)
+    public async Task<Customer> CreateStripeCustomerCustomer(CreateStripeCustomerRequest req)
     {
         StripeConfiguration.ApiKey = StripeApiKey;
 
@@ -52,7 +52,7 @@ public class StripeService : IStripeService
         var service = new CustomerService();
 
         var resposne = await service.CreateAsync(options);
-        return resposne.Id;
+        return resposne;
     }
 
     public static async Task UpdateCutomer()

@@ -46,7 +46,6 @@ public class EasyCart(IPostPublishOrchestrator postPublishOrchestrator, IPostsGe
         user.Subscription.SubscriptionCurrentPeriodStart = req.SubscriptionCurrentPeriodStart;
         user.Subscription.SubscriptionCurrentPeriodEnd = req.SubscriptionCurrentPeriodEnd;
         user.Subscription.AmountPaid = req.AmountPaid;
-        user.Subscription.OrderHasInvoice = req.OrderHasInvoice;
         user.Subscription.OrderId = req.OrderId;
         user.Subscription.CustomerEmail = req.CustomerEmail;
 
@@ -124,7 +123,6 @@ public class EasyCart(IPostPublishOrchestrator postPublishOrchestrator, IPostsGe
             OrderId = req.OrderId,
             AmountPaid = req.AmountPaid,
             CreatedDate = DateTime.Now,
-            OrderHasInvoice = req.OrderHasInvoice,
             UserId = userFromDb.Id,
             SubscriptionCurrentPeriodEnd = req.SubscriptionCurrentPeriodEnd,
             SubscriptionCurrentPeriodStart = req.SubscriptionCurrentPeriodStart,

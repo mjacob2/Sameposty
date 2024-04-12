@@ -5,7 +5,7 @@ using Sameposty.Services.Stripe;
 
 namespace Sameposty.API.Endpoints.Stripe;
 
-public class CreateSubscriptionEndpoint(IQueryExecutor queryExecutor, IStripeService stripeService) : Endpoint<CreateSubscriptionRequest>
+public class CreateSubscriptionEndpoint(IQueryExecutor queryExecutor, IStripeService stripeService, ICommandExecutor commandExecutor) : Endpoint<CreateSubscriptionRequest>
 {
     public override void Configure()
     {
@@ -31,10 +31,10 @@ public class CreateSubscriptionEndpoint(IQueryExecutor queryExecutor, IStripeSer
 
         try
         {
-            var stripeUserId = await stripeService.CreateStripeCustomerCustomer(createStripeCustomerRequest);
-            var subscriptionId = await stripeService.CreateSubscription(stripeUserId);
+            var stripeCustomer = await stripeService.CreateStripeCustomerCustomer(createStripeCustomerRequest);
+            var subscription = await stripeService.CreateSubscription(stripeCustomer.Id);
 
-            await SendOkAsync(stripeUserId, ct);
+            await SendOkAsync(subscription, ct);
         }
         catch (Exception ex)
         {

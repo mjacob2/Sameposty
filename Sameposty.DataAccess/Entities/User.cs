@@ -43,10 +43,6 @@ public class User : EntityBase
     /// </summary>
     public bool IsActive { get; set; }
 
-    public string CardTokenId { get; set; } = string.Empty;
-
-    public string StripeCusomerId { get; set; } = string.Empty;
-
     public string CompanyDescription { get; set; } = string.Empty;
 
     public List<Post> Posts { get; set; } = [];
