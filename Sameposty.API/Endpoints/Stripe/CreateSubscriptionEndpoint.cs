@@ -2,10 +2,11 @@
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.Stripe;
+using Sameposty.Services.SubscriptionManager;
 
 namespace Sameposty.API.Endpoints.Stripe;
 
-public class CreateSubscriptionEndpoint(IQueryExecutor queryExecutor, IStripeService stripeService, ICommandExecutor commandExecutor) : Endpoint<CreateSubscriptionRequest>
+public class CreateSubscriptionEndpoint(IQueryExecutor queryExecutor, IStripeService stripeService, ICommandExecutor commandExecutor, ISubscriptionManager subscriptionManager) : Endpoint<CreateSubscriptionRequest>
 {
     public override void Configure()
     {
@@ -18,23 +19,9 @@ public class CreateSubscriptionEndpoint(IQueryExecutor queryExecutor, IStripeSer
         var loggedUserId = int.Parse(id);
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByIdQuery(loggedUserId));
 
-        var createStripeCustomerRequest = new CreateStripeCustomerRequest()
-        {
-            CardTokenId = req.CardTokenId,
-            City = userFromDb.City,
-            Email = userFromDb.Email,
-            Name = userFromDb.Name,
-            NIP = userFromDb.NIP,
-            PostalCode = userFromDb.PostCode,
-            Street = userFromDb.Street,
-        };
-
         try
         {
-            var stripeCustomer = await stripeService.CreateStripeCustomerCustomer(createStripeCustomerRequest);
-            var subscription = await stripeService.CreateSubscription(stripeCustomer.Id);
-
-            await SendOkAsync(subscription, ct);
+            await subscriptionManager.ManageSubscriptionCreated(userFromDb, req.CardTokenId);
         }
         catch (Exception ex)
         {

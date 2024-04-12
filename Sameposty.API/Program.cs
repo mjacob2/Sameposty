@@ -25,7 +25,6 @@ using Sameposty.Services.PostsPublishers.FacebookPublisher;
 using Sameposty.Services.PostsPublishers.InstagramPublisher;
 using Sameposty.Services.PostsPublishers.Orhestrator;
 using Sameposty.Services.PostsPublishers.PostsPublisher;
-using Sameposty.Services.REGON;
 using Sameposty.Services.Stripe;
 using Sameposty.Services.SubscriptionManager;
 
