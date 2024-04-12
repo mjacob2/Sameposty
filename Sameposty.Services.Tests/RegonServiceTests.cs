@@ -16,7 +16,7 @@ public class RegonServiceTests
     public async Task GetCompanyDataByNipWorks()
     {
         var nip = "8971803272";
-        var data = await _regonService.GetCmpanyData(nip);
+        var data = await _regonService.GetCompanyData(nip);
 
     }
 }

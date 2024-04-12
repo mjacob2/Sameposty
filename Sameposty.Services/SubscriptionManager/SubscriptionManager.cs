@@ -20,15 +20,15 @@ public class SubscriptionManager(IStripeService stripeService, ICommandExecutor 
         var subscription = await stripeService.CreateSubscription(stripeCustomer.Id);
         var sqlSubscription = CreateNewSubscription(userFromDb.Id, subscription.Id, subscription.CurrentPeriodStart, subscription.CurrentPeriodEnd, subscription.CustomerId, subscription.Items.Data[0].Plan.Amount);
         await SaveNewSubscription(sqlSubscription);
-        UpdateUserTokens(userFromDb);
+        await UpdateUserTokens(userFromDb);
 
 
         // te zadania przenieść do webhooka po ustorzeniu nowej subskrypcji
-        var generatePostRequest = CreatePostGeneratingRequest(userFromDb);
-        var newPostsGenerated = await postsGenerator.GeneratePremiumPostsAsync(generatePostRequest);
-        SchedulePublish(userFromDb, newPostsGenerated);
-        await UpdateUser(userFromDb, newPostsGenerated);
-        await email.SendNotifyUserNewPostsCreatedEmail(userFromDb.Email);
+     //   var generatePostRequest = CreatePostGeneratingRequest(userFromDb);
+     //   var newPostsGenerated = await postsGenerator.GeneratePremiumPostsAsync(generatePostRequest);
+     //   SchedulePublish(userFromDb, newPostsGenerated);
+     //   await UpdateUser(userFromDb, newPostsGenerated);
+     //   await email.SendNotifyUserNewPostsCreatedEmail(userFromDb.Email);
 
         // wysłać fakturę do kleinta!
     }
@@ -69,7 +69,7 @@ public class SubscriptionManager(IStripeService stripeService, ICommandExecutor 
         await commandExecutor.ExecuteCommand(new AddSubscriptionCommand() { Parameter = subscription });
     }
 
-    private async void UpdateUserTokens(User userFromDb)
+    private async Task UpdateUserTokens(User userFromDb)
     {
         userFromDb.ImageTokensLimit = configurator.ImageTokensPremiumLimit;
         userFromDb.TextTokensLimit = configurator.TextTokensPremiumLimit;

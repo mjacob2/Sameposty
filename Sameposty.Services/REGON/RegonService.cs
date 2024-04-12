@@ -8,12 +8,12 @@ using WcfCoreMtomEncoder;
 
 
 namespace Sameposty.Services.REGON;
-public class RegonService
+public class RegonService : IRegonService
 {
     private readonly string _serviceKey = "c1983509b95e445cb350";
     private readonly bool _isProduction = true;
 
-    public async Task<DanePodmiotu> GetCmpanyData(string nip)
+    public async Task<DanePodmiotu> GetCompanyData(string nip)
     {
         var searchParameters = new ParametryWyszukiwania
         {

@@ -25,6 +25,7 @@ using Sameposty.Services.PostsPublishers.FacebookPublisher;
 using Sameposty.Services.PostsPublishers.InstagramPublisher;
 using Sameposty.Services.PostsPublishers.Orhestrator;
 using Sameposty.Services.PostsPublishers.PostsPublisher;
+using Sameposty.Services.REGON;
 using Sameposty.Services.Stripe;
 using Sameposty.Services.SubscriptionManager;
 
@@ -74,8 +75,8 @@ if (builder.Environment.IsProduction())
 builder.Services.AddDbContext<SamepostyDbContext>(options =>
             options.UseSqlServer(dbConnectionString));
 AddFastEndpoints(builder, secrets.JWTBearerTokenSignKey);
-builder.Services.AddTransient<IQueryExecutor, QueryExecutor>();
-builder.Services.AddTransient<ICommandExecutor, CommandExecutor>();
+builder.Services.AddScoped<IQueryExecutor, QueryExecutor>();
+builder.Services.AddScoped<ICommandExecutor, CommandExecutor>();
 builder.Services.AddScoped<IPostsGenerator, PostsGenerator>();
 builder.Services.AddScoped<IPostPublishOrchestrator, PostPublishOrchestrator>();
 builder.Services.AddOpenAIService(settings => { settings.ApiKey = secrets.OpenAiApiKey; });
@@ -118,7 +119,7 @@ builder.Services.AddHangfire(config => config
 .UseRecommendedSerializerSettings(o => o.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
 .UseSqlServerStorage(dbConnectionString));
 builder.Services.AddHangfireServer();
-builder.Services.AddRegonClient("c1983509b95e445cb350");
+builder.Services.AddScoped<IRegonService, RegonService>();
 builder.Services.AddScoped<IStripeService, StripeService>();
 builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
 

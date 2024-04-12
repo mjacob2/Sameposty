@@ -6,7 +6,7 @@ using Sameposty.Services.SubscriptionManager;
 
 namespace Sameposty.API.Endpoints.Stripe;
 
-public class CreateSubscriptionEndpoint(IQueryExecutor queryExecutor, IStripeService stripeService, ICommandExecutor commandExecutor, ISubscriptionManager subscriptionManager) : Endpoint<CreateSubscriptionRequest>
+public class CreateSubscriptionEndpoint(IQueryExecutor queryExecutor, IStripeService stripeService, ISubscriptionManager subscriptionManager) : Endpoint<CreateSubscriptionRequest>
 {
     public override void Configure()
     {
@@ -15,6 +15,7 @@ public class CreateSubscriptionEndpoint(IQueryExecutor queryExecutor, IStripeSer
 
     public override async Task HandleAsync(CreateSubscriptionRequest req, CancellationToken ct)
     {
+
         var id = User.FindFirst("UserId").Value;
         var loggedUserId = int.Parse(id);
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByIdQuery(loggedUserId));
@@ -22,6 +23,9 @@ public class CreateSubscriptionEndpoint(IQueryExecutor queryExecutor, IStripeSer
         try
         {
             await subscriptionManager.ManageSubscriptionCreated(userFromDb, req.CardTokenId);
+
+
+            await SendOkAsync(userFromDb.Subscription, ct);
         }
         catch (Exception ex)
         {

@@ -7,10 +7,11 @@ using Sameposty.Services.Configurator;
 using Sameposty.Services.EmailService;
 using Sameposty.Services.Hasher;
 using Sameposty.Services.JWTService;
+using Sameposty.Services.REGON;
 
 namespace Sameposty.API.Endpoints.Users.AddUser;
 
-public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IEmailService email, ILogger<AddUserEndpoint> logger, IConfigurator configurator) : Endpoint<AddUserRequest>
+public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IEmailService email, ILogger<AddUserEndpoint> logger, IConfigurator configurator, IRegonService regonService) : Endpoint<AddUserRequest>
 {
     public override void Configure()
     {
@@ -21,10 +22,10 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
 
     public override async Task HandleAsync(AddUserRequest req, CancellationToken ct)
     {
-        if (req.Email.Contains('+'))
-        {
-            ThrowError("Nie używaj znaku + w adresie e-mail");
-        }
+        //if (req.Email.Contains('+'))
+        //{
+        //    ThrowError("Nie używaj znaku + w adresie e-mail");
+        //}
 
         var getUserByEmail = new GetUserByEmailQuery() { Email = req.Email };
         var userFromDb = await queryExecutor.ExecuteQuery(getUserByEmail);
@@ -32,6 +33,13 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
         if (userFromDb != null)
         {
             ThrowError("Nie można użyć tego adresu e-mail");
+        }
+
+        var regonCompany = await regonService.GetCompanyData(req.NIP);
+
+        if (regonCompany == null)
+        {
+            ThrowError("Nie znaleziono danych firmy z takim NIP");
         }
 
         var salt = Hasher.GetSalt();
@@ -46,6 +54,14 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
             NIP = req.NIP,
             ImageTokensLimit = configurator.ImageTokensDefaultLimit,
             TextTokensLimit = configurator.TextTokensDefaultLimit,
+            REGON = regonCompany.Regon,
+            Name = regonCompany.Nazwa,
+            City = regonCompany.Miejscowosc,
+            Street = regonCompany.Ulica,
+            BuildingNumber = regonCompany.NrNieruchomosci,
+            FlatNumber = regonCompany.NrLokalu,
+            PostCode = regonCompany.KodPocztowy,
+            Role = DataAccess.Entities.Roles.FreeUser,
         };
 
         var command = new AddUserCommand() { Parameter = user };
