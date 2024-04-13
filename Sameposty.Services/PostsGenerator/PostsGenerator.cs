@@ -1,22 +1,25 @@
 ﻿using System.Collections.Concurrent;
+using Hangfire;
 using Sameposty.DataAccess.Entities;
 using Sameposty.Services.Configurator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
+using Sameposty.Services.PostsPublishers.Orhestrator;
+using Sameposty.Services.PostsPublishers.Orhestrator.Models;
 
 namespace Sameposty.Services.PostsGenerator;
-public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGeneratingOrchestrator imageGenerating, IConfigurator configurator) : IPostsGenerator
+public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGeneratingOrchestrator imageGenerating, IConfigurator configurator, IPostPublishOrchestrator postPublishOrchestrator) : IPostsGenerator
 {
     private readonly ConcurrentBag<Post> posts = [];
 
-    public async Task<List<Post>> GenerateInitialPostsAsync(GeneratePostRequest request)
+    public async Task<List<Post>> GeneratePostsAsync(GeneratePostRequest request, int numberOfPostsToGenerate)
     {
-        var tasks = Enumerable.Range(0, configurator.NumberFirstPostsGenerated)
+        var tasks = Enumerable.Range(0, numberOfPostsToGenerate)
             .Select(async index =>
             {
                 request.ShedulePublishDate = DateTime.Today.AddDays(index + 2).Date.AddHours(9);
 
-                var post = await GeneratePost(request);
+                var post = await GenerateSinglePost(request);
                 posts.Add(post);
             });
 
@@ -25,23 +28,7 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
         return posts.ToList();
     }
 
-    public async Task<List<Post>> GeneratePremiumPostsAsync(GeneratePostRequest request)
-    {
-        var tasks = Enumerable.Range(0, configurator.NumberPremiumPostsGenerated)
-            .Select(async index =>
-            {
-                request.ShedulePublishDate = DateTime.Today.AddDays(index + 2).Date.AddHours(9);
-
-                var post = await GeneratePost(request);
-                posts.Add(post);
-            });
-
-        await Task.WhenAll(tasks);
-
-        return posts.ToList();
-    }
-
-    public async Task<Post> GeneratePost(GeneratePostRequest request)
+    private async Task<Post> GenerateSinglePost(GeneratePostRequest request)
     {
         var descriptionTask = postDescriptionGenerator.GeneratePostDescription(request);
         var imageTask = imageGenerating.GenerateImage(request.ProductsAndServices, 1);
@@ -61,6 +48,16 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
             IsPublished = false,
             ShedulePublishDate = request.ShedulePublishDate,
         };
+
+        var publishRequest = new PublishPostToAllRequest()
+        {
+            BaseApiUrl = configurator.ApiBaseUrl,
+            Post = post,
+
+        };
+        var jobPublishId = BackgroundJob.Schedule(() => postPublishOrchestrator.PublishPostToAll(publishRequest), new DateTimeOffset(post.ShedulePublishDate));
+
+        post.JobPublishId = jobPublishId;
 
         return post;
     }

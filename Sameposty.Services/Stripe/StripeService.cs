@@ -4,12 +4,13 @@ namespace Sameposty.Services.Stripe;
 public class StripeService : IStripeService
 {
     private static readonly string StripeApiKey = "sk_test_51OjOS6LJdNESLWLIWOKCCgEy7VUlRrW9Ufs8o6smG52WhoFaSLO9SgM0PKPbS8ScwBloaNdfVLBiGbavbYk2r74V00gLxOwkjM";
-    public async Task<Subscription> CreateSubscription(string stripeCustomerId)
+    public async Task<Subscription> CreateSubscription(string stripeCustomerId, string userId)
     {
         StripeConfiguration.ApiKey = StripeApiKey;
 
         var options = new SubscriptionCreateOptions
         {
+            Metadata = new Dictionary<string, string> { { "userId", userId } },
             Customer = stripeCustomerId,
             Items =
             [
@@ -27,6 +28,7 @@ public class StripeService : IStripeService
 
         var options = new CustomerCreateOptions
         {
+            Metadata = req.Metadata,
             Source = req.CardTokenId, // token do karty. czy moze być wykorzystywany wielokrotnie?
             Name = req.Name,
             Email = req.Email,
@@ -64,6 +66,22 @@ public class StripeService : IStripeService
             Metadata = new Dictionary<string, string> { { "order_id", "6735" } },
         };
         var service = new CustomerService();
-        service.Update("cus_NffrFeUfNV2Hib", options);
+        await service.UpdateAsync("cus_NffrFeUfNV2Hib", options);
+    }
+
+    public async Task CancelSubscription(string subscriptionId)
+    {
+        StripeConfiguration.ApiKey = StripeApiKey;
+        var service = new SubscriptionService();
+        await service.CancelAsync(subscriptionId);
+    }
+
+    public async Task<Subscription> GetSubscription(string subscriptionId)
+    {
+        StripeConfiguration.ApiKey = StripeApiKey;
+
+        var service = new SubscriptionService();
+        return await service.GetAsync(subscriptionId);
+
     }
 }

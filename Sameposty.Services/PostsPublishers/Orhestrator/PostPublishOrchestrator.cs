@@ -16,7 +16,7 @@ public class PostPublishOrchestrator(IPostsPublisher postsPublisher, IImageSaver
     {
         await MarkPostIsPublishingInProgress(request.Post);
 
-        var publishingResults = await postsPublisher.PublishPost(request.Post, request.Connections);
+        var publishingResults = await postsPublisher.PublishPost(request.Post);
 
         var imageThumbnailName = string.Empty;
 

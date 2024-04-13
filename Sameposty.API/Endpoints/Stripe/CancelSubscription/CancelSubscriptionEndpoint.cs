@@ -3,16 +3,16 @@ using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.SubscriptionManager;
 
-namespace Sameposty.API.Endpoints.Stripe;
+namespace Sameposty.API.Endpoints.Stripe.CancelSubscription;
 
-public class CreateSubscriptionEndpoint(IQueryExecutor queryExecutor, ISubscriptionManager subscriptionManager) : Endpoint<CreateSubscriptionRequest>
+public class CancelSubscriptionEndpoint(IQueryExecutor queryExecutor, ISubscriptionManager subscriptionManager) : EndpointWithoutRequest
 {
     public override void Configure()
     {
-        Post("addSubscription");
+        Delete("cancelSubscription");
     }
 
-    public override async Task HandleAsync(CreateSubscriptionRequest req, CancellationToken ct)
+    public override async Task HandleAsync(CancellationToken ct)
     {
 
         var id = User.FindFirst("UserId").Value;
@@ -21,7 +21,7 @@ public class CreateSubscriptionEndpoint(IQueryExecutor queryExecutor, ISubscript
 
         try
         {
-            await subscriptionManager.ManageSubscriptionCreated(userFromDb, req.CardTokenId);
+            await subscriptionManager.ManageSubscriptionCanceled(userFromDb);
             await SendOkAsync(userFromDb.Subscription, ct);
         }
         catch (Exception ex)

@@ -6,6 +6,4 @@ public class PublishPostToAllRequest
     public string BaseApiUrl { get; set; }
 
     public Post Post { get; set; }
-
-    public ConnectionsModel Connections { get; set; }
 }

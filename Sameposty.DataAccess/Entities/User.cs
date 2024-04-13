@@ -43,8 +43,6 @@ public class User : EntityBase
     /// </summary>
     public bool IsActive { get; set; }
 
-    public string CompanyDescription { get; set; } = string.Empty;
-
     public List<Post> Posts { get; set; } = [];
 
     public BasicInformation BasicInformation { get; set; } = new();

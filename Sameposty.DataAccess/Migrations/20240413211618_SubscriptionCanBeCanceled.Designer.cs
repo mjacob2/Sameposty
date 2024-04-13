@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sameposty.DataAccess.DatabaseContext;
 
@@ -11,9 +12,11 @@ using Sameposty.DataAccess.DatabaseContext;
 namespace Sameposty.DataAccess.Migrations
 {
     [DbContext(typeof(SamepostyDbContext))]
-    partial class SamepostyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240413211618_SubscriptionCanBeCanceled")]
+    partial class SubscriptionCanBeCanceled
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -314,6 +317,14 @@ namespace Sameposty.DataAccess.Migrations
 
                     b.Property<DateTime?>("CanceledAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("CardLastFourDigits")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardTokenId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");

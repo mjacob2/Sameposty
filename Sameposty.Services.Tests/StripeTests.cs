@@ -23,6 +23,6 @@ public class StripeTests(IStripeService stripeService)
     public async Task CreateSubscriptionTest()
     {
         var testCustomerId = "abc";
-        await stripeService.CreateSubscription(testCustomerId);
+        await stripeService.CreateSubscription(testCustomerId, "1");
     }
 }

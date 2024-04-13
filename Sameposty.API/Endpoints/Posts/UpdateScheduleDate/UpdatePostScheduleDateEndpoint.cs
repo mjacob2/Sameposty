@@ -40,11 +40,6 @@ public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQ
         {
             BaseApiUrl = configurator.ApiBaseUrl,
             Post = postFromDb,
-            Connections = new()
-            {
-                FacebookConnection = userFromDb.FacebookConnection,
-                InstagramConnection = userFromDb.InstagramConnection,
-            },
         };
 
         postFromDb.JobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(request), new DateTimeOffset(req.Date));

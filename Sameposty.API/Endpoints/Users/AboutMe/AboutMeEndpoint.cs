@@ -48,8 +48,6 @@ public class AboutMeEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequ
         {
             response.Subscription = new AboutMeResponseSubscription()
             {
-                CustomerEmail = userFromDb.Subscription.CustomerEmail,
-                OrderId = userFromDb.Subscription.OrderId,
                 AmountPaid = userFromDb.Subscription.AmountPaid,
                 SubscriptionCurrentPeriodStart = userFromDb.Subscription.SubscriptionCurrentPeriodStart,
                 SubscriptionCurrentPeriodEnd = userFromDb.Subscription.SubscriptionCurrentPeriodEnd,

@@ -1,17 +1,13 @@
 ﻿using FastEndpoints;
-using Hangfire;
 using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
-using Sameposty.Services.Configurator;
 using Sameposty.Services.PostsGenerator;
-using Sameposty.Services.PostsPublishers.Orhestrator;
-using Sameposty.Services.PostsPublishers.Orhestrator.Models;
 
 namespace Sameposty.API.Endpoints.Posts.AddPost;
 
-public class AddPostEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator, IPostPublishOrchestrator postPublishOrchestrator, IConfigurator configurator) : Endpoint<AddPostRequest, Post>
+public class AddPostEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator) : Endpoint<AddPostRequest, Post>
 {
     public override void Configure()
     {
@@ -50,22 +46,7 @@ public class AddPostEndpoint(IQueryExecutor queryExecutor, ICommandExecutor comm
             ShedulePublishDate = req.Date,
         };
 
-        var newPostGenerated = await postsGenerator.GeneratePost(generatePostRequest);
-
-        var request = new PublishPostToAllRequest()
-        {
-            BaseApiUrl = configurator.ApiBaseUrl,
-            Post = newPostGenerated,
-            Connections = new()
-            {
-                FacebookConnection = userFromDb.FacebookConnection,
-                InstagramConnection = userFromDb.InstagramConnection,
-            },
-        };
-
-        var jobPublishId = BackgroundJob.Schedule(() => postPublishOrchestrator.PublishPostToAll(request), new DateTimeOffset(newPostGenerated.ShedulePublishDate));
-
-        newPostGenerated.JobPublishId = jobPublishId;
+        var newPostGenerated = await postsGenerator.GeneratePostsAsync(generatePostRequest, 1);
 
         if (userFromDb.Role != DataAccess.Entities.Roles.Admin)
         {
@@ -73,7 +54,7 @@ public class AddPostEndpoint(IQueryExecutor queryExecutor, ICommandExecutor comm
             userFromDb.TextTokensUsed++;
         }
 
-        var addPostCommand = new AddPostCommand() { Parameter = newPostGenerated };
+        var addPostCommand = new AddPostCommand() { Parameter = newPostGenerated[0] };
         var newPostAdded = await commandExecutor.ExecuteCommand(addPostCommand);
 
         await SendOkAsync(newPostAdded, ct);

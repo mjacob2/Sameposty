@@ -1,16 +1,13 @@
 ﻿using FastEndpoints;
-using Hangfire;
 using Sameposty.DataAccess.Commands.Users;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.Configurator;
 using Sameposty.Services.PostsGenerator;
-using Sameposty.Services.PostsPublishers.Orhestrator;
-using Sameposty.Services.PostsPublishers.Orhestrator.Models;
 
 namespace Sameposty.API.Endpoints.Posts.AddInitalPosts;
 
-public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator, IPostPublishOrchestrator postPublishOrchestrator, IConfigurator configurator) : EndpointWithoutRequest
+public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator, IConfigurator configurator) : EndpointWithoutRequest
 {
     public override void Configure()
     {
@@ -56,26 +53,8 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
         };
 
         var newPostsGenerated = userFromDb.Email != "admin"
-            ? await postsGenerator.GenerateInitialPostsAsync(generatePostRequest)
+            ? await postsGenerator.GeneratePostsAsync(generatePostRequest, configurator.NumberFirstPostsGenerated)
             : postsGenerator.GenerateStubbedPosts(generatePostRequest);
-
-        foreach (var post in newPostsGenerated)
-        {
-            var request = new PublishPostToAllRequest()
-            {
-                BaseApiUrl = configurator.ApiBaseUrl,
-                Post = post,
-                Connections = new()
-                {
-                    FacebookConnection = userFromDb.FacebookConnection,
-                    InstagramConnection = userFromDb.InstagramConnection,
-                },
-
-            };
-            var jobPublishId = BackgroundJob.Schedule(() => postPublishOrchestrator.PublishPostToAll(request), new DateTimeOffset(post.ShedulePublishDate));
-
-            post.JobPublishId = jobPublishId;
-        }
 
         userFromDb.Posts = newPostsGenerated;
 

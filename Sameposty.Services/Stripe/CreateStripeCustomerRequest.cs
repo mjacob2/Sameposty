@@ -1,4 +1,5 @@
-﻿namespace Sameposty.Services.Stripe;
+﻿
+namespace Sameposty.Services.Stripe;
 public class CreateStripeCustomerRequest
 {
     public string Name { get; set; }
@@ -14,4 +15,5 @@ public class CreateStripeCustomerRequest
     public string PostalCode { get; set; }
 
     public string NIP { get; set; }
+    public Dictionary<string, string> Metadata { get; internal set; }
 }

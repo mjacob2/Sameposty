@@ -1,5 +1,4 @@
-﻿using Hangfire;
-using Sameposty.DataAccess.Commands.Subscriptions;
+﻿using Sameposty.DataAccess.Commands.Subscriptions;
 using Sameposty.DataAccess.Commands.Users;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
@@ -7,7 +6,6 @@ using Sameposty.Services.Configurator;
 using Sameposty.Services.EmailService;
 using Sameposty.Services.PostsGenerator;
 using Sameposty.Services.PostsPublishers.Orhestrator;
-using Sameposty.Services.PostsPublishers.Orhestrator.Models;
 
 namespace Sameposty.Services.EasyCart;
 public class EasyCart(IPostPublishOrchestrator postPublishOrchestrator, IPostsGenerator postsGenerator, IConfigurator configurator, ICommandExecutor commandExecutor, IEmailService email) : IEasyCart
@@ -18,9 +16,7 @@ public class EasyCart(IPostPublishOrchestrator postPublishOrchestrator, IPostsGe
         await SaveNewSubscription(subscription);
         UpdateUserTokens(userFromDb);
         var generatePostRequest = CreatePostGeneratingRequest(userFromDb);
-        var newPostsGenerated = await postsGenerator.GeneratePremiumPostsAsync(generatePostRequest);
-        SchedulePublish(userFromDb, newPostsGenerated);
-        await UpdateUser(userFromDb, newPostsGenerated);
+        var newPostsGenerated = await postsGenerator.GeneratePostsAsync(generatePostRequest, configurator.NumberPremiumPostsGenerated);
         await email.SendNotifyUserNewPostsCreatedEmail(userFromDb.Email);
     }
 
@@ -30,9 +26,7 @@ public class EasyCart(IPostPublishOrchestrator postPublishOrchestrator, IPostsGe
         await UpdateSubscription(req, userFromDb);
         UpdateUserTokens(userFromDb);
         var generatePostRequest = CreatePostGeneratingRequest(userFromDb);
-        var newPostsGenerated = await postsGenerator.GeneratePremiumPostsAsync(generatePostRequest);
-        SchedulePublish(userFromDb, newPostsGenerated);
-        await UpdateUser(userFromDb, newPostsGenerated);
+        var newPostsGenerated = await postsGenerator.GeneratePostsAsync(generatePostRequest, configurator.NumberPremiumPostsGenerated);
         await email.SendNotifyUserNewPostsCreatedEmail(userFromDb.Email);
     }
 
@@ -46,47 +40,11 @@ public class EasyCart(IPostPublishOrchestrator postPublishOrchestrator, IPostsGe
         user.Subscription.SubscriptionCurrentPeriodStart = req.SubscriptionCurrentPeriodStart;
         user.Subscription.SubscriptionCurrentPeriodEnd = req.SubscriptionCurrentPeriodEnd;
         user.Subscription.AmountPaid = req.AmountPaid;
-        user.Subscription.OrderId = req.OrderId;
-        user.Subscription.CustomerEmail = req.CustomerEmail;
 
         await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = user });
     }
 
-    private async Task UpdateUser(User userFromDb, List<Post> newPostsGenerated)
-    {
-        userFromDb.Posts = newPostsGenerated;
 
-        if (userFromDb.Role != Roles.Admin)
-        {
-            userFromDb.ImageTokensUsed += configurator.NumberFirstPostsGenerated;
-            userFromDb.TextTokensUsed += configurator.NumberFirstPostsGenerated;
-            userFromDb.Role = Roles.PaidUser;
-        }
-
-        var updateUserCommand = new UpdateUserCommand() { Parameter = userFromDb };
-        await commandExecutor.ExecuteCommand(updateUserCommand);
-    }
-
-    private void SchedulePublish(User userFromDb, List<Post> newPostsGenerated)
-    {
-        foreach (var post in newPostsGenerated)
-        {
-            var request = new PublishPostToAllRequest()
-            {
-                BaseApiUrl = configurator.ApiBaseUrl,
-                Post = post,
-                Connections = new()
-                {
-                    FacebookConnection = userFromDb.FacebookConnection,
-                    InstagramConnection = userFromDb.InstagramConnection,
-                },
-
-            };
-            var jobPublishId = BackgroundJob.Schedule(() => postPublishOrchestrator.PublishPostToAll(request), new DateTimeOffset(post.ShedulePublishDate));
-
-            post.JobPublishId = jobPublishId;
-        }
-    }
 
     private async Task SaveNewSubscription(Subscription subscription)
     {
@@ -119,8 +77,6 @@ public class EasyCart(IPostPublishOrchestrator postPublishOrchestrator, IPostsGe
     {
         return new Subscription()
         {
-            CustomerEmail = req.CustomerEmail,
-            OrderId = req.OrderId,
             AmountPaid = req.AmountPaid,
             CreatedDate = DateTime.Now,
             UserId = userFromDb.Id,

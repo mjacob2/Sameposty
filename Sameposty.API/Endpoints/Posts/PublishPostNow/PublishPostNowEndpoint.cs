@@ -56,11 +56,6 @@ public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, IPostPublishOr
             {
                 BaseApiUrl = configurator.ApiBaseUrl,
                 Post = postToPublish,
-                Connections = new Services.PostsPublishers.ConnectionsModel()
-                {
-                    FacebookConnection = userFromDb.FacebookConnection,
-                    InstagramConnection = userFromDb.InstagramConnection,
-                },
 
             };
             results = await postPublisher.PublishPostToAll(publishRequest);
