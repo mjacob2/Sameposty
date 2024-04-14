@@ -14,6 +14,7 @@ using Sameposty.Services.Configurator;
 using Sameposty.Services.EasyCart;
 using Sameposty.Services.EmailService;
 using Sameposty.Services.FacebookTokenManager;
+using Sameposty.Services.Fakturownia;
 using Sameposty.Services.FileRemover;
 using Sameposty.Services.PostsGenerator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
@@ -71,6 +72,7 @@ if (builder.Environment.IsProduction())
     secrets.SamepostyFacebookAppId = client.GetSecret("SamepostyFacebookAppId").Value.Value ?? throw new ArgumentNullException("No SamepostyFacebookAppId provided in Azure Key Vault");
     secrets.EmailInfoPassword = client.GetSecret("EmailInfoPassword").Value.Value ?? throw new ArgumentNullException("No EmailInfoPassword provided in Azure Key Vault");
     secrets.StripeApiKey = client.GetSecret("StripeApiKey").Value.Value ?? throw new ArgumentNullException("No StripeApiKey provided in Azure Key Vault");
+    secrets.FakturowniaApiKey = client.GetSecret("FakturowniaApiKey").Value.Value ?? throw new ArgumentNullException("No FakturowniaApiKey provided in Azure Key Vault");
 }
 
 builder.Services.AddDbContext<SamepostyDbContext>(options =>
@@ -123,9 +125,14 @@ builder.Services.AddHangfireServer();
 builder.Services.AddScoped<IRegonService, RegonService>();
 builder.Services.AddScoped<IStripeService, StripeService>();
 builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
+builder.Services.AddSingleton<IFakturowniaService>(options =>
+{
+    return new FakturowniaService(secrets.StripeApiKey, options.GetRequiredService<HttpClient>());
+});
+
 builder.Services.AddSingleton<ISecretsProvider>(_ =>
 {
-    return new SecretsProvider(secrets.StripeApiKey);
+    return new SecretsProvider(secrets.FakturowniaApiKey);
 });
 
 var app = builder.Build();

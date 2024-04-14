@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Sameposty.API\Sameposty.API.csproj" />
     <ProjectReference Include="..\Sameposty.Services\Sameposty.Services.csproj" />
   </ItemGroup>
 

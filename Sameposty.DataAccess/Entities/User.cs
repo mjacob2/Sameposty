@@ -67,6 +67,8 @@ public class User : EntityBase
 
     public int TextTokensUsed { get; set; }
 
+    public long FakturowniaClientId { get; set; }
+
     public int GetImageTokensLeft()
     {
         return ImageTokensLimit - ImageTokensUsed;

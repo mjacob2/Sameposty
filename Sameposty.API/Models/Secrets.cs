@@ -13,4 +13,6 @@ public class Secrets
     public string EmailInfoPassword { get; set; }
 
     public string StripeApiKey { get; set; }
+
+    public string FakturowniaApiKey { get; set; }
 }
