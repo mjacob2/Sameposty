@@ -7,11 +7,12 @@ using Sameposty.Services.Configurator;
 using Sameposty.Services.EmailService;
 using Sameposty.Services.PostsGenerator;
 using Sameposty.Services.Stripe;
+using Sameposty.Services.SubscriptionManager;
 using Stripe;
 
 namespace Sameposty.API.Endpoints.StripeWebhook;
 
-public class StripeWebhookInvoicesEndpoint(IQueryExecutor queryExecutor, IConfigurator configurator, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator, IEmailService email, IStripeService stripeService) : Endpoint<StripeWebhookInvoicesRequest>
+public class StripeWebhookInvoicesEndpoint(IQueryExecutor queryExecutor, IConfigurator configurator, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator, IEmailService email, IStripeService stripeService, ISubscriptionManager subscriptionManager) : Endpoint<StripeWebhookInvoicesRequest>
 {
     public override void Configure()
     {
@@ -31,14 +32,17 @@ public class StripeWebhookInvoicesEndpoint(IQueryExecutor queryExecutor, IConfig
             var generatePostRequest = CreatePostGeneratingRequest(userFromDb);
             var newPostsGenerated = await postsGenerator.GeneratePostsAsync(generatePostRequest, configurator.NumberPremiumPostsGenerated);
             await UpdateUser(userFromDb, newPostsGenerated);
-            await email.SendNotifyUserNewPostsCreatedEmail(userFromDb.Email);
+            await email.EmailUserNewPostsGenerated(userFromDb.Email);
             // wysłać fakturę do KLienta!
-            // wziac jeszcze info o tym, keidy nzow bedzie pobrana płątnosc
 
         }
         else if (req.Type == Events.InvoicePaymentFailed)
         {
-            // cancel subscription and notify user by email
+
+            var userId = int.Parse(req.Data.StripeInvoice.SubscriptionDetails.Metadata.UserId);
+            var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByIdQuery(userId));
+            await subscriptionManager.ManageSubscriptionCanceled(userFromDb);
+            await email.SendNotifyUserSubscriptionCanceledPaymentFailedEmail(userFromDb.Email);
         }
         else
         {

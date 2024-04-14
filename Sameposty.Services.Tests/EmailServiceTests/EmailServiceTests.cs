@@ -1,4 +1,4 @@
-﻿namespace Sameposty.Services.Tests;
+﻿namespace Sameposty.Services.Tests.EmailServiceTests;
 public class EmailServiceTests
 {
     [Fact]

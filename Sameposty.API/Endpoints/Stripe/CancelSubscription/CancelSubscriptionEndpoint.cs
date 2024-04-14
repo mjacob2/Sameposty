@@ -22,7 +22,7 @@ public class CancelSubscriptionEndpoint(IQueryExecutor queryExecutor, ISubscript
         try
         {
             await subscriptionManager.ManageSubscriptionCanceled(userFromDb);
-            await SendOkAsync(userFromDb.Subscription, ct);
+            await SendOkAsync("subsription deleted", ct);
         }
         catch (Exception ex)
         {

@@ -17,7 +17,7 @@ public class EasyCart(IPostPublishOrchestrator postPublishOrchestrator, IPostsGe
         UpdateUserTokens(userFromDb);
         var generatePostRequest = CreatePostGeneratingRequest(userFromDb);
         var newPostsGenerated = await postsGenerator.GeneratePostsAsync(generatePostRequest, configurator.NumberPremiumPostsGenerated);
-        await email.SendNotifyUserNewPostsCreatedEmail(userFromDb.Email);
+        await email.EmailUserNewPostsGenerated(userFromDb.Email);
     }
 
     public async Task ActForSubcriptionReneved(EasyCartSubscriptionModel req, User userFromDb)
@@ -27,7 +27,7 @@ public class EasyCart(IPostPublishOrchestrator postPublishOrchestrator, IPostsGe
         UpdateUserTokens(userFromDb);
         var generatePostRequest = CreatePostGeneratingRequest(userFromDb);
         var newPostsGenerated = await postsGenerator.GeneratePostsAsync(generatePostRequest, configurator.NumberPremiumPostsGenerated);
-        await email.SendNotifyUserNewPostsCreatedEmail(userFromDb.Email);
+        await email.EmailUserNewPostsGenerated(userFromDb.Email);
     }
 
     public async Task ActForSubcriptionCanceled(EasyCartSubscriptionModel req, User userFromDb)

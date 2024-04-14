@@ -50,15 +50,19 @@ public class AboutMeResponse
 
 public class AboutMeResponseSubscription
 {
-    public string CustomerEmail { get; set; }
-
-    public int OrderId { get; set; }
-
     public double AmountPaid { get; set; }
-
-    public bool OrderHasInvoice { get; set; }
 
     public string SubscriptionCurrentPeriodStart { get; set; }
 
     public string SubscriptionCurrentPeriodEnd { get; set; }
+
+    public string StripeCusomerId { get; set; } = string.Empty;
+
+    public string StipeSubscriptionId { get; set; } = string.Empty;
+
+    public string StripePaymentCardId { get; set; } = string.Empty;
+
+    public bool IsCanceled { get; set; }
+
+    public string StripeApiKey { get; set; } = string.Empty;
 }

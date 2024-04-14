@@ -2,10 +2,11 @@
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
+using Sameposty.Services.Secrets;
 
 namespace Sameposty.API.Endpoints.Users.AboutMe;
 
-public class AboutMeEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequest<AboutMeResponse>
+public class AboutMeEndpoint(IQueryExecutor queryExecutor, ISecretsProvider secretsProvider) : EndpointWithoutRequest<AboutMeResponse>
 {
     public override void Configure()
     {
@@ -51,6 +52,11 @@ public class AboutMeEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequ
                 AmountPaid = userFromDb.Subscription.AmountPaid,
                 SubscriptionCurrentPeriodStart = userFromDb.Subscription.SubscriptionCurrentPeriodStart,
                 SubscriptionCurrentPeriodEnd = userFromDb.Subscription.SubscriptionCurrentPeriodEnd,
+                IsCanceled = userFromDb.Subscription.IsCanceled,
+                StipeSubscriptionId = userFromDb.Subscription.StipeSubscriptionId,
+                StripeCusomerId = userFromDb.Subscription.StripeCusomerId,
+                StripePaymentCardId = userFromDb.Subscription.StripePaymentCardId,
+                StripeApiKey = secretsProvider.StripeApiKey,
             };
         }
 

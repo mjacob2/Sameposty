@@ -13,7 +13,7 @@ public class SubscriptionManager(IStripeService stripeService, ICommandExecutor 
     {
         if (userFromDb.Subscription != null)
         {
-            throw new ArgumentException("Ten klienta już ma subskrypcję!");
+            throw new ArgumentException("Ten klient już ma subskrypcję!");
         }
 
         var stripeCustomer = await CreateStripeCustomer(stripeService, userFromDb, cardTokenId);
@@ -22,14 +22,13 @@ public class SubscriptionManager(IStripeService stripeService, ICommandExecutor 
         await SaveNewSubscription(sqlSubscription);
     }
 
-
-
     public async Task ManageSubscriptionCanceled(User userFromDb)
     {
-        // cancel stripe subscription
         await stripeService.CancelSubscription(userFromDb.Subscription.StipeSubscriptionId);
-        // delete customer card
-        // update subscription to be isCanceled = true
+        //await stripeService.DeleteCard(userFromDb.Subscription.StripeCusomerId, userFromDb.Subscription.StripePaymentCardId);
+
+        var deleteSubscriptionCommand = new DeleteSubscriptionCommand() { Parameter = userFromDb.Subscription };
+        await commandExecutor.ExecuteCommand(deleteSubscriptionCommand);
     }
 
     private static async Task<Customer> CreateStripeCustomer(IStripeService stripeService, User userFromDb, string cardTokenId)

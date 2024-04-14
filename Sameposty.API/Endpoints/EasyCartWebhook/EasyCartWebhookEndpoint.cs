@@ -18,13 +18,6 @@ public class EasyCartWebhookEndpoint(IQueryExecutor queryExecutor, IEmailService
     {
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByEmailQuery() { Email = "jakubicki.m@gmail.com" });
 
-        if (userFromDb == null)
-        {
-            await email.SendNotifyInvalidSubscriptionEmail(req.CustomerEmail, req.CustomerId, req.OrderId);
-
-            return;
-        }
-
         if (req.Event == "subscription_created")
         {
             var model = new EasyCartSubscriptionModel()

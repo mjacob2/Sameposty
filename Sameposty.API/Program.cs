@@ -6,7 +6,6 @@ using FastEndpoints.Swagger;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using OpenAI.Extensions;
-using REGON.Client;
 using Sameposty.API;
 using Sameposty.API.Models;
 using Sameposty.DataAccess.DatabaseContext;
@@ -26,6 +25,7 @@ using Sameposty.Services.PostsPublishers.InstagramPublisher;
 using Sameposty.Services.PostsPublishers.Orhestrator;
 using Sameposty.Services.PostsPublishers.PostsPublisher;
 using Sameposty.Services.REGON;
+using Sameposty.Services.Secrets;
 using Sameposty.Services.Stripe;
 using Sameposty.Services.SubscriptionManager;
 
@@ -70,6 +70,7 @@ if (builder.Environment.IsProduction())
     secrets.SamepostyFacebookAppSecret = client.GetSecret("SamepostyFacebookAppSecret").Value.Value ?? throw new ArgumentNullException("No SamepostyFacebookAppSecret provided in Azure Key Vault");
     secrets.SamepostyFacebookAppId = client.GetSecret("SamepostyFacebookAppId").Value.Value ?? throw new ArgumentNullException("No SamepostyFacebookAppId provided in Azure Key Vault");
     secrets.EmailInfoPassword = client.GetSecret("EmailInfoPassword").Value.Value ?? throw new ArgumentNullException("No EmailInfoPassword provided in Azure Key Vault");
+    secrets.StripeApiKey = client.GetSecret("StripeApiKey").Value.Value ?? throw new ArgumentNullException("No StripeApiKey provided in Azure Key Vault");
 }
 
 builder.Services.AddDbContext<SamepostyDbContext>(options =>
@@ -94,7 +95,7 @@ builder.Services.AddScoped<IFacebookTokenManager>(options =>
         SamepostyFacebookAppSecret = secrets.SamepostyFacebookAppSecret,
     };
 
-    return new FacebookTokenManager(s, options.GetRequiredService<System.Net.Http.HttpClient>());
+    return new FacebookTokenManager(s, options.GetRequiredService<HttpClient>());
 });
 
 builder.Services.AddScoped<IEmailService>(options =>
@@ -122,6 +123,10 @@ builder.Services.AddHangfireServer();
 builder.Services.AddScoped<IRegonService, RegonService>();
 builder.Services.AddScoped<IStripeService, StripeService>();
 builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
+builder.Services.AddSingleton<ISecretsProvider>(_ =>
+{
+    return new SecretsProvider(secrets.StripeApiKey);
+});
 
 var app = builder.Build();
 
