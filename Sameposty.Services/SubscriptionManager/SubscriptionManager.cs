@@ -16,7 +16,7 @@ public class SubscriptionManager(IStripeService stripeService, ICommandExecutor 
             throw new ArgumentException("Ten klient już ma subskrypcję!");
         }
 
-        var stripeCustomer = await CreateStripeCustomer(stripeService, userFromDb, cardTokenId);
+        var stripeCustomer = await CreateStripeCustomer(userFromDb);
         var subscription = await stripeService.CreateSubscription(stripeCustomer.Id, userFromDb.Id.ToString());
         var sqlSubscription = CreateNewSubscription(userFromDb.Id, subscription.Id, subscription.CurrentPeriodStart, subscription.CurrentPeriodEnd, subscription.CustomerId, subscription.Items.Data[0].Plan.Amount, stripeCustomer.DefaultSourceId);
         await SaveNewSubscription(sqlSubscription);
@@ -31,11 +31,10 @@ public class SubscriptionManager(IStripeService stripeService, ICommandExecutor 
         await commandExecutor.ExecuteCommand(deleteSubscriptionCommand);
     }
 
-    private static async Task<Customer> CreateStripeCustomer(IStripeService stripeService, User userFromDb, string cardTokenId)
+    public async Task<Customer> CreateStripeCustomer(User userFromDb)
     {
         var createStripeCustomerRequest = new CreateStripeCustomerRequest()
         {
-            CardTokenId = cardTokenId,
             City = userFromDb.City,
             Email = userFromDb.Email,
             Name = userFromDb.Name,

@@ -27,13 +27,11 @@ public class StripeWebhookInvoicesEndpoint(IQueryExecutor queryExecutor, IConfig
 
         if (req.Type == Events.InvoicePaid)
         {
-            var userId = int.Parse(req.Data.StripeInvoice.SubscriptionDetails.Metadata.UserId);
-            var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByIdQuery(userId));
+            var userEmail = req.Data.StripeInvoice.Email;
+            var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByEmailQuery(userEmail));
 
             var generatePostRequest = CreatePostGeneratingRequest(userFromDb);
             var newPostsGenerated = await postsGenerator.GeneratePostsAsync(generatePostRequest, configurator.NumberPremiumPostsGenerated);
-
-
 
             var request = new AddFakturowniaClientModel()
             {
@@ -58,8 +56,8 @@ public class StripeWebhookInvoicesEndpoint(IQueryExecutor queryExecutor, IConfig
         else if (req.Type == Events.InvoicePaymentFailed)
         {
 
-            var userId = int.Parse(req.Data.StripeInvoice.SubscriptionDetails.Metadata.UserId);
-            var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByIdQuery(userId));
+            var userEmail = req.Data.StripeInvoice.Email;
+            var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByEmailQuery(userEmail));
             await subscriptionManager.ManageSubscriptionCanceled(userFromDb);
             await email.SendNotifyUserSubscriptionCanceledPaymentFailedEmail(userFromDb.Email);
         }

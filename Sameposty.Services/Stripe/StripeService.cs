@@ -1,10 +1,41 @@
-﻿using Sameposty.Services.Secrets;
+﻿using Sameposty.Services.Configurator;
+using Sameposty.Services.Secrets;
 using Stripe;
+using Stripe.Checkout;
 
 namespace Sameposty.Services.Stripe;
-public class StripeService(ISecretsProvider secretsProvider) : IStripeService
+public class StripeService(ISecretsProvider secretsProvider, IConfigurator configurator) : IStripeService
 {
+    private const string Price = "price_1P3iW6LJdNESLWLI7IJLtxNq";
+
     private readonly string StripeApiKey = secretsProvider.StripeApiKey;
+
+    public async Task<Session> CreateSubscriptionSession(Customer customer, int userId)
+    {
+        StripeConfiguration.ApiKey = StripeApiKey;
+
+        var options = new SessionCreateOptions
+        {
+            SuccessUrl = configurator.SubscriptionSuccessPaymentUrl + "?session_id={CHECKOUT_SESSION_ID}",
+            CancelUrl = configurator.SubscriptionFailedPaymentUrl,
+            Mode = "subscription",
+            Customer = customer.Id,
+            Metadata = new Dictionary<string, string> { { "userId", userId.ToString() } },
+            LineItems =
+            [
+                new SessionLineItemOptions
+                {
+                    Price = Price,
+                    Quantity = 1,
+                },
+            ],
+        };
+
+        var service = new SessionService();
+        var session = await service.CreateAsync(options);
+        return session;
+    }
+
     public async Task<Subscription> CreateSubscription(string stripeCustomerId, string userId)
     {
         StripeConfiguration.ApiKey = StripeApiKey;
@@ -15,7 +46,7 @@ public class StripeService(ISecretsProvider secretsProvider) : IStripeService
             Customer = stripeCustomerId,
             Items =
             [
-                new SubscriptionItemOptions() { Price = "price_1P3iW6LJdNESLWLI7IJLtxNq" },
+                new SubscriptionItemOptions() { Price = Price },
             ],
         };
         var service = new SubscriptionService();

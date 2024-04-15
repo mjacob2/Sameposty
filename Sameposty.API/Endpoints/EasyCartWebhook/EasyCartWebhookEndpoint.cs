@@ -16,7 +16,7 @@ public class EasyCartWebhookEndpoint(IQueryExecutor queryExecutor, IEmailService
 
     public override async Task HandleAsync(EasyCartRequest req, CancellationToken ct)
     {
-        var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByEmailQuery() { Email = "jakubicki.m@gmail.com" });
+        var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByEmailQuery("jakubicki.m@gmail.com"));
 
         if (req.Event == "subscription_created")
         {

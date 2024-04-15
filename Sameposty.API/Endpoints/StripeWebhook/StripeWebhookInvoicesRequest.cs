@@ -26,23 +26,13 @@ public class SripeInvoice
     [JsonPropertyName("customer")]
     public string StripeCustomerId { get; set; }
 
+    [JsonPropertyName("customer_email")]
+    public string Email { get; set; }
+
     [JsonPropertyName("subscription")]
     public string StripeSubscriptionId { get; set; }
-
-    [JsonPropertyName("subscription_details")]
-    public SubscriptionDetails SubscriptionDetails { get; set; }
 }
 
-public class Metadata
-{
-    [JsonPropertyName("userId")]
-    public string UserId { get; set; }
-}
-
-public class SubscriptionDetails
-{
-    public Metadata Metadata { get; set; }
-}
 
 
 

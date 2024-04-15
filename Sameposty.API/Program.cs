@@ -127,12 +127,12 @@ builder.Services.AddScoped<IStripeService, StripeService>();
 builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
 builder.Services.AddSingleton<IFakturowniaService>(options =>
 {
-    return new FakturowniaService(secrets.StripeApiKey, options.GetRequiredService<HttpClient>());
+    return new FakturowniaService(secrets.FakturowniaApiKey, options.GetRequiredService<HttpClient>());
 });
 
 builder.Services.AddSingleton<ISecretsProvider>(_ =>
 {
-    return new SecretsProvider(secrets.FakturowniaApiKey);
+    return new SecretsProvider(secrets.StripeApiKey);
 });
 
 var app = builder.Build();

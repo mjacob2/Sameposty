@@ -10,4 +10,8 @@ public interface IConfigurator
     public int ImageTokensPremiumLimit { get; }
     public int TextTokensPremiumLimit { get; }
     string AngularClientBaseURl { get; }
+
+    string SubscriptionSuccessPaymentUrl { get; }
+
+    string SubscriptionFailedPaymentUrl { get; }
 }

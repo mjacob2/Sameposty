@@ -19,7 +19,7 @@ public class UserLoginEndpoint(IQueryExecutor queryExecutor, IEmailService email
     public override async Task HandleAsync(LoginRequest req, CancellationToken ct)
     {
 
-        var getUserByEmail = new GetUserByEmailQuery() { Email = req.Email };
+        var getUserByEmail = new GetUserByEmailQuery(req.Email);
         var userFromDb = await queryExecutor.ExecuteQuery(getUserByEmail);
 
         if (userFromDb == null)

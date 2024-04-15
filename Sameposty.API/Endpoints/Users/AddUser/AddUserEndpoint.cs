@@ -27,7 +27,7 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
         //    ThrowError("Nie używaj znaku + w adresie e-mail");
         //}
 
-        var getUserByEmail = new GetUserByEmailQuery() { Email = req.Email };
+        var getUserByEmail = new GetUserByEmailQuery(req.Email);
         var userFromDb = await queryExecutor.ExecuteQuery(getUserByEmail);
 
         if (userFromDb != null)
