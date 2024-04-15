@@ -1,32 +1,32 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Sameposty.Services.Fakturownia;
 public class AddFakturowniaClientRequest
 {
-    [JsonProperty("api_token")]
+    [JsonPropertyName("api_token")]
     public string ApiToken { get; set; }
 
-    [JsonProperty("client")]
+    [JsonPropertyName("client")]
     public AddFakturowniaClientModel Client { get; set; }
 }
 
 public class AddFakturowniaClientModel
 {
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public string Name { get; set; }
 
-    [JsonProperty("tax_no")]
+    [JsonPropertyName("tax_no")]
     public string NIP { get; set; }
 
-    [JsonProperty("city")]
+    [JsonPropertyName("city")]
     public string City { get; set; }
 
-    [JsonProperty("email")]
+    [JsonPropertyName("email")]
     public string Email { get; set; }
 
-    [JsonProperty("post_code")]
+    [JsonPropertyName("post_code")]
     public string PostCode { get; set; }
 
-    [JsonProperty("street")]
+    [JsonPropertyName("street")]
     public string Street { get; set; }
 }
