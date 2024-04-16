@@ -15,5 +15,5 @@ public class CreateStripeCustomerRequest
     public string PostalCode { get; set; }
 
     public string NIP { get; set; }
-    public Dictionary<string, string> Metadata { get; internal set; }
+    public Dictionary<string, string> Metadata { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using Sameposty.Services.Stripe;
+using Sameposty.Services.StripeServices;
 
 namespace Sameposty.Services.Tests;
 public class StripeTests(IStripeService stripeService)
@@ -16,7 +17,7 @@ public class StripeTests(IStripeService stripeService)
             Street = "Street 1 /3",
         };
 
-        await stripeService.CreateStripeCustomerCustomer(req);
+        await stripeService.CreateStripeCustomer(req);
     }
 
     [Fact]

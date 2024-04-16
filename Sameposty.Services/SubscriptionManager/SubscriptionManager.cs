@@ -4,21 +4,21 @@ using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.Services.Configurator;
 using Sameposty.Services.Stripe;
-using Stripe;
+using Sameposty.Services.StripeServices;
 
 namespace Sameposty.Services.SubscriptionManager;
 public class SubscriptionManager(IStripeService stripeService, ICommandExecutor commandExecutor, IConfigurator configurator) : ISubscriptionManager
 {
-    public async Task ManageSubscriptionCreated(User userFromDb, string cardTokenId)
+    public async Task ManageSubscriptionCreated(User userFromDb)
     {
         if (userFromDb.Subscription != null)
         {
             throw new ArgumentException("Ten klient już ma subskrypcję!");
         }
 
-        var stripeCustomer = await CreateStripeCustomer(userFromDb);
-        var subscription = await stripeService.CreateSubscription(stripeCustomer.Id, userFromDb.Id.ToString());
-        var sqlSubscription = CreateNewSubscription(userFromDb.Id, subscription.Id, subscription.CurrentPeriodStart, subscription.CurrentPeriodEnd, subscription.CustomerId, subscription.Items.Data[0].Plan.Amount, stripeCustomer.DefaultSourceId);
+        var stripeCustomer = await GetStripeCustomerId(userFromDb);
+        var subscription = await stripeService.CreateSubscription(stripeCustomer, userFromDb.Id.ToString());
+        var sqlSubscription = CreateNewSubscription(userFromDb.Id, subscription.Id, subscription.CurrentPeriodStart, subscription.CurrentPeriodEnd, subscription.Items.Data[0].Plan.Amount);
         await SaveNewSubscription(sqlSubscription);
     }
 
@@ -31,35 +31,42 @@ public class SubscriptionManager(IStripeService stripeService, ICommandExecutor 
         await commandExecutor.ExecuteCommand(deleteSubscriptionCommand);
     }
 
-    public async Task<Customer> CreateStripeCustomer(User userFromDb)
+    public async Task<string> GetStripeCustomerId(User userFromDb)
     {
-        var createStripeCustomerRequest = new CreateStripeCustomerRequest()
+        if (userFromDb.Subscription != null)
         {
-            City = userFromDb.City,
-            Email = userFromDb.Email,
-            Name = userFromDb.Name,
-            NIP = userFromDb.NIP,
-            PostalCode = userFromDb.PostCode,
-            Street = userFromDb.Street,
-            Metadata = new Dictionary<string, string> { { "userId", userFromDb.Id.ToString() } },
-        };
-        var stripeCustomer = await stripeService.CreateStripeCustomerCustomer(createStripeCustomerRequest);
+            return userFromDb.Subscription.StripeCustomerId;
+        }
+        else
+        {
+            var createStripeCustomerRequest = new CreateStripeCustomerRequest()
+            {
+                City = userFromDb.City,
+                Email = userFromDb.Email,
+                Name = userFromDb.Name,
+                NIP = userFromDb.NIP,
+                PostalCode = userFromDb.PostCode,
+                Street = userFromDb.Street,
+                Metadata = new Dictionary<string, string> { { "userId", userFromDb.Id.ToString() } },
+            };
 
-        return stripeCustomer;
+            var stripeCustomer = await stripeService.CreateStripeCustomer(createStripeCustomerRequest);
+            userFromDb.Subscription.StripeCustomerId = stripeCustomer.Id;
+            await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = userFromDb });
+            return stripeCustomer.Id;
+        }
     }
 
-    private static DataAccess.Entities.Subscription CreateNewSubscription(int userId, string subscriptionId, DateTime currentPeriodStart, DateTime currentPeriodEnd, string customerId, long? amountPaid, string defaultSourceId)
+    private static Subscription CreateNewSubscription(int userId, string subscriptionId, DateTime currentPeriodStart, DateTime currentPeriodEnd, long? amountPaid)
     {
-        return new DataAccess.Entities.Subscription()
+        return new Subscription()
         {
-            AmountPaid = amountPaid / 100 ?? 0,
+            LastAmountPaid = amountPaid / 100 ?? 0,
             CreatedDate = DateTime.Now,
             UserId = userId,
             SubscriptionCurrentPeriodEnd = currentPeriodEnd.ToString(),
             SubscriptionCurrentPeriodStart = currentPeriodStart.ToString(),
-            StripeCusomerId = customerId,
             StipeSubscriptionId = subscriptionId,
-            StripePaymentCardId = defaultSourceId,
         };
     }
 
@@ -85,5 +92,8 @@ public class SubscriptionManager(IStripeService stripeService, ICommandExecutor 
         await commandExecutor.ExecuteCommand(updateUserCommand);
     }
 
-
+    Task<global::Stripe.Customer> ISubscriptionManager.GetStripeCustomerId(User userFromDb)
+    {
+        throw new NotImplementedException();
+    }
 }

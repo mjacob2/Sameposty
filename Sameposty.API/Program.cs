@@ -27,7 +27,7 @@ using Sameposty.Services.PostsPublishers.Orhestrator;
 using Sameposty.Services.PostsPublishers.PostsPublisher;
 using Sameposty.Services.REGON;
 using Sameposty.Services.Secrets;
-using Sameposty.Services.Stripe;
+using Sameposty.Services.StripeServices;
 using Sameposty.Services.SubscriptionManager;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -123,7 +123,7 @@ builder.Services.AddHangfire(config => config
 .UseSqlServerStorage(dbConnectionString));
 builder.Services.AddHangfireServer();
 builder.Services.AddScoped<IRegonService, RegonService>();
-builder.Services.AddScoped<IStripeService, StripeService>();
+builder.Services.AddScoped<IStripeService, StripeServices>();
 builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
 builder.Services.AddSingleton<IFakturowniaService>(options =>
 {

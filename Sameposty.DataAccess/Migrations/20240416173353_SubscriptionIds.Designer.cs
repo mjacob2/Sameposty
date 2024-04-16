@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sameposty.DataAccess.DatabaseContext;
 
@@ -11,9 +12,11 @@ using Sameposty.DataAccess.DatabaseContext;
 namespace Sameposty.DataAccess.Migrations
 {
     [DbContext(typeof(SamepostyDbContext))]
-    partial class SamepostyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240416173353_SubscriptionIds")]
+    partial class SubscriptionIds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -316,9 +319,11 @@ namespace Sameposty.DataAccess.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("StipeSubscriptionId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StripeCustomerId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SubscriptionCurrentPeriodEnd")
@@ -368,7 +373,7 @@ namespace Sameposty.DataAccess.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<long?>("FakturowniaClientId")
+                    b.Property<long>("FakturowniaClientId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("FlatNumber")
@@ -524,8 +529,7 @@ namespace Sameposty.DataAccess.Migrations
                     b.Navigation("Privilege")
                         .IsRequired();
 
-                    b.Navigation("Subscription")
-                        .IsRequired();
+                    b.Navigation("Subscription");
                 });
 #pragma warning restore 612, 618
         }

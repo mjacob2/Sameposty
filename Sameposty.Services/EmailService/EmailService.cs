@@ -5,6 +5,42 @@ using Sameposty.Services.Configurator;
 namespace Sameposty.Services.EmailService;
 public class EmailService(EmailServiceSecrets secrets, IConfigurator configurator) : IEmailService
 {
+    public async Task EmailUserSubscriptionCreated(string to)
+    {
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress("Marek z sameposty.pl", "info@sameposty.pl"));
+        message.To.Add(new MailboxAddress("", to));
+        message.Subject = "Dziękuję za zakup subskrypcji!";
+        var builder = new BodyBuilder
+        {
+            HtmlBody = EmailBodyProvider.SubscriptionCreatedBodyEmail(),
+        };
+        message.Body = builder.ToMessageBody();
+        using var client = new SmtpClient();
+        await client.ConnectAsync("s6.cyber-folks.pl", 465, true);
+        await client.AuthenticateAsync("info@sameposty.pl", secrets.EmailInfoPassword);
+        await client.SendAsync(message);
+        await client.DisconnectAsync(true);
+    }
+
+    public async Task EmailUserSubscriptionDeleted(string to)
+    {
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress("Marek z sameposty.pl", "info@sameposty.pl"));
+        message.To.Add(new MailboxAddress("", to));
+        message.Subject = "Subskrypcja dobiegła końca!";
+        var builder = new BodyBuilder
+        {
+            HtmlBody = EmailBodyProvider.SubscriptionDeletedBodyEmail(),
+        };
+        message.Body = builder.ToMessageBody();
+        using var client = new SmtpClient();
+        await client.ConnectAsync("s6.cyber-folks.pl", 465, true);
+        await client.AuthenticateAsync("info@sameposty.pl", secrets.EmailInfoPassword);
+        await client.SendAsync(message);
+        await client.DisconnectAsync(true);
+    }
+
     public async Task EmailUserNewPostsGenerated(string to)
     {
         var message = new MimeMessage();
@@ -23,7 +59,7 @@ public class EmailService(EmailServiceSecrets secrets, IConfigurator configurato
         await client.DisconnectAsync(true);
     }
 
-    public async Task SendNotifyUserSubscriptionCanceledPaymentFailedEmail(string to)
+    public async Task SendNotifyUserPaymentFailedEmail(string to)
     {
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress("Marek z sameposty.pl", "info@sameposty.pl"));
@@ -31,7 +67,7 @@ public class EmailService(EmailServiceSecrets secrets, IConfigurator configurato
         message.Subject = "Niepowodzenie płatności za subskrypcję sameposty.pl";
         var builder = new BodyBuilder
         {
-            HtmlBody = EmailBodyProvider.SubscriptionCanceledPaymentFailedEmailBody(),
+            HtmlBody = EmailBodyProvider.PaymentFailedEmailBody(),
         };
         message.Body = builder.ToMessageBody();
         using var client = new SmtpClient();

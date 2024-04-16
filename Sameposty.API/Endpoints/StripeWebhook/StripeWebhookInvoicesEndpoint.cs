@@ -7,7 +7,7 @@ using Sameposty.Services.Configurator;
 using Sameposty.Services.EmailService;
 using Sameposty.Services.Fakturownia;
 using Sameposty.Services.PostsGenerator;
-using Sameposty.Services.Stripe;
+using Sameposty.Services.StripeServices;
 using Sameposty.Services.SubscriptionManager;
 using Stripe;
 
@@ -31,35 +31,18 @@ public class StripeWebhookInvoicesEndpoint(IQueryExecutor queryExecutor, IConfig
             var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByEmailQuery(userEmail));
 
             var generatePostRequest = CreatePostGeneratingRequest(userFromDb);
-            var newPostsGenerated = await postsGenerator.GeneratePostsAsync(generatePostRequest, configurator.NumberPremiumPostsGenerated);
+            //var newPostsGenerated = await postsGenerator.GeneratePostsAsync(generatePostRequest, configurator.NumberPremiumPostsGenerated);
 
-            var request = new AddFakturowniaClientModel()
-            {
-                City = userFromDb.City,
-                Email = userFromDb.Email,
-                Name = userFromDb.Name,
-                NIP = userFromDb.NIP,
-                PostCode = userFromDb.PostCode,
-                Street = GetStreetNameWithNumbers(userFromDb.Street, userFromDb.BuildingNumber, userFromDb.FlatNumber),
-            };
-
-            var fakturowniaClientId = await fakturowniaService.CreateClientAsync(request);
-            userFromDb.FakturowniaClientId = fakturowniaClientId;
-
-
-
-            await UpdateUser(userFromDb, newPostsGenerated);
+            //await UpdateUser(userFromDb, newPostsGenerated);
             await email.EmailUserNewPostsGenerated(userFromDb.Email);
             // wysłać fakturę do KLienta!
-
         }
         else if (req.Type == Events.InvoicePaymentFailed)
         {
 
             var userEmail = req.Data.StripeInvoice.Email;
             var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByEmailQuery(userEmail));
-            await subscriptionManager.ManageSubscriptionCanceled(userFromDb);
-            await email.SendNotifyUserSubscriptionCanceledPaymentFailedEmail(userFromDb.Email);
+            await email.SendNotifyUserPaymentFailedEmail(userFromDb.Email);
         }
         else
         {

@@ -51,7 +51,7 @@ public class User : EntityBase
 
     public InstagramConnection? InstagramConnection { get; set; }
 
-    public Subscription? Subscription { get; set; }
+    public Subscription Subscription { get; set; } = new();
 
     public Privilege Privilege { get; set; } = new();
 
@@ -67,7 +67,7 @@ public class User : EntityBase
 
     public int TextTokensUsed { get; set; }
 
-    public long FakturowniaClientId { get; set; }
+    public long? FakturowniaClientId { get; set; }
 
     public int GetImageTokensLeft()
     {

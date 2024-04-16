@@ -39,7 +39,7 @@ public class EasyCart(IPostPublishOrchestrator postPublishOrchestrator, IPostsGe
     {
         user.Subscription.SubscriptionCurrentPeriodStart = req.SubscriptionCurrentPeriodStart;
         user.Subscription.SubscriptionCurrentPeriodEnd = req.SubscriptionCurrentPeriodEnd;
-        user.Subscription.AmountPaid = req.AmountPaid;
+        user.Subscription.LastAmountPaid = req.AmountPaid;
 
         await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = user });
     }
@@ -77,7 +77,7 @@ public class EasyCart(IPostPublishOrchestrator postPublishOrchestrator, IPostsGe
     {
         return new Subscription()
         {
-            AmountPaid = req.AmountPaid,
+            LastAmountPaid = req.AmountPaid,
             CreatedDate = DateTime.Now,
             UserId = userFromDb.Id,
             SubscriptionCurrentPeriodEnd = req.SubscriptionCurrentPeriodEnd,

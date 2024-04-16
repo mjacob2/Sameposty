@@ -1,16 +1,21 @@
 ﻿using Sameposty.Services.Configurator;
 using Sameposty.Services.Secrets;
+using Sameposty.Services.Stripe;
 using Stripe;
 using Stripe.Checkout;
 
-namespace Sameposty.Services.Stripe;
-public class StripeService(ISecretsProvider secretsProvider, IConfigurator configurator) : IStripeService
+
+namespace Sameposty.Services.StripeServices;
+public class StripeServices(ISecretsProvider secretsProvider, IConfigurator configurator) : IStripeService
 {
     private const string Price = "price_1P3iW6LJdNESLWLI7IJLtxNq";
 
     private readonly string StripeApiKey = secretsProvider.StripeApiKey;
 
-    public async Task<Session> CreateSubscriptionSession(Customer customer, int userId)
+    private readonly string ReturnUrl = "https://sameposty.pl";
+
+
+    public async Task<Session> CreateSubscriptionSession(string stripeCustomerId, int userId)
     {
         StripeConfiguration.ApiKey = StripeApiKey;
 
@@ -19,8 +24,11 @@ public class StripeService(ISecretsProvider secretsProvider, IConfigurator confi
             SuccessUrl = configurator.SubscriptionSuccessPaymentUrl + "?session_id={CHECKOUT_SESSION_ID}",
             CancelUrl = configurator.SubscriptionFailedPaymentUrl,
             Mode = "subscription",
-            Customer = customer.Id,
-            Metadata = new Dictionary<string, string> { { "userId", userId.ToString() } },
+            Customer = stripeCustomerId,
+            SubscriptionData = new SessionSubscriptionDataOptions
+            {
+                Metadata = new Dictionary<string, string> { { "userId", userId.ToString() } },
+            },
             LineItems =
             [
                 new SessionLineItemOptions
@@ -54,7 +62,7 @@ public class StripeService(ISecretsProvider secretsProvider, IConfigurator confi
         return result;
     }
 
-    public async Task<Customer> CreateStripeCustomerCustomer(CreateStripeCustomerRequest req)
+    public async Task<Customer> CreateStripeCustomer(CreateStripeCustomerRequest req)
     {
         StripeConfiguration.ApiKey = StripeApiKey;
 
@@ -124,5 +132,10 @@ public class StripeService(ISecretsProvider secretsProvider, IConfigurator confi
 
         var service = new SourceService();
         await service.DetachAsync(stripeCustomerId, stripePaymentCardId);
+    }
+
+    public Task<Session> CreatePortalSession(string stripeCustomerId)
+    {
+        throw new NotImplementedException();
     }
 }

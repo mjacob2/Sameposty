@@ -1,17 +1,21 @@
-﻿using Stripe;
+﻿using Sameposty.Services.Stripe;
+using Stripe;
 using Stripe.Checkout;
 
-namespace Sameposty.Services.Stripe;
+namespace Sameposty.Services.StripeServices;
 public interface IStripeService
 {
-    Task<Session> CreateSubscriptionSession(Customer customer, int userId);
+    Task<Session> CreatePortalSession(string stripeCustomerId);
 
-    Task<Customer> CreateStripeCustomerCustomer(CreateStripeCustomerRequest req);
+    Task<Session> CreateSubscriptionSession(string stripeCustomerId, int userId);
+
+    Task<Customer> CreateStripeCustomer(CreateStripeCustomerRequest req);
+
     Task<Subscription> CreateSubscription(string stripeCustomerId, string userId);
+
     Task CancelSubscription(string subscriptionId);
 
     Task DeleteCard(string stripeCustomerId, string stripePaymentCardId);
 
     Task<Subscription> GetSubscription(string subscriptionId);
-
 }

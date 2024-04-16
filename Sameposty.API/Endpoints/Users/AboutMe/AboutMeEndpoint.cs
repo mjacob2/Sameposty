@@ -49,13 +49,11 @@ public class AboutMeEndpoint(IQueryExecutor queryExecutor, ISecretsProvider secr
         {
             response.Subscription = new AboutMeResponseSubscription()
             {
-                AmountPaid = userFromDb.Subscription.AmountPaid,
+                AmountPaid = userFromDb.Subscription.LastAmountPaid,
                 SubscriptionCurrentPeriodStart = userFromDb.Subscription.SubscriptionCurrentPeriodStart,
                 SubscriptionCurrentPeriodEnd = userFromDb.Subscription.SubscriptionCurrentPeriodEnd,
-                IsCanceled = userFromDb.Subscription.IsCanceled,
                 StipeSubscriptionId = userFromDb.Subscription.StipeSubscriptionId,
-                StripeCusomerId = userFromDb.Subscription.StripeCusomerId,
-                StripePaymentCardId = userFromDb.Subscription.StripePaymentCardId,
+                StripeCusomerId = userFromDb.Subscription.StripeCustomerId,
                 StripeApiKey = secretsProvider.StripeApiKey,
             };
         }
