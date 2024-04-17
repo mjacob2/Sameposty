@@ -16,11 +16,11 @@ public class FakturowniaInvoice
     public string PriceNet { get; set; }
 
     [JsonPropertyName("price_gross")]
-    public string PriceGRoss { get; set; }
+    public string PriceGross { get; set; }
 
     [JsonPropertyName("currency")]
     public string Currency { get; set; }
 
     [JsonPropertyName("client_id")]
-    public string FakturowniaClientId { get; set; }
+    public long FakturowniaClientId { get; set; }
 }

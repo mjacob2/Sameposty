@@ -13,7 +13,7 @@ public class CreateSubscriptionCheckoutSessionEndpoint(IQueryExecutor queryExecu
 {
     public override void Configure()
     {
-        Post("create-checkout-session");
+        Get("create-checkout-session");
     }
 
     public override async Task HandleAsync(CancellationToken ct)
@@ -35,9 +35,17 @@ public class CreateSubscriptionCheckoutSessionEndpoint(IQueryExecutor queryExecu
                 Metadata = new Dictionary<string, string> { { "userId", userFromDb.Id.ToString() } },
             };
 
-            var stripeCustomer = await stripeService.CreateStripeCustomer(createStripeCustomerRequest);
-            userFromDb.Subscription.StripeCustomerId = stripeCustomer.Id;
-            await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = userFromDb });
+            try
+            {
+                var stripeCustomer = await stripeService.CreateStripeCustomer(createStripeCustomerRequest);
+                userFromDb.Subscription.StripeCustomerId = stripeCustomer.Id;
+                await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = userFromDb });
+            }
+            catch (Exception e)
+            {
+                ThrowError(e.Message);
+            }
+
         }
 
         if (userFromDb.FakturowniaClientId == null)
@@ -52,9 +60,17 @@ public class CreateSubscriptionCheckoutSessionEndpoint(IQueryExecutor queryExecu
                 Street = GetStreetNameWithNumbers(userFromDb.Street, userFromDb.BuildingNumber, userFromDb.FlatNumber),
             };
 
-            var fakturowniaClientId = await fakturowniaService.CreateClientAsync(request);
-            userFromDb.FakturowniaClientId = fakturowniaClientId;
-            await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = userFromDb });
+            try
+            {
+                var fakturowniaClientId = await fakturowniaService.CreateClientAsync(request);
+                userFromDb.FakturowniaClientId = fakturowniaClientId;
+                await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = userFromDb });
+            }
+            catch (Exception e)
+            {
+                ThrowError(e.Message);
+            }
+
         }
 
         var session = await stripe.CreateSubscriptionSession(userFromDb.Subscription.StripeCustomerId, userFromDb.Id);

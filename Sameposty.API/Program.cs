@@ -28,6 +28,8 @@ using Sameposty.Services.PostsPublishers.PostsPublisher;
 using Sameposty.Services.REGON;
 using Sameposty.Services.Secrets;
 using Sameposty.Services.StripeServices;
+using Sameposty.Services.StripeWebhooksManagers;
+using Sameposty.Services.StripeWebhooksManagers.Subscriptions;
 using Sameposty.Services.SubscriptionManager;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -116,6 +118,8 @@ builder.Services.AddScoped<IPostsPublisher, PostsPublisher>();
 builder.Services.AddHttpClient();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IConfigurator, Configurator>();
+builder.Services.AddScoped<IStripeWebhooksManager, StripeInvoiceWebhooksManager>();
+builder.Services.AddScoped<IStripeSubscriptionWebhooksManager, StripeSubscriptionWebhooksManager>();
 
 builder.Services.AddHangfire(config => config
 .UseSimpleAssemblyNameTypeSerializer()
@@ -136,6 +140,12 @@ builder.Services.AddSingleton<ISecretsProvider>(_ =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<SamepostyDbContext>();
+    await new SeedDatabase(dbContext).Run();
+}
 
 app.UseStaticFiles();
 app.UseHttpsRedirection();

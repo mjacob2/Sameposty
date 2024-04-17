@@ -45,6 +45,8 @@ public class User : EntityBase
 
     public List<Post> Posts { get; set; } = [];
 
+    public List<Invoice> Invoices { get; set; } = [];
+
     public BasicInformation BasicInformation { get; set; } = new();
 
     public FacebookConnection? FacebookConnection { get; set; }

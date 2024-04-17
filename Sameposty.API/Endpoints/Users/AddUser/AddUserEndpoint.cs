@@ -37,9 +37,9 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
 
         var regonCompany = await regonService.GetCompanyData(req.NIP);
 
-        if (regonCompany == null)
+        if (regonCompany.Nazwa == null || regonCompany.Miejscowosc == null || regonCompany.KodPocztowy == null || regonCompany.Nip == null || !string.IsNullOrEmpty(regonCompany.DataZakonczeniaDzialalnosci))
         {
-            ThrowError("Nie znaleziono danych firmy z takim NIP");
+            ThrowError($"Dane firmy znalezione w bazie REGON są niekompletne: Nazwa:{regonCompany.Nazwa ?? "brak"}, Miejscowość:{regonCompany.Miejscowosc ?? "brak"}, Poczta:{regonCompany.KodPocztowy ?? "brak"}, NIP: {regonCompany.Nip ?? "brak"}, Data zamknięcia: {regonCompany.DataZakonczeniaDzialalnosci}");
         }
 
         var salt = Hasher.GetSalt();

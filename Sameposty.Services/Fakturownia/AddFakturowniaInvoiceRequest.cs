@@ -10,7 +10,7 @@ public class AddFakturowniaInvoiceRequest
     public AddFakturowniaInvoiceModel Invoice { get; set; }
 }
 
-public class AddFakturowniaInvoiceModel(long clientId)
+public class AddFakturowniaInvoiceModel(long? clientId)
 {
     [JsonPropertyName("kind")]
     public string Kind { get; set; } = "vat";
@@ -22,7 +22,7 @@ public class AddFakturowniaInvoiceModel(long clientId)
     public string Place { get; set; } = "Wrocław";
 
     [JsonPropertyName("client_id")]
-    public long ClientId { get; set; } = clientId;
+    public long? ClientId { get; set; } = clientId;
 
     [JsonPropertyName("payment_type")]
     public string PaymentType { get; set; } = "card";

@@ -33,4 +33,11 @@ public class FakturowniaTest
 
         var gf = await fakturowniaService.CreateInvoiceAsync(request);
     }
+
+    [Fact]
+    public async Task SendInvoiceEmail()
+    {
+        var fakturowniaService = new FakturowniaService("txN5wuxiAaMPDfjhMoj", new HttpClient());
+        await fakturowniaService.SendInvoiceToUser(284935497);
+    }
 }

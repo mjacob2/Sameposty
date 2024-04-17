@@ -13,7 +13,7 @@ public class CreatePortalSessionEndpoint(IQueryExecutor queryExecutor, ISecretsP
     private readonly string StripeApiKey = secretsProvider.StripeApiKey;
     public override void Configure()
     {
-        Post("create-portal-session");
+        Get("create-portal-session");
     }
 
     public override async Task HandleAsync(CancellationToken ct)

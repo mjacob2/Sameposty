@@ -16,7 +16,10 @@ internal static class EmailBodyProvider
 <p>Witaj w serwisie sameposty.pl! <br>
 Aby potwierdzić swoje konto i wygenerować pierwsze, wspaniałe posty na social media, kliknij w poniższy przycisk <br><br>
 <a href={url}/confirm?token={token} style=""background-color: #0042B6; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border-radius: 20px; cursor: pointer;"">Potwierdź e-mail</a>
-
+<br><br>
+Przycisk nie działa?<br>
+Skopiuj i wklej poniższy link do przeglądarki: <br>
+{url}/confirm?token={token} <br><br>
 <p>-- Marek z sameposty.pl<br>";
     }
 

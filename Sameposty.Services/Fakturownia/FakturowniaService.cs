@@ -56,4 +56,16 @@ public class FakturowniaService(string fakturowniaApiKey, HttpClient http) : IFa
             throw new HttpRequestException("Fakturownia invoice creation failed");
         }
     }
+
+    public async Task SendInvoiceToUser(long invoiceId)
+    {
+        var url = $"https://middlers.fakturownia.pl/invoices/{invoiceId}/send_by_email.json?api_token={fakturowniaApiKey}";
+
+        var response = await http.PostAsync(url, null);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException("Fakturownia invoice sending failed");
+        }
+    }
 }
