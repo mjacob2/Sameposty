@@ -122,6 +122,7 @@ builder.Services.AddScoped<IStripeWebhooksManager, StripeInvoiceWebhooksManager>
 builder.Services.AddScoped<IStripeSubscriptionWebhooksManager, StripeSubscriptionWebhooksManager>();
 
 builder.Services.AddHangfire(config => config
+
 .UseSimpleAssemblyNameTypeSerializer()
 .UseRecommendedSerializerSettings(o => o.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
 .UseSqlServerStorage(dbConnectionString));
@@ -147,13 +148,14 @@ using (var scope = app.Services.CreateScope())
     await new SeedDatabase(dbContext).Run();
 }
 
+app.UseAuthentication()
+    .UseAuthorization()
+    .UseFastEndpoints()
+    .UseSwaggerGen();
 app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseCors();
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseFastEndpoints()
-    .UseSwaggerGen();
+
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     Authorization = new[] { new MyAuthorizationFilter() }

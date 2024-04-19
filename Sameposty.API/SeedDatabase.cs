@@ -11,7 +11,7 @@ public class SeedDatabase(SamepostyDbContext db)
         {
             var user = new User
             {
-                Email = "admin",
+                Email = "jakubicki.m@gmail.com",
                 Password = "adminadmin",
                 Salt = string.Empty,
                 NIP = "5321574227",
