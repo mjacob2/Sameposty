@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sameposty.DataAccess", "Sam
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0B176F25-795D-407A-8BCD-62C6C63EC993}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sameposty.Services.Tests", "Sameposty.Services.Tests\Sameposty.Services.Tests.csproj", "{21FA585B-99C3-4B9B-B4E6-6E870ED15C37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sameposty.Services.Tests", "Sameposty.Services.Tests\Sameposty.Services.Tests.csproj", "{21FA585B-99C3-4B9B-B4E6-6E870ED15C37}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{8558FC8F-3691-47B1-A523-C59C3DCB9150}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublishPostFunction", "PublishPostFunction\PublishPostFunction.csproj", "{8A49D49B-BCAA-480E-9B71-9DF10B81431A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,12 +39,17 @@ Global
 		{21FA585B-99C3-4B9B-B4E6-6E870ED15C37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21FA585B-99C3-4B9B-B4E6-6E870ED15C37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21FA585B-99C3-4B9B-B4E6-6E870ED15C37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A49D49B-BCAA-480E-9B71-9DF10B81431A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A49D49B-BCAA-480E-9B71-9DF10B81431A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A49D49B-BCAA-480E-9B71-9DF10B81431A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A49D49B-BCAA-480E-9B71-9DF10B81431A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{21FA585B-99C3-4B9B-B4E6-6E870ED15C37} = {0B176F25-795D-407A-8BCD-62C6C63EC993}
+		{8A49D49B-BCAA-480E-9B71-9DF10B81431A} = {8558FC8F-3691-47B1-A523-C59C3DCB9150}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B7B79D52-966B-43C7-AC41-3C8F06FB5D01}
