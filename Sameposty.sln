@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sameposty.Services.Tests", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{8558FC8F-3691-47B1-A523-C59C3DCB9150}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublishPostFunction", "PublishPostFunction\PublishPostFunction.csproj", "{8A49D49B-BCAA-480E-9B71-9DF10B81431A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublishPostFunction", "PublishPostFunction\PublishPostFunction.csproj", "{8A49D49B-BCAA-480E-9B71-9DF10B81431A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

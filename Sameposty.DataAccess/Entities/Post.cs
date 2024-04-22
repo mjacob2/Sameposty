@@ -4,10 +4,6 @@ namespace Sameposty.DataAccess.Entities;
 public class Post : EntityBase
 {
     [Required]
-    [MaxLength(100)]
-    public string Title { get; set; } = string.Empty;
-
-    [Required]
     public string Description { get; set; } = string.Empty;
 
     [Required]
@@ -18,8 +14,6 @@ public class Post : EntityBase
     public DateTime ShedulePublishDate { get; set; }
 
     public DateTime? PublishedDate { get; set; }
-
-    public string PlatformPostId { get; set; } = string.Empty;
 
     public bool IsPublished { get; set; }
 

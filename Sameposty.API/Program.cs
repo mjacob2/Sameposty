@@ -48,8 +48,6 @@ builder.Services.AddCors(opt =>
         });
 });
 
-builder.Services.AddAuthorization();
-builder.Services.AddAuthentication();
 
 var secrets = new Secrets();
 var dbConnectionString = "";
@@ -122,7 +120,6 @@ builder.Services.AddScoped<IStripeWebhooksManager, StripeInvoiceWebhooksManager>
 builder.Services.AddScoped<IStripeSubscriptionWebhooksManager, StripeSubscriptionWebhooksManager>();
 
 builder.Services.AddHangfire(config => config
-
 .UseSimpleAssemblyNameTypeSerializer()
 .UseRecommendedSerializerSettings(o => o.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
 .UseSqlServerStorage(dbConnectionString));
@@ -140,6 +137,8 @@ builder.Services.AddSingleton<ISecretsProvider>(_ =>
     return new SecretsProvider(secrets.StripeApiKey);
 });
 
+
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -148,27 +147,28 @@ using (var scope = app.Services.CreateScope())
     await new SeedDatabase(dbContext).Run();
 }
 
-app.UseAuthentication()
-    .UseAuthorization()
-    .UseFastEndpoints()
-    .UseSwaggerGen();
-app.UseStaticFiles();
-app.UseHttpsRedirection();
-app.UseCors();
-
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     Authorization = new[] { new MyAuthorizationFilter() }
 });
+app.UseStaticFiles();
+app.UseHttpsRedirection();
+app.UseCors();
+app.UseAuthentication()
+    .UseAuthorization()
+    .UseFastEndpoints()
+    .UseSwaggerGen();
+
+
+
 
 
 app.Run();
 
 static void AddFastEndpoints(WebApplicationBuilder builder, string key)
 {
-    builder.Services
-        .AddFastEndpoints()
-        .AddJWTBearerAuth(key)
-        .AddAuthorization()
-        .SwaggerDocument();
+    builder.Services.AddAuthenticationJwtBearer(s => s.SigningKey = key);
+    builder.Services.AddAuthorization();
+    builder.Services.AddFastEndpoints();
+    builder.Services.SwaggerDocument();
 }

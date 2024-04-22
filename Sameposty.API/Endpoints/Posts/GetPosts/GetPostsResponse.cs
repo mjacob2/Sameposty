@@ -11,7 +11,6 @@ public class GetPostsResponse
             Posts.Add(new Post
             {
                 Id = item.Id,
-                Title = item.Title
             });
         }
     }

@@ -1,10 +1,13 @@
 using Azure.Messaging.ServiceBus;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Sameposty.DataAccess.Executors;
+using Sameposty.Services.FileRemover;
+using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
 
 namespace PublishPostFunction;
 
-public class PublishPost(ILogger<PublishPost> logger)
+public class PublishPost(ILogger<PublishPost> logger, ICommandExecutor commandExecutor, IFileRemover fileRemover, IImageSaver imageSaver)
 {
     [Function(nameof(PublishPost))]
     public async Task Run(
@@ -12,11 +15,7 @@ public class PublishPost(ILogger<PublishPost> logger)
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {
-        logger.LogInformation("Message ID: {id}", message.MessageId);
-        logger.LogInformation("Message Body: {body}", message.Body);
-        logger.LogInformation("Message Content-Type: {contentType}", message.ContentType);
 
-        // Complete the message
         await messageActions.CompleteMessageAsync(message);
     }
 }

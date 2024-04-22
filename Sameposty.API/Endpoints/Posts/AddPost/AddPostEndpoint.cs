@@ -46,7 +46,7 @@ public class AddPostEndpoint(IQueryExecutor queryExecutor, ICommandExecutor comm
             ShedulePublishDate = req.Date,
         };
 
-        var newPostGenerated = await postsGenerator.GeneratePostsAsync(generatePostRequest, 1);
+        var newPostGenerated = await postsGenerator.GenerateSinglePost(generatePostRequest);
 
         if (userFromDb.Role != DataAccess.Entities.Roles.Admin)
         {
@@ -54,7 +54,7 @@ public class AddPostEndpoint(IQueryExecutor queryExecutor, ICommandExecutor comm
             userFromDb.TextTokensUsed++;
         }
 
-        var addPostCommand = new AddPostCommand() { Parameter = newPostGenerated[0] };
+        var addPostCommand = new AddPostCommand() { Parameter = newPostGenerated };
         var newPostAdded = await commandExecutor.ExecuteCommand(addPostCommand);
 
         await SendOkAsync(newPostAdded, ct);

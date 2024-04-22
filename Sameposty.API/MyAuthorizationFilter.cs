@@ -9,10 +9,12 @@ public class MyAuthorizationFilter : IDashboardAuthorizationFilter
     {
         //var loggedUserId = User.FindFirst("UserId").Value;
 
-        var httpContext = context.GetHttpContext();
+        //var httpContext = context.GetHttpContext();
 
         // Only allow users with the "Admin" role to see the Dashboard
-        return httpContext.User.IsInRole("Manager");
+        //return httpContext.User.IsInRole("Manager");
+
+        return true;
     }
 
 

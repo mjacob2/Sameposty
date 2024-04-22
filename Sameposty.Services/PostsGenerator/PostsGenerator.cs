@@ -17,7 +17,9 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
         var tasks = Enumerable.Range(0, numberOfPostsToGenerate)
             .Select(async index =>
             {
-                request.ShedulePublishDate = DateTime.Today.AddDays(index + 2).Date.AddHours(9);
+                TimeZoneInfo cetZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+                DateTime localDateTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow.AddDays(index + 2).Date.AddHours(9), cetZone);
+                request.ShedulePublishDate = localDateTime;
 
                 var post = await GenerateSinglePost(request);
                 posts.Add(post);
@@ -28,8 +30,12 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
         return posts.ToList();
     }
 
-    private async Task<Post> GenerateSinglePost(GeneratePostRequest request)
+    public async Task<Post> GenerateSinglePost(GeneratePostRequest request)
     {
+
+        DateTimeOffset localDateTimeOffset = new(request.ShedulePublishDate, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time").GetUtcOffset(request.ShedulePublishDate));
+        DateTimeOffset utcDateTimeOffset = localDateTimeOffset.UtcDateTime;
+
         var descriptionTask = postDescriptionGenerator.GeneratePostDescription(request);
         var imageTask = imageGenerating.GenerateImage(request.ProductsAndServices, 1);
 
@@ -43,7 +49,6 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
             CreatedDate = DateTime.Now,
             UserId = request.UserId,
             Description = description,
-            Title = "",
             ImageUrl = $"{configurator.ApiBaseUrl}/{imageName}",
             IsPublished = false,
             ShedulePublishDate = request.ShedulePublishDate,
@@ -55,7 +60,8 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
             Post = post,
 
         };
-        var jobPublishId = BackgroundJob.Schedule(() => postPublishOrchestrator.PublishPostToAll(publishRequest), new DateTimeOffset(post.ShedulePublishDate));
+
+        var jobPublishId = BackgroundJob.Schedule(() => postPublishOrchestrator.PublishPostToAll(publishRequest), utcDateTimeOffset);
 
         post.JobPublishId = jobPublishId;
 
@@ -71,7 +77,6 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
             CreatedDate = DateTime.Now,
             UserId = request.UserId,
             Description = "",
-            Title = "",
             ImageUrl = $"",
             IsPublished = false,
             ShedulePublishDate = DateTime.Today.AddDays(1).Date.AddHours(9),

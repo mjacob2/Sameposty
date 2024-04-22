@@ -49,7 +49,7 @@ public class PostPublishOrchestrator(IPostsPublisher postsPublisher, IImageSaver
         post.IsPublished = true;
         post.JobPublishId = string.Empty;
         post.PublishedDate = GetNowInPoland();
-        post.PlatformPostId = "published";
+        post.IsPublishingInProgress = false;
         post.ImageUrl = $"{baseApiUrl}/Thumbnails/{imageThumbnailUrl}";
 
         var updatePostCommand = new UpdatePostCommand() { Parameter = post };

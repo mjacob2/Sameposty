@@ -34,15 +34,16 @@ public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQ
 
         BackgroundJob.Delete(postFromDb.JobPublishId);
 
-        //DateTimeOffset cetDateTimeOffset = new(req.Date, TimeSpan.FromHours(1)); // Assuming req.Date is in CET (Central European Time)
-
         var request = new PublishPostToAllRequest()
         {
             BaseApiUrl = configurator.ApiBaseUrl,
             Post = postFromDb,
         };
 
-        postFromDb.JobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(request), new DateTimeOffset(req.Date));
+        DateTimeOffset localDateTimeOffset = new(req.Date, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time").GetUtcOffset(req.Date));
+        DateTimeOffset utcDateTimeOffset = localDateTimeOffset.UtcDateTime;
+
+        postFromDb.JobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(request), utcDateTimeOffset.UtcDateTime);
 
         var updateScheduleDateCommand = new UpdatePostScheduleDateCommand(req.PostId, req.Date);
 

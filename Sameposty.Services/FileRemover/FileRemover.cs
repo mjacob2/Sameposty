@@ -5,7 +5,6 @@ public class FileRemover(IConfigurator configurator) : IFileRemover
 {
     public void RemovePostImage(string fileName)
     {
-
         fileName = ExtractFilename(fileName);
 
         string filePath = Path.Combine(configurator.WwwRoot, fileName);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace Sameposty.Services.Configurator;
 public class Configurator(IConfiguration configuration, IWebHostEnvironment webHostEnvironment) : IConfigurator
@@ -15,4 +16,5 @@ public class Configurator(IConfiguration configuration, IWebHostEnvironment webH
     public int TextTokensPremiumLimit { get; private set; } = configuration.GetValue<int>("Settings:TextTokensPremiumLimit");
     public string SubscriptionSuccessPaymentUrl { get; private set; } = configuration.GetConnectionString("SubscriptionSuccessPaymentUrl") ?? throw new ArgumentNullException("No SubscriptionSuccessPaymentUrl provided in sppsettings.json");
     public string SubscriptionFailedPaymentUrl { get; private set; } = configuration.GetConnectionString("SubscriptionFailedPaymentUrl") ?? throw new ArgumentNullException("No SubscriptionFailedPaymentUrl provided in sppsettings.json");
+    public bool IsDevelopment => webHostEnvironment.IsDevelopment();
 }
