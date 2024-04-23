@@ -24,8 +24,8 @@ public class AddUserRequestValidator : Validator<AddUserRequest>
             .WithMessage("Hasło nie może być puste")
             .MaximumLength(20)
             .WithMessage("Hasło nie więcej niż 20 znaków")
-            .MinimumLength(6)
-            .WithMessage("Hasło nie mniej niż 6 znaków");
+            .MinimumLength(4)
+            .WithMessage("Hasło nie mniej niż 4 znaki");
 
         RuleFor(x => x.NIP)
            .NotNull()

@@ -15,6 +15,9 @@ public class AddPostEndpoint(IQueryExecutor queryExecutor, ICommandExecutor comm
     }
     public override async Task HandleAsync(AddPostRequest req, CancellationToken ct)
     {
+
+
+
         var id = User.FindFirst("UserId").Value;
         var loggedUserId = int.Parse(id);
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByIdQuery(loggedUserId));
@@ -26,12 +29,12 @@ public class AddPostEndpoint(IQueryExecutor queryExecutor, ICommandExecutor comm
 
         if (userFromDb.GetImageTokensLeft() < 1)
         {
-            ThrowError("Brak wystarczającej ilości tokenów do generowania obrazów!");
+            ThrowError("Zużyto wszystkie tokeny do generowania obrazów! Tokeny odnawiają się wraz z kolejnym okresem subskrypcji premium.");
         }
 
         if (userFromDb.GetTextTokensLeft() < 1)
         {
-            ThrowError("Brak wystarczającej ilości tokenów do generowania tekstów!");
+            ThrowError("Zużyto wszystkie tokeny do generowania tekstów! Tokeny odnawiają się wraz z kolejnym okresem subskrypcji premium.");
         }
 
         var generatePostRequest = new GeneratePostRequest()

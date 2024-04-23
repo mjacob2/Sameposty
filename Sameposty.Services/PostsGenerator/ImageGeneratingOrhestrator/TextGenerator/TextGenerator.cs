@@ -40,7 +40,7 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
             {
                 ChatMessage.FromSystem("Jesteś pomocnym asystentem"),
 
-                ChatMessage.FromUser($"Daj mi jedną, kreatywną propozycję, co może przedstawiać zdjęcie, które będzie opublikowane na social media firmy, która tak odpowiedziała na pytanie o to czym się zajmuje: {productsAndServices}"),
+                ChatMessage.FromUser($"Daj mi jedną, kreatywną propozycję, co może przedstawiać zdjęcie, które będzie opublikowane na social media firmy, która tak odpowiedziała na pytanie o to czym się zajmuje: {productsAndServices}. Twoja odpoiwedź nie może przekraczać 500 znaków."),
             }
         };
 

@@ -68,9 +68,6 @@ public class StripeInvoiceWebhooksManager(IQueryExecutor queryExecutor, IEmailSe
     }
     private async Task UpdateUser(User userFromDb, List<Post> newPostsGenerated)
     {
-        var stripeSubscription = await stripeService.GetSubscription(userFromDb.Subscription.StipeSubscriptionId);
-        userFromDb.Subscription.SubscriptionCurrentPeriodEnd = stripeSubscription.CurrentPeriodEnd.ToString();
-
         userFromDb.ImageTokensLimit = configurator.ImageTokensPremiumLimit;
         userFromDb.TextTokensLimit = configurator.TextTokensPremiumLimit;
 

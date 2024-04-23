@@ -70,7 +70,7 @@ public class SubscriptionManager(IStripeService stripeService, ICommandExecutor 
         };
     }
 
-    private async Task SaveNewSubscription(DataAccess.Entities.Subscription subscription)
+    private async Task SaveNewSubscription(Subscription subscription)
     {
         await commandExecutor.ExecuteCommand(new AddSubscriptionCommand() { Parameter = subscription });
     }

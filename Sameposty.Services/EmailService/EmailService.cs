@@ -5,6 +5,23 @@ using Sameposty.Services.Configurator;
 namespace Sameposty.Services.EmailService;
 public class EmailService(EmailServiceSecrets secrets, IConfigurator configurator) : IEmailService
 {
+    public async Task SentImageGeneratorErrorEmail(string errorMessage)
+    {
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress("Marek z sameposty.pl", "info@sameposty.pl"));
+        message.To.Add(new MailboxAddress("", "jakubicki.m@gmail.com"));
+        message.Subject = "Erroro";
+        var builder = new BodyBuilder
+        {
+            HtmlBody = errorMessage,
+        };
+        message.Body = builder.ToMessageBody();
+        using var client = new SmtpClient();
+        await client.ConnectAsync("s6.cyber-folks.pl", 465, true);
+        await client.AuthenticateAsync("info@sameposty.pl", secrets.EmailInfoPassword);
+        await client.SendAsync(message);
+        await client.DisconnectAsync(true);
+    }
     public async Task EmailUserSubscriptionCreated(string to)
     {
         var message = new MimeMessage();

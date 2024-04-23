@@ -1,5 +1,4 @@
-﻿using Sameposty.DataAccess.Commands.Prompts;
-using Sameposty.DataAccess.Executors;
+﻿using Sameposty.DataAccess.Executors;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageGenerator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
@@ -11,14 +10,14 @@ public class ImageGeneratingOrchestrator(IImageGenerator imageGenerator, IImageS
     {
         var prompt = await textGenerator.GeneratePromptForImageForPost(postDescription);
 
-        await commandExecutor.ExecuteCommand(new AddPromptCommand()
-        {
-            Parameter = new DataAccess.Entities.Prompt()
-            {
-                ImagePrompt = prompt,
-                PostId = postId
-            }
-        });
+        //await commandExecutor.ExecuteCommand(new AddPromptCommand()
+        //{
+        //    Parameter = new DataAccess.Entities.Prompt()
+        //    {
+        //        ImagePrompt = prompt,
+        //        PostId = postId
+        //    }
+        //});
 
         var imageUrl = await imageGenerator.GenerateImageUrl(prompt);
 

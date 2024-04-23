@@ -1,4 +1,5 @@
-﻿namespace Sameposty.Services.EmailService;
+﻿
+namespace Sameposty.Services.EmailService;
 internal static class EmailBodyProvider
 {
     public static string NewPostsCreatedBodyEmail()

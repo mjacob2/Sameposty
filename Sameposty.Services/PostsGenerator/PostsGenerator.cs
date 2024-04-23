@@ -12,16 +12,26 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
 {
     private readonly ConcurrentBag<Post> posts = [];
 
-    public async Task<List<Post>> GeneratePostsAsync(GeneratePostRequest request, int numberOfPostsToGenerate)
+    public async Task<List<Post>> GeneratePostsAsync(GeneratePostRequest originalRequest, int numberOfPostsToGenerate)
     {
-        var tasks = Enumerable.Range(0, numberOfPostsToGenerate)
+        var tasks = Enumerable.Range(1, numberOfPostsToGenerate)
             .Select(async index =>
             {
+                var newRequest = new GeneratePostRequest()
+                {
+                    Assets = originalRequest.Assets,
+                    Audience = originalRequest.Audience,
+                    UserId = originalRequest.UserId,
+                    BrandName = originalRequest.BrandName,
+                    Goals = originalRequest.Goals,
+                    Mission = originalRequest.Mission,
+                    ProductsAndServices = originalRequest.ProductsAndServices,
+                };
                 TimeZoneInfo cetZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
-                DateTime localDateTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow.AddDays(index + 2).Date.AddHours(9), cetZone);
-                request.ShedulePublishDate = localDateTime;
+                DateTime localDateTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow.AddDays(index * 2).Date.AddHours(7), cetZone);
+                newRequest.ShedulePublishDate = localDateTime;
 
-                var post = await GenerateSinglePost(request);
+                var post = await GenerateSinglePost(newRequest);
                 posts.Add(post);
             });
 
