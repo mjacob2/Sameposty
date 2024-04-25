@@ -33,12 +33,12 @@ public class StripeWebhookSubscriptionsEndpoint(IStripeSubscriptionWebhooksManag
         if (stripeEvent.Type == Events.CustomerSubscriptionCreated)
         {
             BackgroundJob.Schedule(() =>
-           manager.ManageSubscriptionCreated(subscription), TimeSpan.FromSeconds(10));
+           manager.ManageSubscriptionCreated(subscription), TimeSpan.FromSeconds(2));
         }
         else if (stripeEvent.Type == Events.CustomerSubscriptionDeleted)
         {
             BackgroundJob.Schedule(() =>
-            manager.ManageSubscriptionDeleted(subscription), TimeSpan.FromSeconds(10));
+            manager.ManageSubscriptionDeleted(subscription), TimeSpan.FromSeconds(2));
         }
     }
 }

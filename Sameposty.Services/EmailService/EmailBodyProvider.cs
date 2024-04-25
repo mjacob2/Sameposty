@@ -5,7 +5,7 @@ internal static class EmailBodyProvider
     public static string NewPostsCreatedBodyEmail()
     {
         return $@"<p style=""margin-top: 20px;"">Cześć!<br>
-<p>Kliknij poniższy przycisk i zobacz, jakie wspaniałe, nowe posty właśnie przygotowalismy! Pamiętaj, aby je zatwierdzić! <br><br>
+<p>Kliknij poniższy przycisk i zobacz, jakie wspaniałe, nowe posty właśnie przygotowalismy! Pamiętaj, aby je zatwierdzić! Inaczej, nie zostaną opublikowane!<br><br>
 <a href=https://sameposty.pl style=""background-color: #0042B6; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border-radius: 20px; cursor: pointer;"">Sprawdź nowe posty</a>
 
 <p>-- Marek z sameposty.pl<br>";
@@ -67,7 +67,9 @@ To, że zrezygnowałeś z subskrypcji, nie oznacza, że całe konto zostało anu
 Nawet nie wiesz jak się cieszę! <br><br>
 
 Wierzę, że pozostaniesz subskrybentem na długo! Przed nami setki ekscytujących postów do stworzenia i opublikownia na social mediach Twojej firmy!<br><br>
-Poczekaj jeszcze chwilę na kolejny e-mail. Powinien przyjść za około 2 minuty z informacją, że kolejna porcja postów jest już gotowa! <br><br>
+Poczekaj jeszcze chwilę na kolejny e-mail. Powinien przyjść za około 2-4 minuty z informacją, że kolejna porcja postów jest już gotowa! <br><br>
+
+Oczekuj również na fakturę, którą także wyślemy mejlowo. Pamiętaj, że wystawcą faktury jest Middlers Sp. z o.o., właściciel serwisu sameposty.pl. <br><br>
 
 <p>-- Marek z sameposty.pl<br>";
     }

@@ -3,6 +3,3 @@
 // Project-level suppressions either have no target or are given
 // a specific target and scoped to a namespace, type, member, etc.
 
-using System.Diagnostics.CodeAnalysis;
-
-[assembly: SuppressMessage("Style", "IDE0305:Simplify collection initialization", Justification = "<Pending>", Scope = "member", Target = "~M:Sameposty.Services.PostsGenerator.PostsGenerator.GenerateInitialPostsAsync(Sameposty.Services.PostsGenerator.GeneratePostRequest)~System.Threading.Tasks.Task{System.Collections.Generic.List{Sameposty.DataAccess.Entities.Post}}")]

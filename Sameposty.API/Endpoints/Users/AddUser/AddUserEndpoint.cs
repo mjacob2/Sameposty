@@ -11,7 +11,7 @@ using Sameposty.Services.REGON;
 
 namespace Sameposty.API.Endpoints.Users.AddUser;
 
-public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IEmailService email, ILogger<AddUserEndpoint> logger, IConfigurator configurator, IRegonService regonService) : Endpoint<AddUserRequest>
+public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IEmailService email, IConfigurator configurator, IRegonService regonService, IJWTBearerProvider jwt) : Endpoint<AddUserRequest>
 {
     public override void Configure()
     {
@@ -68,11 +68,9 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
 
         var newUserFromDb = await commandExecutor.ExecuteCommand(command);
 
-        string jwtToken = JWTFactory.GenerateJwt(newUserFromDb.Id.ToString());
+        var newToken = jwt.ProvideToken(newUserFromDb.Id.ToString(), newUserFromDb.Email, newUserFromDb.Role.ToString());
 
-        logger.LogWarning($"created token: {jwtToken}");
-
-        await email.SendRegisterConfirmationEmail(req.Email, jwtToken);
+        await email.SendRegisterConfirmationEmail(req.Email, newToken);
 
         await SendOkAsync($"{user.Email}", ct);
     }

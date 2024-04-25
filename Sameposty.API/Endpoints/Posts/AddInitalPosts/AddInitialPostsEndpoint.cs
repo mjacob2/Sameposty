@@ -3,11 +3,11 @@ using Sameposty.DataAccess.Commands.Users;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.Configurator;
-using Sameposty.Services.PostsGenerator;
+using Sameposty.Services.PostGeneratingManager;
 
 namespace Sameposty.API.Endpoints.Posts.AddInitalPosts;
 
-public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecutor commandExecutor, IPostsGenerator postsGenerator, IConfigurator configurator) : EndpointWithoutRequest
+public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, IPostGeneratingManager manager, IConfigurator configurator, ICommandExecutor commandExecutor) : EndpointWithoutRequest
 {
     public override void Configure()
     {
@@ -41,37 +41,11 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, ICommandExecu
             ThrowError("Brak wystarczającej ilości tokenów do generowania tekstów!");
         }
 
-        var generatePostRequest = new GeneratePostRequest()
-        {
-            UserId = userFromDb.Id,
-            BrandName = userFromDb.BasicInformation.BrandName,
-            Audience = userFromDb.BasicInformation.Audience,
-            Mission = userFromDb.BasicInformation.Mission,
-            ProductsAndServices = userFromDb.BasicInformation.ProductsAndServices,
-            Goals = userFromDb.BasicInformation.Goals,
-            Assets = userFromDb.BasicInformation.Assets,
-        };
+        var posts = await manager.ManageGeneratingPosts(userFromDb, configurator.NumberFirstPostsGenerated);
 
-        var newPostsGenerated = userFromDb.Email != "admin"
-            ? await postsGenerator.GeneratePostsAsync(generatePostRequest, configurator.NumberFirstPostsGenerated)
-            : postsGenerator.GenerateStubbedPosts(generatePostRequest);
+        userFromDb.Privilege.CanGenerateInitialPosts = false;
+        await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = userFromDb });
 
-        userFromDb.Posts = newPostsGenerated;
-
-        if (userFromDb.Role != DataAccess.Entities.Roles.Admin)
-        {
-            userFromDb.ImageTokensUsed += configurator.NumberFirstPostsGenerated;
-            userFromDb.TextTokensUsed += configurator.NumberFirstPostsGenerated;
-        }
-
-        if (userFromDb.Role == DataAccess.Entities.Roles.FreeUser)
-        {
-            userFromDb.Privilege.CanGenerateInitialPosts = false;
-        }
-
-        var updateUserCommand = new UpdateUserCommand() { Parameter = userFromDb };
-        await commandExecutor.ExecuteCommand(updateUserCommand);
-
-        await SendOkAsync(newPostsGenerated, ct);
+        await SendOkAsync(posts, ct);
     }
 }

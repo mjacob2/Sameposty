@@ -19,6 +19,11 @@ public class RegenerateImageEndpoint(IQueryExecutor queryExecutor, IImageGenerat
 
     public override async Task HandleAsync(RegenerateImageRequest req, CancellationToken ct)
     {
+        if (string.IsNullOrEmpty(req.Prompt))
+        {
+            ThrowError("Polecenie nie może być puste!");
+        }
+
         var id = User.FindFirst("UserId").Value;
         var loggedUserId = int.Parse(id);
 
@@ -34,6 +39,11 @@ public class RegenerateImageEndpoint(IQueryExecutor queryExecutor, IImageGenerat
         var imageUrl = $"{configurator.ApiBaseUrl}/{newImageName}";
 
         var postToUpdate = await queryExecutor.ExecuteQuery(new GetPostByIdQuery() { PostId = req.PostId });
+
+        if (postToUpdate.IsPublishingInProgress || postToUpdate.IsPublished)
+        {
+            ThrowError("Nie można już edytować tego posta");
+        }
 
         fileRemover.RemovePostImage(postToUpdate.ImageUrl);
 

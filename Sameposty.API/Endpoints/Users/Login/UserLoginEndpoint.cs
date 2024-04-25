@@ -2,13 +2,12 @@
 using Microsoft.AspNetCore.Identity.Data;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
-using Sameposty.Services.EmailService;
 using Sameposty.Services.Hasher;
 using Sameposty.Services.JWTService;
 
 namespace Sameposty.API.Endpoints.Users.Login;
 
-public class UserLoginEndpoint(IQueryExecutor queryExecutor, IEmailService email) : Endpoint<LoginRequest>
+public class UserLoginEndpoint(IQueryExecutor queryExecutor, IJWTBearerProvider jwt) : Endpoint<LoginRequest>
 {
     public override void Configure()
     {
@@ -51,12 +50,12 @@ public class UserLoginEndpoint(IQueryExecutor queryExecutor, IEmailService email
 
         }
 
-        string jwtToken = JWTFactory.GenerateJwt(userFromDb.Id.ToString());
+        var token = jwt.ProvideToken(userFromDb.Id.ToString(), userFromDb.Email, userFromDb.Role.ToString());
 
         await SendAsync(new
         {
             Id = userFromDb.Id,
-            Token = jwtToken,
+            Token = token,
             Username = req.Email,
         }, cancellation: ct);
 

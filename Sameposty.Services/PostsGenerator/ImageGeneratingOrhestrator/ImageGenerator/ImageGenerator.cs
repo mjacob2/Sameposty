@@ -60,7 +60,10 @@ public class ImageGenerator(IOpenAIService openAiService, IConfigurator configur
         else
         {
             logger.LogError(imageResult.Error.Message ?? "Wystapił wyjątek else w ImageGenerator");
-            await email.SentImageGeneratorErrorEmail(imageResult.Error.Message ?? "Wystapił wyjątek else w ImageGenerator");
+
+            var message = $"Error: {imageResult.Error.Message} ------ Prompt: {myPrompt}";
+
+            await email.SentImageGeneratorErrorEmail(message);
             return "https://sameposty.pl/media/error.png";
         }
     }

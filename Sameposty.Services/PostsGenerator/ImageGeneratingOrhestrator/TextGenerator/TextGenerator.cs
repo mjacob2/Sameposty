@@ -17,7 +17,7 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
             MaxTokens = maxTokensUsedToGenerateImagePrompt,
             Messages = new List<ChatMessage>
             {
-                ChatMessage.FromSystem("$\"Jesteś pracownikiem agencji marketingowej i jesteś specjalistą od marketingu w social media. Twoim zadaniem jest tworzyć świetny tekst do posta na Facebook. Musisz pamiętać, jakie teksty były już tworzone dla tej firmy, żeby teksty się nie powtarzały. Tekst nie może być dłuższy niż {maxCharCount} znaków. Tworzysz sam tekst posta. Bez zanych komentarzy ani dopisków."),
+                ChatMessage.FromSystem("$\"Jesteś pracownikiem agencji marketingowej i jesteś specjalistą od marketingu w social media. Twoim zadaniem jest tworzyć świetny tekst do posta na Facebook. Musisz pamiętać, jakie teksty były już tworzone dla tej firmy, żeby teksty się nie powtarzały. Tekst nie może być dłuższy niż {maxCharCount} znaków. Tworzysz sam tekst posta. Bez żanych komentarzy ani dopisków."),
 
                 ChatMessage.FromSystem($"Pracujesz dla firmy, której nazwa marketingowa to {request.BrandName} a jej grupa docelowa to: {request.Audience}"),
 
@@ -38,9 +38,9 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
             MaxTokens = maxTokensUsedToGenerateImagePrompt,
             Messages = new List<ChatMessage>
             {
-                ChatMessage.FromSystem("Jesteś pomocnym asystentem"),
+                ChatMessage.FromSystem("Jesteś pomocnym asystentem, który pisze prompty, które potem posłużą do generowania obrazów w nowym modelu sztucznej inteligencji. Weź pod uwagę zasady bezpieczeństwa, które mogą stać na straży takiego generatora obrazów. Czyli nie podawaj nazw zastrzeżonych, obraźliwych słów, niebezpiecznych, itp."),
 
-                ChatMessage.FromUser($"Daj mi jedną, kreatywną propozycję, co może przedstawiać zdjęcie, które będzie opublikowane na social media firmy, która tak odpowiedziała na pytanie o to czym się zajmuje: {productsAndServices}. Twoja odpoiwedź nie może przekraczać 500 znaków."),
+                ChatMessage.FromUser($"Daj mi jedną, kreatywną propozycję, co może przedstawiać zdjęcie, które będzie opublikowane na social media firmy, która tak odpowiedziała na pytanie o to czym się zajmuje: {productsAndServices}. Twoja odpowiedź nie może przekraczać 300 znaków."),
             }
         };
 

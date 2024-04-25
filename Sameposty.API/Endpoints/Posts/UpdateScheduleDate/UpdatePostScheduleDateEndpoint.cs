@@ -19,6 +19,15 @@ public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQ
 
     public override async Task HandleAsync(UpdatePostSheduledDateRequest req, CancellationToken ct)
     {
+        var reqDateUtc = req.Date.ToUniversalTime();
+        var utcNow = DateTime.UtcNow;
+        var utcNowPlus10Minutes = utcNow.AddMinutes(10);
+
+        if (reqDateUtc < utcNowPlus10Minutes)
+        {
+            ThrowError("Postu nie można zaplanować na wcześniej niż za 10 minut!");
+        }
+
         var id = User.FindFirst("UserId").Value;
         var loggedUserId = int.Parse(id);
         var getUserFromDbQuery = new GetUserByIdQuery(loggedUserId);
@@ -30,6 +39,11 @@ public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQ
         if (postFromDb.UserId != loggedUserId)
         {
             ThrowError("Brak uprawnień");
+        }
+
+        if (postFromDb.IsPublishingInProgress || postFromDb.IsPublished)
+        {
+            ThrowError("Nie można już edytować tego posta");
         }
 
         BackgroundJob.Delete(postFromDb.JobPublishId);

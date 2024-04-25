@@ -11,11 +11,12 @@ using Sameposty.API.Models;
 using Sameposty.DataAccess.DatabaseContext;
 using Sameposty.DataAccess.Executors;
 using Sameposty.Services.Configurator;
-using Sameposty.Services.EasyCart;
 using Sameposty.Services.EmailService;
 using Sameposty.Services.FacebookTokenManager;
 using Sameposty.Services.Fakturownia;
 using Sameposty.Services.FileRemover;
+using Sameposty.Services.JWTService;
+using Sameposty.Services.PostGeneratingManager;
 using Sameposty.Services.PostsGenerator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageGenerator;
@@ -87,7 +88,6 @@ builder.Services.AddScoped<IImageGenerator, ImageGenerator>();
 builder.Services.AddScoped<ITextGenerator, TextGenerator>();
 builder.Services.AddScoped<IImageSaver, ImageSaver>();
 builder.Services.AddScoped<IFileRemover, FileRemover>();
-builder.Services.AddScoped<IEasyCart, EasyCart>();
 builder.Services.AddScoped<IImageGeneratingOrchestrator, ImageGeneratingOrchestrator>();
 builder.Services.AddScoped<IFacebookTokenManager>(options =>
 {
@@ -134,9 +134,11 @@ builder.Services.AddSingleton<IFakturowniaService>(options =>
 
 builder.Services.AddSingleton<ISecretsProvider>(_ =>
 {
-    return new SecretsProvider(secrets.StripeApiKey);
+    return new SecretsProvider(secrets.StripeApiKey, secrets.JWTBearerTokenSignKey);
 });
 
+builder.Services.AddSingleton<IJWTBearerProvider, JWTBearerProvider>();
+builder.Services.AddTransient<IPostGeneratingManager, PostGeneratingManager>();
 
 
 var app = builder.Build();

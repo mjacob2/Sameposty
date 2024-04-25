@@ -2,11 +2,12 @@
 using Sameposty.DataAccess.Commands.FacebookConnections;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
+using Sameposty.DataAccess.Queries.FacebookConnections;
 using Sameposty.Services.FacebookTokenManager;
 
 namespace Sameposty.API.Endpoints.FacebookConnections.Add;
 
-public class AddFacebookConnectionEndpoint(ICommandExecutor commandExecutor, IFacebookTokenManager facebookTokenManager) : Endpoint<AddSocialMediaConnectionRequest, Response>
+public class AddFacebookConnectionEndpoint(ICommandExecutor commandExecutor, IFacebookTokenManager facebookTokenManager, IQueryExecutor queryExecutor) : Endpoint<AddSocialMediaConnectionRequest, Response>
 {
     public override void Configure()
     {
@@ -15,6 +16,12 @@ public class AddFacebookConnectionEndpoint(ICommandExecutor commandExecutor, IFa
 
     public override async Task HandleAsync(AddSocialMediaConnectionRequest req, CancellationToken ct)
     {
+        var facebookConnection = await queryExecutor.ExecuteQuery(new GetFacebookConnectionByPageIdQuery(req.PageId));
+        if (facebookConnection != null)
+        {
+            ThrowError("Ta strona została już dodana na innym koncie, inengo użytkownika sameposty");
+        }
+
         var loggedUserId = User.FindFirst("UserId").Value;
         var userId = int.Parse(loggedUserId);
 

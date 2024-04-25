@@ -74,26 +74,4 @@ public class SubscriptionManager(IStripeService stripeService, ICommandExecutor 
     {
         await commandExecutor.ExecuteCommand(new AddSubscriptionCommand() { Parameter = subscription });
     }
-
-    private async Task UpdateUser(User userFromDb, List<Post> newPostsGenerated)
-    {
-        List<Post> currentPosts = userFromDb.Posts;
-        currentPosts.AddRange(newPostsGenerated);
-        userFromDb.Posts = currentPosts;
-
-        if (userFromDb.Role != Roles.Admin)
-        {
-            userFromDb.ImageTokensUsed = configurator.NumberFirstPostsGenerated;
-            userFromDb.TextTokensUsed = configurator.NumberFirstPostsGenerated;
-            userFromDb.Role = Roles.PaidUser;
-        }
-
-        var updateUserCommand = new UpdateUserCommand() { Parameter = userFromDb };
-        await commandExecutor.ExecuteCommand(updateUserCommand);
-    }
-
-    Task<global::Stripe.Customer> ISubscriptionManager.GetStripeCustomerId(User userFromDb)
-    {
-        throw new NotImplementedException();
-    }
 }

@@ -37,6 +37,11 @@ public class RegeneratePostDescriptionEndpoint(ITextGenerator textGenerator, IQu
         var basicInformation = await queryExecutor.ExecuteQuery(new GetBasicInformationByUserIdQuery(loggedUserId));
         var postToUpdate = await queryExecutor.ExecuteQuery(new GetPostByIdQuery() { PostId = req.PostId });
 
+        if (postToUpdate.IsPublishingInProgress || postToUpdate.IsPublished)
+        {
+            ThrowError("Nie można już edytować tego posta");
+        }
+
         var regenerateRequest = new ReGeneratePostRequest()
         {
             UserPrompt = req.Prompt,

@@ -37,14 +37,14 @@ public class StripeWebhookInvoicesEndpoint(IStripeWebhooksManager manager) : End
         if (stripeEvent.Type == Events.InvoicePaid)
         {
             BackgroundJob.Schedule(() =>
-            manager.ManageInvoicePaid(userEmail), TimeSpan.FromSeconds(10));
+            manager.ManageInvoicePaid(userEmail), TimeSpan.FromSeconds(2));
 
 
         }
         else if (stripeEvent.Type == Events.InvoicePaymentFailed)
         {
             BackgroundJob.Schedule(() =>
-            manager.ManageInvoicePaymentFailed(userEmail), TimeSpan.FromSeconds(10));
+            manager.ManageInvoicePaymentFailed(userEmail), TimeSpan.FromSeconds(2));
         }
         else
         {

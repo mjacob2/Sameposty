@@ -13,6 +13,11 @@ public class UpdatePostDescriptionCommand(int postId, string postDescription) : 
             throw new ArgumentException(nameof(postToUpdate));
         }
 
+        if (postToUpdate.IsPublishingInProgress || postToUpdate.IsPublished)
+        {
+            throw new Exception("Nie można już edytować tego posta");
+        }
+
         postToUpdate.Description = postDescription;
 
         db.Posts.Update(postToUpdate);

@@ -5,131 +5,59 @@ using Sameposty.Services.Configurator;
 namespace Sameposty.Services.EmailService;
 public class EmailService(EmailServiceSecrets secrets, IConfigurator configurator) : IEmailService
 {
-    public async Task SentImageGeneratorErrorEmail(string errorMessage)
+    private async Task SendEmail(string to, string subject, string body)
     {
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress("Marek z sameposty.pl", "info@sameposty.pl"));
-        message.To.Add(new MailboxAddress("", "jakubicki.m@gmail.com"));
-        message.Subject = "Erroro";
+        message.To.Add(new MailboxAddress("", to));
+        message.Subject = subject;
+
         var builder = new BodyBuilder
         {
-            HtmlBody = errorMessage,
+            HtmlBody = body,
         };
+
         message.Body = builder.ToMessageBody();
+
         using var client = new SmtpClient();
         await client.ConnectAsync("s6.cyber-folks.pl", 465, true);
         await client.AuthenticateAsync("info@sameposty.pl", secrets.EmailInfoPassword);
         await client.SendAsync(message);
         await client.DisconnectAsync(true);
     }
+
+    public async Task SentImageGeneratorErrorEmail(string errorMessage)
+    {
+        await SendEmail("jakubicki.m@gmail.com", "Error podczas tworzenia zdjęcia z AI", errorMessage);
+    }
+
     public async Task EmailUserSubscriptionCreated(string to)
     {
-        var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("Marek z sameposty.pl", "info@sameposty.pl"));
-        message.To.Add(new MailboxAddress("", to));
-        message.Subject = "Dziękuję za zakup subskrypcji!";
-        var builder = new BodyBuilder
-        {
-            HtmlBody = EmailBodyProvider.SubscriptionCreatedBodyEmail(),
-        };
-        message.Body = builder.ToMessageBody();
-        using var client = new SmtpClient();
-        await client.ConnectAsync("s6.cyber-folks.pl", 465, true);
-        await client.AuthenticateAsync("info@sameposty.pl", secrets.EmailInfoPassword);
-        await client.SendAsync(message);
-        await client.DisconnectAsync(true);
+        await SendEmail(to, "Dziękuję za zakup subskrypcji!", EmailBodyProvider.SubscriptionCreatedBodyEmail());
     }
 
     public async Task EmailUserSubscriptionDeleted(string to)
     {
-        var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("Marek z sameposty.pl", "info@sameposty.pl"));
-        message.To.Add(new MailboxAddress("", to));
-        message.Subject = "Subskrypcja dobiegła końca!";
-        var builder = new BodyBuilder
-        {
-            HtmlBody = EmailBodyProvider.SubscriptionDeletedBodyEmail(),
-        };
-        message.Body = builder.ToMessageBody();
-        using var client = new SmtpClient();
-        await client.ConnectAsync("s6.cyber-folks.pl", 465, true);
-        await client.AuthenticateAsync("info@sameposty.pl", secrets.EmailInfoPassword);
-        await client.SendAsync(message);
-        await client.DisconnectAsync(true);
+        await SendEmail(to, "Subskrypcja dobiegła końca!", EmailBodyProvider.SubscriptionDeletedBodyEmail());
     }
 
     public async Task EmailUserNewPostsGenerated(string to)
     {
-        var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("Marek z sameposty.pl", "info@sameposty.pl"));
-        message.To.Add(new MailboxAddress("", to));
-        message.Subject = "Wygenerowaliśmy nowe posty. Sprawdź je koniecznie!";
-        var builder = new BodyBuilder
-        {
-            HtmlBody = EmailBodyProvider.NewPostsCreatedBodyEmail(),
-        };
-        message.Body = builder.ToMessageBody();
-        using var client = new SmtpClient();
-        await client.ConnectAsync("s6.cyber-folks.pl", 465, true);
-        await client.AuthenticateAsync("info@sameposty.pl", secrets.EmailInfoPassword);
-        await client.SendAsync(message);
-        await client.DisconnectAsync(true);
+        await SendEmail(to, "Wygenerowaliśmy nowe posty. Sprawdź je koniecznie!", EmailBodyProvider.NewPostsCreatedBodyEmail());
     }
 
     public async Task SendNotifyUserPaymentFailedEmail(string to)
     {
-        var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("Marek z sameposty.pl", "info@sameposty.pl"));
-        message.To.Add(new MailboxAddress("", to));
-        message.Subject = "Niepowodzenie płatności za subskrypcję sameposty.pl";
-        var builder = new BodyBuilder
-        {
-            HtmlBody = EmailBodyProvider.PaymentFailedEmailBody(),
-        };
-        message.Body = builder.ToMessageBody();
-        using var client = new SmtpClient();
-        await client.ConnectAsync("s6.cyber-folks.pl", 465, true);
-        await client.AuthenticateAsync("info@sameposty.pl", secrets.EmailInfoPassword);
-        await client.SendAsync(message);
-        await client.DisconnectAsync(true);
+        await SendEmail(to, "Niepowodzenie płatności za subskrypcję sameposty.pl", EmailBodyProvider.PaymentFailedEmailBody());
     }
 
     public async Task SendRegisterConfirmationEmail(string to, string token)
     {
-        var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("Marek z sameposty.pl", "info@sameposty.pl"));
-        message.To.Add(new MailboxAddress("", to));
-        message.Subject = "Potwierdź e-mail w serwisie sameposty.pl";
-        var builder = new BodyBuilder
-        {
-            HtmlBody = EmailBodyProvider.RegisterConfirmationEmailBody(configurator.AngularClientBaseURl, token),
-        };
-
-        message.Body = builder.ToMessageBody();
-        using var client = new SmtpClient();
-        await client.ConnectAsync("s6.cyber-folks.pl", 465, true);
-        await client.AuthenticateAsync("info@sameposty.pl", secrets.EmailInfoPassword);
-        await client.SendAsync(message);
-        await client.DisconnectAsync(true);
+        await SendEmail(to, "Potwierdź e-mail w serwisie sameposty.pl", EmailBodyProvider.RegisterConfirmationEmailBody(configurator.AngularClientBaseURl, token));
     }
 
     public async Task SendResetPasswordEmail(string to, string token, int userId)
     {
-        var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("Marek z sameposty.pl", "info@sameposty.pl"));
-        message.To.Add(new MailboxAddress("", to));
-        message.Subject = "Reset hasła w serwisie sameposty.pl";
-
-        var builder = new BodyBuilder
-        {
-            HtmlBody = EmailBodyProvider.ResetPasswordEmailBody(configurator.AngularClientBaseURl, to, token, userId),
-        };
-
-        message.Body = builder.ToMessageBody();
-        using var client = new SmtpClient();
-        await client.ConnectAsync("s6.cyber-folks.pl", 465, true);
-        await client.AuthenticateAsync("info@sameposty.pl", secrets.EmailInfoPassword);
-        await client.SendAsync(message);
-        await client.DisconnectAsync(true);
+        await SendEmail(to, "Reset hasła w serwisie sameposty.pl", EmailBodyProvider.ResetPasswordEmailBody(configurator.AngularClientBaseURl, to, token, userId));
     }
 }

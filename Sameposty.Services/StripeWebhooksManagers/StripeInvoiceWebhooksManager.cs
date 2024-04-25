@@ -7,11 +7,10 @@ using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.Configurator;
 using Sameposty.Services.EmailService;
 using Sameposty.Services.Fakturownia;
-using Sameposty.Services.PostsGenerator;
-using Sameposty.Services.StripeServices;
+using Sameposty.Services.PostGeneratingManager;
 
 namespace Sameposty.Services.StripeWebhooksManagers;
-public class StripeInvoiceWebhooksManager(IQueryExecutor queryExecutor, IEmailService email, IFakturowniaService fakturowniaService, IConfigurator configurator, IPostsGenerator postsGenerator, ICommandExecutor commandExecutor, IStripeService stripeService) : IStripeWebhooksManager
+public class StripeInvoiceWebhooksManager(IPostGeneratingManager manager, IQueryExecutor queryExecutor, IEmailService email, IFakturowniaService fakturowniaService, IConfigurator configurator, ICommandExecutor commandExecutor) : IStripeWebhooksManager
 {
     [AutomaticRetry(Attempts = 0)]
     public async Task ManageInvoicePaymentFailed(string userEmail)
@@ -24,16 +23,23 @@ public class StripeInvoiceWebhooksManager(IQueryExecutor queryExecutor, IEmailSe
     public async Task ManageInvoicePaid(string userEmail)
     {
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByEmailQuery(userEmail));
+        await UpdateUserTokens(userFromDb);
         var createInvoiceRequest = new AddFakturowniaInvoiceModel(userFromDb.FakturowniaClientId);
         var invoiceCreated = await fakturowniaService.CreateInvoiceAsync(createInvoiceRequest);
         await SaveInvoice(invoiceCreated, userFromDb.Id);
         await fakturowniaService.SendInvoiceToUser(invoiceCreated.Id);
-
-        var generatePostRequest = CreatePostGeneratingRequest(userFromDb);
-        var newPostsGenerated = await postsGenerator.GeneratePostsAsync(generatePostRequest, configurator.NumberPremiumPostsGenerated);
-
-        await UpdateUser(userFromDb, newPostsGenerated);
+        await manager.ManageGeneratingPosts(userFromDb, configurator.NumberPremiumPostsGenerated);
         await email.EmailUserNewPostsGenerated(userFromDb.Email);
+    }
+
+    private async Task UpdateUserTokens(User user)
+    {
+        user.ImageTokensLimit = configurator.ImageTokensPremiumLimit;
+        user.TextTokensLimit = configurator.TextTokensPremiumLimit;
+        user.ImageTokensUsed = 0;
+        user.TextTokensUsed = 0;
+
+        await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = user });
     }
 
     private async Task SaveInvoice(FakturowniaInvoice fakturowniaInvoice, int userId)
@@ -52,39 +58,4 @@ public class StripeInvoiceWebhooksManager(IQueryExecutor queryExecutor, IEmailSe
         var addInvoiceCommand = new AddInvoiceCommand() { Parameter = invoice };
         await commandExecutor.ExecuteCommand(addInvoiceCommand);
     }
-
-    private static GeneratePostRequest CreatePostGeneratingRequest(User userFromDb)
-    {
-        return new GeneratePostRequest()
-        {
-            UserId = userFromDb.Id,
-            BrandName = userFromDb.BasicInformation.BrandName,
-            Audience = userFromDb.BasicInformation.Audience,
-            Mission = userFromDb.BasicInformation.Mission,
-            ProductsAndServices = userFromDb.BasicInformation.ProductsAndServices,
-            Goals = userFromDb.BasicInformation.Goals,
-            Assets = userFromDb.BasicInformation.Assets,
-        };
-    }
-    private async Task UpdateUser(User userFromDb, List<Post> newPostsGenerated)
-    {
-        userFromDb.ImageTokensLimit = configurator.ImageTokensPremiumLimit;
-        userFromDb.TextTokensLimit = configurator.TextTokensPremiumLimit;
-
-        var currentPosts = userFromDb.Posts;
-        currentPosts.AddRange(newPostsGenerated);
-
-        userFromDb.Posts = currentPosts;
-
-        if (userFromDb.Role != Roles.Admin)
-        {
-            userFromDb.ImageTokensUsed += configurator.NumberFirstPostsGenerated;
-            userFromDb.TextTokensUsed += configurator.NumberFirstPostsGenerated;
-            userFromDb.Role = Roles.PaidUser;
-        }
-
-        var updateUserCommand = new UpdateUserCommand() { Parameter = userFromDb };
-        await commandExecutor.ExecuteCommand(updateUserCommand);
-    }
-
 }

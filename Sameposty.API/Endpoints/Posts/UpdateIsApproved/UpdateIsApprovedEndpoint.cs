@@ -24,6 +24,11 @@ public class UpdateIsApprovedEndpoint(ICommandExecutor commandExecutor, IQueryEx
             ThrowError("Brak uprawnień");
         }
 
+        if (postFromDb.IsPublishingInProgress || postFromDb.IsPublished)
+        {
+            ThrowError("Nie można już edytować tego posta");
+        }
+
         postFromDb.IsApproved = req.IsApproved;
 
         var updatedPost = await commandExecutor.ExecuteCommand(new UpdatePostCommand() { Parameter = postFromDb });

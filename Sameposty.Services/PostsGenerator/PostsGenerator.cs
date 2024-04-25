@@ -1,14 +1,11 @@
 ﻿using System.Collections.Concurrent;
-using Hangfire;
 using Sameposty.DataAccess.Entities;
 using Sameposty.Services.Configurator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
-using Sameposty.Services.PostsPublishers.Orhestrator;
-using Sameposty.Services.PostsPublishers.Orhestrator.Models;
 
 namespace Sameposty.Services.PostsGenerator;
-public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGeneratingOrchestrator imageGenerating, IConfigurator configurator, IPostPublishOrchestrator postPublishOrchestrator) : IPostsGenerator
+public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGeneratingOrchestrator imageGenerating, IConfigurator configurator) : IPostsGenerator
 {
     private readonly ConcurrentBag<Post> posts = [];
 
@@ -42,10 +39,6 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
 
     public async Task<Post> GenerateSinglePost(GeneratePostRequest request)
     {
-
-        DateTimeOffset localDateTimeOffset = new(request.ShedulePublishDate, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time").GetUtcOffset(request.ShedulePublishDate));
-        DateTimeOffset utcDateTimeOffset = localDateTimeOffset.UtcDateTime;
-
         var descriptionTask = postDescriptionGenerator.GeneratePostDescription(request);
         var imageTask = imageGenerating.GenerateImage(request.ProductsAndServices, 1);
 
@@ -63,17 +56,6 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
             IsPublished = false,
             ShedulePublishDate = request.ShedulePublishDate,
         };
-
-        var publishRequest = new PublishPostToAllRequest()
-        {
-            BaseApiUrl = configurator.ApiBaseUrl,
-            Post = post,
-
-        };
-
-        var jobPublishId = BackgroundJob.Schedule(() => postPublishOrchestrator.PublishPostToAll(publishRequest), utcDateTimeOffset);
-
-        post.JobPublishId = jobPublishId;
 
         return post;
     }
