@@ -10,6 +10,7 @@ public class GetUserAboutMeQuery(int userId) : QueryBase<User>
         return await db.Users
         .Include(u => u.Privilege)
         .Include(u => u.Subscription)
+        .Include(u => u.Invoices)
         .FirstOrDefaultAsync(u => u.Id == userId);
     }
 }

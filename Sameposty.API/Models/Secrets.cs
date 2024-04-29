@@ -15,4 +15,8 @@ public class Secrets
     public string StripeApiKey { get; set; }
 
     public string FakturowniaApiKey { get; set; }
+
+    public string StripeSubscriptionsWebhookKey { get; set; }
+
+    public string StripeInvoicesWebhookKey { get; set; }
 }

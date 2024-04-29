@@ -14,6 +14,7 @@ public class Configurator(IConfiguration configuration, IWebHostEnvironment webH
     public string AngularClientBaseURl { get; private set; } = configuration.GetConnectionString("AngularClientBaseURl") ?? throw new ArgumentNullException("No AngularClientBaseURl provided in sppsettings.json");
     public int ImageTokensPremiumLimit { get; private set; } = configuration.GetValue<int>("Settings:ImageTokensPremiumLimit");
     public int TextTokensPremiumLimit { get; private set; } = configuration.GetValue<int>("Settings:TextTokensPremiumLimit");
+    public string StripeSubscriptionPriceId { get; private set; } = configuration.GetValue<string>("StripeSettings:ProductPriceId") ?? throw new ArgumentNullException("No StripeSubscriptionPriceId provided in sppsettings.json");
     public string SubscriptionSuccessPaymentUrl { get; private set; } = configuration.GetConnectionString("SubscriptionSuccessPaymentUrl") ?? throw new ArgumentNullException("No SubscriptionSuccessPaymentUrl provided in sppsettings.json");
     public string SubscriptionFailedPaymentUrl { get; private set; } = configuration.GetConnectionString("SubscriptionFailedPaymentUrl") ?? throw new ArgumentNullException("No SubscriptionFailedPaymentUrl provided in sppsettings.json");
     public bool IsDevelopment => webHostEnvironment.IsDevelopment();

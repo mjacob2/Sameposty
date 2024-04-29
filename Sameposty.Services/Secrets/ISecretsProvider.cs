@@ -4,4 +4,8 @@ public interface ISecretsProvider
     string StripeApiKey { get; }
 
     string JWTBearerTokenSignKey { get; }
+
+    string StripeInvoicesWebhookKey { get; }
+
+    string StripeSubscriptionsWebhookKey { get; }
 }

@@ -21,7 +21,7 @@ public class AddInstagramConnectionEndpoint(ICommandExecutor commandExecutor, IF
 
         if (instagramConnection != null)
         {
-            ThrowError("Ta strona została już dodana na innym koncie, inengo użytkownika sameposty");
+            ThrowError("Ta strona została już dodana na innym koncie, innego użytkownika sameposty");
         }
 
         var loggedUserId = User.FindFirst("UserId").Value;

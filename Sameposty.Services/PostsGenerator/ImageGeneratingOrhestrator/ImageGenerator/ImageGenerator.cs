@@ -10,35 +10,27 @@ public class ImageGenerator(IOpenAIService openAiService, IConfigurator configur
 {
     public async Task<string> GenerateImageUrl(string myPrompt)
     {
-        var imageRequest = new ImageCreateRequest
+        var imageRequest = new ImageCreateRequest();
+
+        if (configurator.IsDevelopment)
         {
-            Model = Models.Dall_e_2,
-            Prompt = myPrompt,
-            N = 1,
-            Size = StaticValues.ImageStatics.Size.Size256,
-            ResponseFormat = "url"
-        };
 
-
-        //if (configurator.IsDevelopment)
-        //{
-
-        //    imageRequest.Model = Models.Dall_e_2;
-        //    imageRequest.Prompt = prompt;
-        //    imageRequest.N = 1;
-        //    imageRequest.Size = StaticValues.ImageStatics.Size.Size512;
-        //    imageRequest.ResponseFormat = "url";
-        //}
-        //else
-        //{
-        //    imageRequest.Model = Models.Dall_e_3;
-        //    imageRequest.Prompt = prompt;
-        //    imageRequest.N = 1;
-        //    imageRequest.Size = StaticValues.ImageStatics.Size.Size1024;
-        //    imageRequest.ResponseFormat = "url";
-        //    imageRequest.Quality = "hd";
-        //    imageRequest.Style = "vivid";
-        //}
+            imageRequest.Model = Models.Dall_e_2;
+            imageRequest.Prompt = myPrompt;
+            imageRequest.N = 1;
+            imageRequest.Size = StaticValues.ImageStatics.Size.Size512;
+            imageRequest.ResponseFormat = "url";
+        }
+        else
+        {
+            imageRequest.Model = Models.Dall_e_3;
+            imageRequest.Prompt = myPrompt;
+            imageRequest.N = 1;
+            imageRequest.Size = StaticValues.ImageStatics.Size.Size1024;
+            imageRequest.ResponseFormat = "url";
+            imageRequest.Quality = "hd";
+            imageRequest.Style = "vivid";
+        }
 
         var imageResult = await openAiService.Image.CreateImage(imageRequest);
 

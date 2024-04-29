@@ -21,9 +21,8 @@ public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQ
     {
         var reqDateUtc = req.Date.ToUniversalTime();
         var utcNow = DateTime.UtcNow;
-        var utcNowPlus10Minutes = utcNow.AddMinutes(10);
 
-        if (reqDateUtc < utcNowPlus10Minutes)
+        if (reqDateUtc < utcNow)
         {
             ThrowError("Postu nie można zaplanować na wcześniej niż za 10 minut!");
         }

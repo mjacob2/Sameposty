@@ -40,7 +40,7 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
             {
                 ChatMessage.FromSystem("Jesteś pomocnym asystentem, który pisze prompty, które potem posłużą do generowania obrazów w nowym modelu sztucznej inteligencji. Weź pod uwagę zasady bezpieczeństwa, które mogą stać na straży takiego generatora obrazów. Czyli nie podawaj nazw zastrzeżonych, obraźliwych słów, niebezpiecznych, itp."),
 
-                ChatMessage.FromUser($"Daj mi jedną, kreatywną propozycję, co może przedstawiać zdjęcie, które będzie opublikowane na social media firmy, która tak odpowiedziała na pytanie o to czym się zajmuje: {productsAndServices}. Twoja odpowiedź nie może przekraczać 300 znaków."),
+                ChatMessage.FromUser($"Daj mi jedną, kreatywną propozycję, co może przedstawiać zdjęcie, które będzie opublikowane na social media firmy działającej w Polsce, która tak odpowiedziała na pytanie o to czym się zajmuje: {productsAndServices}. Twoja odpowiedź nie może przekraczać 300 znaków."),
             }
         };
 
@@ -83,6 +83,10 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
                 ChatMessage.FromAssistant("A czym wyróżnia się ta firma na tle konkurencji?"),
 
                 ChatMessage.FromUser($"{request.Assets}"),
+
+                ChatMessage.FromAssistant("A w jakim kraju działa ta firma?"),
+
+                ChatMessage.FromUser($"Firma działa w Polsce"),
 
                 ChatMessage.FromAssistant("Ok, dziękuję za informacje. Teraz pomyslę, i stworzę najlepszy post na social media dla tej firmy.")
             }

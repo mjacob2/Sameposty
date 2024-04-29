@@ -58,6 +58,16 @@ public class AboutMeEndpoint(IQueryExecutor queryExecutor, ISecretsProvider secr
             };
         }
 
+        foreach (var invoice in userFromDb.Invoices)
+        {
+            response.Invoices.Add(new AboutMeInvoiceResponse()
+            {
+                Id = invoice.FakturowniaInvoiceId,
+                Number = invoice.Number,
+                IssueDate = invoice.IssueDate,
+            });
+        }
+
         await SendOkAsync(response, ct);
     }
 

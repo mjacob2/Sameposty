@@ -1,16 +1,14 @@
 ﻿using FastEndpoints;
 using Hangfire;
+using Sameposty.Services.Secrets;
 using Sameposty.Services.StripeWebhooksManagers;
 using Stripe;
 using Invoice = Stripe.Invoice;
 
 namespace Sameposty.API.Endpoints.StripeWebhook;
 
-public class StripeWebhookInvoicesEndpoint(IStripeWebhooksManager manager) : EndpointWithoutRequest
+public class StripeWebhookInvoicesEndpoint(IStripeWebhooksManager manager, ISecretsProvider secrets) : EndpointWithoutRequest
 {
-
-    private const string EndpointSecret = "whsec_I9nz7awy44YaT2tFnKMhIEniHvy9sz7y";
-
     public override void Configure()
     {
         Post("stripeWebhookInvoices");
@@ -25,7 +23,7 @@ public class StripeWebhookInvoicesEndpoint(IStripeWebhooksManager manager) : End
 
         var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync(ct);
         var stripeEvent = EventUtility.ConstructEvent(json,
-                    request.Headers["Stripe-Signature"], EndpointSecret);
+                    request.Headers["Stripe-Signature"], secrets.StripeInvoicesWebhookKey);
 
         if (stripeEvent.Data.Object is not Invoice invoice)
         {

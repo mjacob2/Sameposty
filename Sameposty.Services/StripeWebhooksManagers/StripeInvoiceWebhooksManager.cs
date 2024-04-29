@@ -46,6 +46,7 @@ public class StripeInvoiceWebhooksManager(IPostGeneratingManager manager, IQuery
     {
         var invoice = new Invoice()
         {
+            FakturowniaInvoiceId = fakturowniaInvoice.Id,
             Number = fakturowniaInvoice.Number,
             IssueDate = fakturowniaInvoice.IssueDate,
             PriceNet = fakturowniaInvoice.PriceNet,

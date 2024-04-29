@@ -5,6 +5,7 @@ internal static class EmailBodyProvider
     public static string NewPostsCreatedBodyEmail()
     {
         return $@"<p style=""margin-top: 20px;"">Cześć!<br>
+<p>Dziekuję za opłacenie subskrypcji! <br><br>
 <p>Kliknij poniższy przycisk i zobacz, jakie wspaniałe, nowe posty właśnie przygotowalismy! Pamiętaj, aby je zatwierdzić! Inaczej, nie zostaną opublikowane!<br><br>
 <a href=https://sameposty.pl style=""background-color: #0042B6; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border-radius: 20px; cursor: pointer;"">Sprawdź nowe posty</a>
 

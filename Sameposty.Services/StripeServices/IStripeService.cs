@@ -15,7 +15,5 @@ public interface IStripeService
 
     Task CancelSubscription(string subscriptionId);
 
-    Task DeleteCard(string stripeCustomerId, string stripePaymentCardId);
-
     Task<Subscription> GetSubscription(string subscriptionId);
 }

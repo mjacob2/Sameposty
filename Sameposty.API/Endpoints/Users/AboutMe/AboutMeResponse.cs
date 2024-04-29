@@ -46,6 +46,8 @@ public class AboutMeResponse
     public int TextTokensUsed { get; set; }
 
     public AboutMeResponseSubscription? Subscription { get; set; }
+
+    public List<AboutMeInvoiceResponse> Invoices { get; set; } = [];
 }
 
 public class AboutMeResponseSubscription
@@ -65,4 +67,13 @@ public class AboutMeResponseSubscription
     public bool IsCanceled { get; set; }
 
     public string StripeApiKey { get; set; } = string.Empty;
+}
+
+public class AboutMeInvoiceResponse
+{
+    public string Number { get; set; } = string.Empty;
+
+    public long Id { get; set; }
+
+    public string IssueDate { get; set; } = string.Empty;
 }

@@ -8,12 +8,7 @@ using Stripe.Checkout;
 namespace Sameposty.Services.StripeServices;
 public class StripeServices(ISecretsProvider secretsProvider, IConfigurator configurator) : IStripeService
 {
-    private const string Price = "price_1P3iW6LJdNESLWLI7IJLtxNq";
-
     private readonly string StripeApiKey = secretsProvider.StripeApiKey;
-
-    private readonly string ReturnUrl = "https://sameposty.pl";
-
 
     public async Task<Session> CreateSubscriptionSession(string stripeCustomerId, int userId)
     {
@@ -33,7 +28,7 @@ public class StripeServices(ISecretsProvider secretsProvider, IConfigurator conf
             [
                 new SessionLineItemOptions
                 {
-                    Price = Price,
+                    Price = configurator.StripeSubscriptionPriceId,
                     Quantity = 1,
                 },
             ],
@@ -54,7 +49,7 @@ public class StripeServices(ISecretsProvider secretsProvider, IConfigurator conf
             Customer = stripeCustomerId,
             Items =
             [
-                new SubscriptionItemOptions() { Price = Price },
+                new SubscriptionItemOptions() { Price = configurator.StripeSubscriptionPriceId },
             ],
         };
         var service = new SubscriptionService();
@@ -98,18 +93,6 @@ public class StripeServices(ISecretsProvider secretsProvider, IConfigurator conf
         return resposne;
     }
 
-    public async Task UpdateCutomer()
-    {
-        StripeConfiguration.ApiKey = StripeApiKey;
-
-        var options = new CustomerUpdateOptions
-        {
-            Metadata = new Dictionary<string, string> { { "order_id", "6735" } },
-        };
-        var service = new CustomerService();
-        await service.UpdateAsync("cus_NffrFeUfNV2Hib", options);
-    }
-
     public async Task CancelSubscription(string subscriptionId)
     {
         StripeConfiguration.ApiKey = StripeApiKey;
@@ -124,14 +107,6 @@ public class StripeServices(ISecretsProvider secretsProvider, IConfigurator conf
         var service = new SubscriptionService();
         return await service.GetAsync(subscriptionId);
 
-    }
-
-    public async Task DeleteCard(string stripeCustomerId, string stripePaymentCardId)
-    {
-        StripeConfiguration.ApiKey = StripeApiKey;
-
-        var service = new SourceService();
-        await service.DetachAsync(stripeCustomerId, stripePaymentCardId);
     }
 
     public Task<Session> CreatePortalSession(string stripeCustomerId)

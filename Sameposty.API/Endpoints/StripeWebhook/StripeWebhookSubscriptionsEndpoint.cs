@@ -1,14 +1,13 @@
 ﻿using FastEndpoints;
 using Hangfire;
+using Sameposty.Services.Secrets;
 using Sameposty.Services.StripeWebhooksManagers.Subscriptions;
 using Stripe;
 
 namespace Sameposty.API.Endpoints.StripeWebhook;
 
-public class StripeWebhookSubscriptionsEndpoint(IStripeSubscriptionWebhooksManager manager) : EndpointWithoutRequest
+public class StripeWebhookSubscriptionsEndpoint(IStripeSubscriptionWebhooksManager manager, ISecretsProvider secrets) : EndpointWithoutRequest
 {
-    private const string EndpointSecret = "whsec_ztLTSBpfRULHnqKam4NUHWyzuSYShLoA";
-
     public override void Configure()
     {
         Post("stripeWebhookSubscriptions");
@@ -23,7 +22,7 @@ public class StripeWebhookSubscriptionsEndpoint(IStripeSubscriptionWebhooksManag
 
         var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync(ct);
         var stripeEvent = EventUtility.ConstructEvent(json,
-                    request.Headers["Stripe-Signature"], EndpointSecret);
+                    request.Headers["Stripe-Signature"], secrets.StripeSubscriptionsWebhookKey);
 
         if (stripeEvent.Data.Object is not Subscription subscription)
         {

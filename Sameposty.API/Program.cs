@@ -74,6 +74,8 @@ if (builder.Environment.IsProduction())
     secrets.EmailInfoPassword = client.GetSecret("EmailInfoPassword").Value.Value ?? throw new ArgumentNullException("No EmailInfoPassword provided in Azure Key Vault");
     secrets.StripeApiKey = client.GetSecret("StripeApiKey").Value.Value ?? throw new ArgumentNullException("No StripeApiKey provided in Azure Key Vault");
     secrets.FakturowniaApiKey = client.GetSecret("FakturowniaApiKey").Value.Value ?? throw new ArgumentNullException("No FakturowniaApiKey provided in Azure Key Vault");
+    secrets.StripeSubscriptionsWebhookKey = client.GetSecret("StripeSubscriptionsWebhookKey").Value.Value ?? throw new ArgumentNullException("No StripeSubscriptionsWebhookKey provided in Azure Key Vault");
+    secrets.StripeInvoicesWebhookKey = client.GetSecret("StripeInvoicesWebhookKey").Value.Value ?? throw new ArgumentNullException("No StripeInvoicesWebhookKey provided in Azure Key Vault");
 }
 
 builder.Services.AddDbContext<SamepostyDbContext>(options =>
@@ -134,7 +136,7 @@ builder.Services.AddSingleton<IFakturowniaService>(options =>
 
 builder.Services.AddSingleton<ISecretsProvider>(_ =>
 {
-    return new SecretsProvider(secrets.StripeApiKey, secrets.JWTBearerTokenSignKey);
+    return new SecretsProvider(secrets.StripeApiKey, secrets.JWTBearerTokenSignKey, secrets.StripeInvoicesWebhookKey, secrets.StripeSubscriptionsWebhookKey);
 });
 
 builder.Services.AddSingleton<IJWTBearerProvider, JWTBearerProvider>();
