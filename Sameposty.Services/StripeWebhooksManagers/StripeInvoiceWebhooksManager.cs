@@ -20,11 +20,11 @@ public class StripeInvoiceWebhooksManager(IPostGeneratingManager manager, IQuery
     }
 
     [AutomaticRetry(Attempts = 0)]
-    public async Task ManageInvoicePaid(string userEmail)
+    public async Task ManageInvoicePaid(string userEmail, double price)
     {
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByEmailQuery(userEmail));
         await UpdateUserTokens(userFromDb);
-        var createInvoiceRequest = new AddFakturowniaInvoiceModel(userFromDb.FakturowniaClientId);
+        var createInvoiceRequest = new AddFakturowniaInvoiceModel(userFromDb.FakturowniaClientId, price);
         var invoiceCreated = await fakturowniaService.CreateInvoiceAsync(createInvoiceRequest);
         await SaveInvoice(invoiceCreated, userFromDb.Id);
         await fakturowniaService.SendInvoiceToUser(invoiceCreated.Id);

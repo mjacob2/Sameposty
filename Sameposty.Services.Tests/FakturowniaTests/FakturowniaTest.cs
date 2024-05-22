@@ -29,7 +29,7 @@ public class FakturowniaTest
     {
         var fakturowniaService = new FakturowniaService("txN5wuxiAaMPDfjhMoj", new HttpClient());
 
-        var request = new AddFakturowniaInvoiceModel(145352780);
+        var request = new AddFakturowniaInvoiceModel(145699860, 189.89);
 
         var gf = await fakturowniaService.CreateInvoiceAsync(request);
     }

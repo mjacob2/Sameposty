@@ -35,7 +35,7 @@ public class StripeWebhookInvoicesEndpoint(IStripeWebhooksManager manager, ISecr
         if (stripeEvent.Type == Events.InvoicePaid)
         {
             BackgroundJob.Schedule(() =>
-            manager.ManageInvoicePaid(userEmail), TimeSpan.FromSeconds(2));
+            manager.ManageInvoicePaid(userEmail, invoice.AmountPaid / 100.00), TimeSpan.FromSeconds(2));
 
 
         }

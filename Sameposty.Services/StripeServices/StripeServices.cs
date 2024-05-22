@@ -32,6 +32,13 @@ public class StripeServices(ISecretsProvider secretsProvider, IConfigurator conf
                     Quantity = 1,
                 },
             ],
+            Discounts =
+            [
+                new SessionDiscountOptions()
+                {
+                    Coupon = "IDrizwBX",
+                }
+            ]
         };
 
         var service = new SessionService();

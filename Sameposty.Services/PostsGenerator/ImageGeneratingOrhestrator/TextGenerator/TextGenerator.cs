@@ -13,7 +13,7 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
     {
         var text = new ChatCompletionCreateRequest()
         {
-            Model = Models.Gpt_4_0125_preview,
+            Model = Models.Gpt_4_turbo,
             MaxTokens = maxTokensUsedToGenerateImagePrompt,
             Messages = new List<ChatMessage>
             {
@@ -34,7 +34,7 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
     {
         var text = new ChatCompletionCreateRequest()
         {
-            Model = Models.Gpt_4_0125_preview,
+            Model = Models.Gpt_4_turbo,
             MaxTokens = maxTokensUsedToGenerateImagePrompt,
             Messages = new List<ChatMessage>
             {
@@ -54,7 +54,7 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
     {
         var text = new ChatCompletionCreateRequest()
         {
-            Model = Models.Gpt_4_0125_preview,
+            Model = Models.Gpt_4_turbo,
             MaxTokens = maxTokensUsedToGenerateText,
             Messages = new List<ChatMessage>
             {

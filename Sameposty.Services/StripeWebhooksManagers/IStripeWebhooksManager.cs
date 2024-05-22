@@ -2,5 +2,5 @@
 public interface IStripeWebhooksManager
 {
     Task ManageInvoicePaymentFailed(string userEmail);
-    Task ManageInvoicePaid(string userEmail);
+    Task ManageInvoicePaid(string userEmail, double price);
 }

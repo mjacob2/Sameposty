@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 namespace Sameposty.Services.Fakturownia;
-public class AddFakturowniaInvoiceRequest
+public class AddFakturowniaInvoiceRequest()
 {
     [JsonPropertyName("api_token")]
     public string ApiToken { get; set; }
@@ -10,7 +10,7 @@ public class AddFakturowniaInvoiceRequest
     public AddFakturowniaInvoiceModel Invoice { get; set; }
 }
 
-public class AddFakturowniaInvoiceModel(long? clientId)
+public class AddFakturowniaInvoiceModel(long? clientId, double price)
 {
     [JsonPropertyName("kind")]
     public string Kind { get; set; } = "vat";
@@ -34,16 +34,22 @@ public class AddFakturowniaInvoiceModel(long? clientId)
     public string Status { get; set; } = "paid";
 
     [JsonPropertyName("positions")]
-    public FakturowniaPositions Positions { get; set; } = new();
+    public FakturowniaPositions Positions { get; set; } = new(price);
 
     [JsonPropertyName("split_payment")]
     public string SplitPayment { get; set; } = "0";
 }
 
-public class FakturowniaPositions
+public class FakturowniaPositions(double price)
 {
-    [JsonPropertyName("product_id")]
-    public long ProductId { get; set; } = 1099106483;
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = "SamePosty.pl subskrypcja premium";
+
+    [JsonPropertyName("tax")]
+    public int Tax { get; set; } = 0;
+
+    [JsonPropertyName("total_price_gross")]
+    public double Price { get; set; } = price;
 
     [JsonPropertyName("quantity")]
     public int Quantity { get; set; } = 1;
