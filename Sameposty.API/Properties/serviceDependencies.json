@@ -9,11 +9,6 @@
       "type": "secrets",
       "connectionId": "VaultUri",
       "dynamicId": null
-    },
-    "mssql1": {
-      "type": "mssql",
-      "connectionId": "ConnectionStrings",
-      "dynamicId": null
     }
   }
 }

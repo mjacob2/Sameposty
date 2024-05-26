@@ -25,6 +25,11 @@ public class EmailService(EmailServiceSecrets secrets, IConfigurator configurato
         await client.SendAsync(message);
         await client.DisconnectAsync(true);
     }
+    public async Task SendWhyNotCreateAccountEmail(string message)
+    {
+        await SendEmail("jakubicki.m@gmail.com", "Powód dlaczego klient nie chce teraz zakładać konta:", message);
+    }
+
 
     public async Task SentImageGeneratorErrorEmail(string errorMessage)
     {

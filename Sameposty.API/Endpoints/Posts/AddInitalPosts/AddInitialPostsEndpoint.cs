@@ -21,7 +21,7 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, IPostGenerati
         var getUserFromDbQuery = new GetUserByIdQuery(id);
         var userFromDb = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
-        if (userFromDb.Privilege.CanGenerateInitialPosts == false && userFromDb.Role != DataAccess.Entities.Roles.Admin)
+        if (!userFromDb.Privilege.CanGenerateInitialPosts && userFromDb.Role != DataAccess.Entities.Roles.Admin)
         {
             ThrowError("Aby wygenerować więcej wspaniałych postów, zapraszamy do skorzystania z abonamentu.");
         }
