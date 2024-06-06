@@ -36,7 +36,7 @@ public class StripeServices(ISecretsProvider secretsProvider, IConfigurator conf
             [
                 new SessionDiscountOptions()
                 {
-                    Coupon = "IDrizwBX",
+                    Coupon = "9eks2D8j",
                 }
             ]
         };
