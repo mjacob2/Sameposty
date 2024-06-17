@@ -2,36 +2,39 @@
 using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
+using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.Services.FileRemover;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
 using Sameposty.Services.PostsPublishers.Orhestrator.Models;
 using Sameposty.Services.PostsPublishers.PostsPublisher;
 
 namespace Sameposty.Services.PostsPublishers.Orhestrator;
-public class PostPublishOrchestrator(IPostsPublisher postsPublisher, IImageSaver imageSaver, IFileRemover fileRemover, ICommandExecutor commandExecutor) : IPostPublishOrchestrator
+public class PostPublishOrchestrator(IPostsPublisher postsPublisher, IImageSaver imageSaver, IFileRemover fileRemover, ICommandExecutor commandExecutor, IQueryExecutor queryExecutor) : IPostPublishOrchestrator
 {
 
     [AutomaticRetry(Attempts = 0)]
     public async Task<List<PublishResult>> PublishPostToAll(PublishPostToAllRequest request)
     {
-        await MarkPostIsPublishingInProgress(request.Post);
+        var postToPublish = await queryExecutor.ExecuteQuery(new GetPostByIdQuery() { PostId = request.PostId }) ?? throw new Exception("We can not publish post that does not exist!");
 
-        var publishingResults = await postsPublisher.PublishPost(request.Post);
+        await MarkPostIsPublishingInProgress(postToPublish);
+
+        var publishingResults = await postsPublisher.PublishPost(postToPublish);
 
         var imageThumbnailName = string.Empty;
 
-        if (!string.IsNullOrEmpty(request.Post.ImageUrl))
+        if (!string.IsNullOrEmpty(postToPublish.ImageUrl))
         {
-            imageThumbnailName = await imageSaver.DownsizePNG(request.Post.ImageUrl);
+            imageThumbnailName = await imageSaver.DownsizePNG(postToPublish.ImageUrl);
 
-            fileRemover.RemovePostImage(request.Post.ImageUrl);
+            fileRemover.RemovePostImage(postToPublish.ImageUrl);
         }
 
-        request.Post.PublishResults = publishingResults;
+        postToPublish.PublishResults = publishingResults;
 
-        BackgroundJob.Delete(request.Post.JobPublishId);
+        BackgroundJob.Delete(postToPublish.JobPublishId);
 
-        await UpdatePost(request.Post, imageThumbnailName, request.BaseApiUrl);
+        await UpdatePost(postToPublish, imageThumbnailName, request.BaseApiUrl);
 
         return publishingResults;
     }

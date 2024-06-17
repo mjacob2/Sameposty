@@ -47,7 +47,6 @@ public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, IPostPublishOr
             ThrowError("Post nie ma opisu!");
         }
 
-
         var results = new List<PublishResult>();
 
         try
@@ -55,7 +54,7 @@ public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, IPostPublishOr
             var publishRequest = new PublishPostToAllRequest()
             {
                 BaseApiUrl = configurator.ApiBaseUrl,
-                Post = postToPublish,
+                PostId = postToPublish.Id,
 
             };
             results = await postPublisher.PublishPostToAll(publishRequest);

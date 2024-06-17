@@ -50,7 +50,7 @@ public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQ
         var request = new PublishPostToAllRequest()
         {
             BaseApiUrl = configurator.ApiBaseUrl,
-            Post = postFromDb,
+            PostId = postFromDb.Id,
         };
 
         DateTimeOffset localDateTimeOffset = new(req.Date, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time").GetUtcOffset(req.Date));

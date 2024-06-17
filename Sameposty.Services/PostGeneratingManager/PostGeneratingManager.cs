@@ -32,7 +32,7 @@ public class PostGeneratingManager(IPostsGenerator postsGenerator, ICommandExecu
         var publishRequest = new PublishPostToAllRequest()
         {
             BaseApiUrl = configurator.ApiBaseUrl,
-            Post = addedPost,
+            PostId = addedPost.Id,
         };
         DateTimeOffset localDateTimeOffset = new(addedPost.ShedulePublishDate, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time").GetUtcOffset(addedPost.ShedulePublishDate));
         DateTimeOffset utcDateTimeOffset = localDateTimeOffset.UtcDateTime;
@@ -76,7 +76,7 @@ public class PostGeneratingManager(IPostsGenerator postsGenerator, ICommandExecu
             var publishRequest = new PublishPostToAllRequest()
             {
                 BaseApiUrl = configurator.ApiBaseUrl,
-                Post = post,
+                PostId = post.Id,
             };
 
             DateTimeOffset localDateTimeOffset = new(post.ShedulePublishDate, TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time").GetUtcOffset(post.ShedulePublishDate));
