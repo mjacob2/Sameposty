@@ -1,4 +1,4 @@
-﻿namespace Sameposty.API.Models;
+﻿namespace Sameposty.Services.Secrets;
 
 public class Secrets
 {
@@ -19,4 +19,8 @@ public class Secrets
     public string StripeSubscriptionsWebhookKey { get; set; }
 
     public string StripeInvoicesWebhookKey { get; set; }
+
+    public string FacebookPixelId { get; set; }
+
+    public string FacebookPixelAccessToken { get; set; }
 }

@@ -7,11 +7,11 @@ using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using OpenAI.Extensions;
 using Sameposty.API;
-using Sameposty.API.Models;
 using Sameposty.DataAccess.DatabaseContext;
 using Sameposty.DataAccess.Executors;
 using Sameposty.Services.Configurator;
 using Sameposty.Services.EmailService;
+using Sameposty.Services.FacebookPixel;
 using Sameposty.Services.FacebookTokenManager;
 using Sameposty.Services.Fakturownia;
 using Sameposty.Services.FileRemover;
@@ -41,8 +41,7 @@ builder.Services.AddCors(opt =>
         corsbuilder =>
         {
             corsbuilder
-            .WithOrigins(builder.Configuration.GetConnectionString("AngularClientBaseURl")
-            ?? throw new ArgumentNullException("AngularClientBaseURl not provided"))
+            .WithOrigins(builder.Configuration.GetConnectionString("AngularClientBaseURl") ?? throw new ArgumentNullException("AngularClientBaseURl not provided"))
             .AllowAnyHeader()
             .AllowCredentials()
             .AllowAnyMethod();
@@ -76,11 +75,21 @@ if (builder.Environment.IsProduction())
     secrets.FakturowniaApiKey = client.GetSecret("FakturowniaApiKey").Value.Value ?? throw new ArgumentNullException("No FakturowniaApiKey provided in Azure Key Vault");
     secrets.StripeSubscriptionsWebhookKey = client.GetSecret("StripeSubscriptionsWebhookKey").Value.Value ?? throw new ArgumentNullException("No StripeSubscriptionsWebhookKey provided in Azure Key Vault");
     secrets.StripeInvoicesWebhookKey = client.GetSecret("StripeInvoicesWebhookKey").Value.Value ?? throw new ArgumentNullException("No StripeInvoicesWebhookKey provided in Azure Key Vault");
+    secrets.FacebookPixelId = client.GetSecret("FacebookPixelId").Value.Value ?? throw new ArgumentNullException("No FacebookPixelId provided in Azure Key Vault");
+    secrets.FacebookPixelAccessToken = client.GetSecret("FacebookPixelAccessToken").Value.Value ?? throw new ArgumentNullException("No FacebookPixelAccessToken provided in Azure Key Vault");
 }
+
+AddFastEndpoints(builder, secrets.JWTBearerTokenSignKey);
 
 builder.Services.AddDbContext<SamepostyDbContext>(options =>
             options.UseSqlServer(dbConnectionString));
-AddFastEndpoints(builder, secrets.JWTBearerTokenSignKey);
+
+builder.Services.AddSingleton<ISecretsProvider>(_ =>
+{
+    return new SecretsProvider(secrets);
+});
+
+builder.Services.AddScoped<IFacebookPixelNotifier, FacebookPixelNotifier>();
 builder.Services.AddScoped<IQueryExecutor, QueryExecutor>();
 builder.Services.AddScoped<ICommandExecutor, CommandExecutor>();
 builder.Services.AddScoped<IPostsGenerator, PostsGenerator>();
@@ -91,27 +100,8 @@ builder.Services.AddScoped<ITextGenerator, TextGenerator>();
 builder.Services.AddScoped<IImageSaver, ImageSaver>();
 builder.Services.AddScoped<IFileRemover, FileRemover>();
 builder.Services.AddScoped<IImageGeneratingOrchestrator, ImageGeneratingOrchestrator>();
-builder.Services.AddScoped<IFacebookTokenManager>(options =>
-{
-    var s = new FacebookTokenManagerSecrets()
-    {
-        SamepostyFacebookAppId = secrets.SamepostyFacebookAppId,
-        SamepostyFacebookAppSecret = secrets.SamepostyFacebookAppSecret,
-    };
-
-    return new FacebookTokenManager(s, options.GetRequiredService<HttpClient>());
-});
-
-builder.Services.AddScoped<IEmailService>(options =>
-{
-    var s = new EmailServiceSecrets()
-    {
-        EmailInfoPassword = secrets.EmailInfoPassword,
-    };
-
-    return new EmailService(s, options.GetRequiredService<IConfigurator>());
-});
-
+builder.Services.AddScoped<IFacebookTokenManager, FacebookTokenManager>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IFacebookPublisher, FacebookPublisher>();
 builder.Services.AddScoped<IInstagramPublisher, InstagramPublisher>();
 builder.Services.AddScoped<IPostsPublisher, PostsPublisher>();
@@ -120,7 +110,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IConfigurator, Configurator>();
 builder.Services.AddScoped<IStripeWebhooksManager, StripeInvoiceWebhooksManager>();
 builder.Services.AddScoped<IStripeSubscriptionWebhooksManager, StripeSubscriptionWebhooksManager>();
-
 builder.Services.AddHangfire(config => config
 .UseSimpleAssemblyNameTypeSerializer()
 .UseRecommendedSerializerSettings(o => o.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
@@ -129,19 +118,9 @@ builder.Services.AddHangfireServer();
 builder.Services.AddScoped<IRegonService, RegonService>();
 builder.Services.AddScoped<IStripeService, StripeServices>();
 builder.Services.AddScoped<ISubscriptionManager, SubscriptionManager>();
-builder.Services.AddSingleton<IFakturowniaService>(options =>
-{
-    return new FakturowniaService(secrets.FakturowniaApiKey, options.GetRequiredService<HttpClient>());
-});
-
-builder.Services.AddSingleton<ISecretsProvider>(_ =>
-{
-    return new SecretsProvider(secrets.StripeApiKey, secrets.JWTBearerTokenSignKey, secrets.StripeInvoicesWebhookKey, secrets.StripeSubscriptionsWebhookKey);
-});
-
+builder.Services.AddSingleton<IFakturowniaService, FakturowniaService>();
 builder.Services.AddSingleton<IJWTBearerProvider, JWTBearerProvider>();
 builder.Services.AddTransient<IPostGeneratingManager, PostGeneratingManager>();
-
 
 var app = builder.Build();
 
@@ -162,10 +141,6 @@ app.UseAuthentication()
     .UseAuthorization()
     .UseFastEndpoints()
     .UseSwaggerGen();
-
-
-
-
 
 app.Run();
 

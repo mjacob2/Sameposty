@@ -1,8 +1,9 @@
 ﻿using System.Text.Json;
 using Sameposty.Services.FacebookTokenManager.Models;
+using Sameposty.Services.Secrets;
 
 namespace Sameposty.Services.FacebookTokenManager;
-public class FacebookTokenManager(FacebookTokenManagerSecrets secrets, HttpClient http) : IFacebookTokenManager
+public class FacebookTokenManager(HttpClient http, ISecretsProvider secrets) : IFacebookTokenManager
 {
     private readonly string FacebookApiBaseUrl = "https://graph.facebook.com/v19.0/";
 

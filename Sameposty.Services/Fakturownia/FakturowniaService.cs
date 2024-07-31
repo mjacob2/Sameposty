@@ -1,9 +1,10 @@
 ﻿using System.Text;
 using System.Text.Json;
+using Sameposty.Services.Secrets;
 
 
 namespace Sameposty.Services.Fakturownia;
-public class FakturowniaService(string fakturowniaApiKey, HttpClient http) : IFakturowniaService
+public class FakturowniaService(ISecretsProvider secrets, HttpClient http) : IFakturowniaService
 {
     private const string clientsUrl = "https://middlers.fakturownia.pl/clients.json";
     private const string invoicesUrl = "https://middlers.fakturownia.pl/invoices.json";
@@ -12,7 +13,7 @@ public class FakturowniaService(string fakturowniaApiKey, HttpClient http) : IFa
     {
         var request = new AddFakturowniaClientRequest()
         {
-            ApiToken = fakturowniaApiKey,
+            ApiToken = secrets.FakturowniaApiKey,
             Client = clientData,
         };
 
@@ -37,7 +38,7 @@ public class FakturowniaService(string fakturowniaApiKey, HttpClient http) : IFa
     {
         var request = new AddFakturowniaInvoiceRequest()
         {
-            ApiToken = fakturowniaApiKey,
+            ApiToken = secrets.FakturowniaApiKey,
             Invoice = invoiceData,
         };
 
@@ -59,7 +60,7 @@ public class FakturowniaService(string fakturowniaApiKey, HttpClient http) : IFa
 
     public async Task SendInvoiceToUser(long invoiceId)
     {
-        var url = $"https://middlers.fakturownia.pl/invoices/{invoiceId}/send_by_email.json?api_token={fakturowniaApiKey}";
+        var url = $"https://middlers.fakturownia.pl/invoices/{invoiceId}/send_by_email.json?api_token={secrets.FakturowniaApiKey}";
 
         var response = await http.PostAsync(url, null);
 

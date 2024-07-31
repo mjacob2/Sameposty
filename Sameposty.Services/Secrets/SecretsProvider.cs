@@ -1,11 +1,23 @@
 ﻿namespace Sameposty.Services.Secrets;
-public class SecretsProvider(string stripeApiKey, string JWTBearerTokenSignKey, string StripeInvoicesWebhookKey, string StripeSubscriptionsWebhookKey) : ISecretsProvider
+public class SecretsProvider(Secrets secrets) : ISecretsProvider
 {
-    public string StripeApiKey { get; private set; } = stripeApiKey;
+    public string StripeApiKey { get; private set; } = secrets.StripeApiKey;
 
-    public string JWTBearerTokenSignKey { get; private set; } = JWTBearerTokenSignKey;
+    public string JWTBearerTokenSignKey { get; private set; } = secrets.JWTBearerTokenSignKey;
 
-    public string StripeInvoicesWebhookKey { get; private set; } = StripeInvoicesWebhookKey;
+    public string StripeInvoicesWebhookKey { get; private set; } = secrets.StripeInvoicesWebhookKey;
 
-    public string StripeSubscriptionsWebhookKey { get; private set; } = StripeSubscriptionsWebhookKey;
+    public string StripeSubscriptionsWebhookKey { get; private set; } = secrets.StripeSubscriptionsWebhookKey;
+
+    public string FacebookPixelId { get; private set; } = secrets.FacebookPixelId;
+
+    public string FacebookPixelAccessToken { get; private set; } = secrets.FacebookPixelAccessToken;
+
+    public string SamepostyFacebookAppSecret { get; private set; } = secrets.SamepostyFacebookAppSecret;
+
+    public string SamepostyFacebookAppId { get; private set; } = secrets.SamepostyFacebookAppId;
+
+    public string EmailInfoPassword { get; private set; } = secrets.EmailInfoPassword;
+
+    public string FakturowniaApiKey { get; private set; } = secrets.FakturowniaApiKey;
 }
