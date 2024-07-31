@@ -1,6 +1,8 @@
 ﻿namespace Sameposty.Services.Secrets;
 public class SecretsProvider(Secrets secrets) : ISecretsProvider
 {
+    public string AdminPassword { get; private set; } = secrets.AdminPassword;
+
     public string StripeApiKey { get; private set; } = secrets.StripeApiKey;
 
     public string JWTBearerTokenSignKey { get; private set; } = secrets.JWTBearerTokenSignKey;
@@ -20,4 +22,5 @@ public class SecretsProvider(Secrets secrets) : ISecretsProvider
     public string EmailInfoPassword { get; private set; } = secrets.EmailInfoPassword;
 
     public string FakturowniaApiKey { get; private set; } = secrets.FakturowniaApiKey;
+
 }

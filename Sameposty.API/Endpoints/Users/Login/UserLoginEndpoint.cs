@@ -17,13 +17,12 @@ public class UserLoginEndpoint(IQueryExecutor queryExecutor, IJWTBearerProvider 
 
     public override async Task HandleAsync(LoginRequest req, CancellationToken ct)
     {
-
         var getUserByEmail = new GetUserByEmailQuery(req.Email);
         var userFromDb = await queryExecutor.ExecuteQuery(getUserByEmail);
 
         if (userFromDb == null)
         {
-            ThrowError("E-mail nie istnieje");
+            ThrowError("Taki użytkownik nie istnieje");
         }
 
         if (!userFromDb.IsVerified)
@@ -31,23 +30,12 @@ public class UserLoginEndpoint(IQueryExecutor queryExecutor, IJWTBearerProvider 
             ThrowError("Wysłaliśmy e-mail z potwierdzeniem rejestracji. Sprawdź swoją pocztę.");
         }
 
-        if (userFromDb.Role != DataAccess.Entities.Roles.Admin)
-        {
-            var passwordFromRequest = Hasher.HashPassword(req.Password, userFromDb.Salt);
-            var passwordFromResponse = userFromDb.Password;
+        var passwordFromRequest = Hasher.HashPassword(req.Password, userFromDb.Salt);
+        var passwordFromDb = userFromDb.Password;
 
-            if (passwordFromResponse != passwordFromRequest)
-            {
-                ThrowError("Niepoprawne hasło");
-            }
-        }
-        else
+        if (passwordFromDb != passwordFromRequest)
         {
-            if (req.Password != "adminadmin")
-            {
-                ThrowError("Niepoprawne hasło");
-            }
-
+            ThrowError("Niepoprawne hasło");
         }
 
         var token = jwt.ProvideToken(userFromDb.Id.ToString(), userFromDb.Email, userFromDb.Role.ToString());
@@ -57,6 +45,7 @@ public class UserLoginEndpoint(IQueryExecutor queryExecutor, IJWTBearerProvider 
             Id = userFromDb.Id,
             Token = token,
             Username = req.Email,
+            Role = userFromDb.Role.ToString()
         }, cancellation: ct);
 
     }

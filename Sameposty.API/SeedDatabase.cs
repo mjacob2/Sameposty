@@ -1,19 +1,24 @@
 ﻿using Sameposty.DataAccess.DatabaseContext;
 using Sameposty.DataAccess.Entities;
+using Sameposty.Services.Hasher;
+using Sameposty.Services.Secrets;
 
 namespace Sameposty.API;
 
-public class SeedDatabase(SamepostyDbContext db)
+public class SeedDatabase(SamepostyDbContext db, ISecretsProvider secrets)
 {
     public async Task Run()
     {
-        if (!db.Users.Any())
+        if (!db.Users.Any(x => x.Email == "Admin"))
         {
+            var salt = Hasher.GetSalt();
+            var passwordHashed = Hasher.HashPassword(secrets.AdminPassword, salt);
+
             var user = new User
             {
-                Email = "jakubicki.m@gmail.com",
-                Password = "adminadmin",
-                Salt = string.Empty,
+                Email = "Admin",
+                Password = passwordHashed,
+                Salt = salt,
                 NIP = "5321574227",
                 Name = "Admin Company",
                 Street = "Admin Street",
@@ -26,12 +31,12 @@ public class SeedDatabase(SamepostyDbContext db)
                 IsActive = true,
                 Role = Roles.Admin,
                 IsVerified = true,
-                ImageTokensLimit = 1000,
-                TextTokensLimit = 1000,
+                ImageTokensLimit = 10000,
+                TextTokensLimit = 10000,
             };
 
-            db.Users.Add(user);
-            db.SaveChanges();
+            await db.Users.AddAsync(user);
+            await db.SaveChangesAsync();
         }
     }
 }

@@ -2,6 +2,8 @@
 
 public interface ISecretsProvider
 {
+    string AdminPassword { get; }
+
     string StripeApiKey { get; }
 
     string JWTBearerTokenSignKey { get; }

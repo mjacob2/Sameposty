@@ -66,6 +66,8 @@ if (builder.Environment.IsProduction())
     var client = new SecretClient(keyVaultUrl, credential);
 
     dbConnectionString = client.GetSecret("ProductionDbConnectionString").Value.Value ?? throw new ArgumentNullException("No DbConnectionString provided in Azure Key Vault");
+
+    secrets.AdminPassword = client.GetSecret("AdminPassword").Value.Value ?? throw new ArgumentNullException("No AdminPassword provided in Azure Key Vault");
     secrets.OpenAiApiKey = client.GetSecret("OpenAiApiKey").Value.Value ?? throw new ArgumentNullException("No OpenAiApiKey provided in Azure Key Vault");
     secrets.JWTBearerTokenSignKey = client.GetSecret("JWTBearerTokenSignKey").Value.Value ?? throw new ArgumentNullException("No JWTBearerTokenSignKey provided in Azure Key Vault");
     secrets.SamepostyFacebookAppSecret = client.GetSecret("SamepostyFacebookAppSecret").Value.Value ?? throw new ArgumentNullException("No SamepostyFacebookAppSecret provided in Azure Key Vault");
@@ -127,7 +129,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<SamepostyDbContext>();
-    await new SeedDatabase(dbContext).Run();
+    await new SeedDatabase(dbContext, scope.ServiceProvider.GetRequiredService<ISecretsProvider>()).Run();
 }
 
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
@@ -147,7 +149,8 @@ app.Run();
 static void AddFastEndpoints(WebApplicationBuilder builder, string key)
 {
     builder.Services.AddAuthenticationJwtBearer(s => s.SigningKey = key);
-    builder.Services.AddAuthorization();
+    builder.Services.AddAuthorizationBuilder()
+        .AddPolicy("AdminOnly", x => x.RequireRole("Admin"));
     builder.Services.AddFastEndpoints();
     builder.Services.SwaggerDocument();
 }
