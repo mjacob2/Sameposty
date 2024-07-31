@@ -40,7 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Endpoints\Users\GetAllUsers\" />
     <Folder Include="wwwroot\" />
     <Folder Include="wwwroot\Thumbnails\" />
   </ItemGroup>

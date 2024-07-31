@@ -2,6 +2,8 @@
 
 public class Secrets
 {
+    public string AdminPassword { get; set; }
+
     public string OpenAiApiKey { get; set; }
 
     public string JWTBearerTokenSignKey { get; set; }
