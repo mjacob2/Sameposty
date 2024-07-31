@@ -10,10 +10,10 @@ public class FacebookPixelNotifier(HttpClient httpClient, ISecretsProvider secre
     private const string API_URL = "https://graph.facebook.com";
     private const string API_VERSION = "v20.0";
     private const string ENDPOINT = "events";
-    private const string EVENT_NAME = "Lead";
+    private const string EVENT_NAME = "Purchase";
     private const string ACTION_SOURCE = "website";
 
-    public async Task<string> NotifyNewLeadAsync(string userEmail)
+    public async Task<string> NotifyNewPurchaseAsync(string userEmail)
     {
         var url = $"{API_URL}/{API_VERSION}/{secrets.FacebookPixelId}/{ENDPOINT}?access_token={secrets.FacebookPixelAccessToken}";
 

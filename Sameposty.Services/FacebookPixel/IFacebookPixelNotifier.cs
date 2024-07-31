@@ -2,5 +2,5 @@
 
 public interface IFacebookPixelNotifier
 {
-    Task<string> NotifyNewLeadAsync(string userEmail);
+    Task<string> NotifyNewPurchaseAsync(string userEmail);
 }

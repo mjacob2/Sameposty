@@ -15,9 +15,9 @@ public class FacebookPixelNotifierTests : IDisposable
 
     public async Task<string> NotifyNewLeadTest(string useremail)
     {
-        Console.WriteLine($"Testing {nameof(_facebookPixelNotifier.NotifyNewLeadAsync)}...");
+        Console.WriteLine($"Testing {nameof(_facebookPixelNotifier.NotifyNewPurchaseAsync)}...");
 
-        var result = await _facebookPixelNotifier.NotifyNewLeadAsync(useremail);
+        var result = await _facebookPixelNotifier.NotifyNewPurchaseAsync(useremail);
 
         Console.WriteLine($"result: {result}");
 

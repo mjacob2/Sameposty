@@ -5,13 +5,14 @@ using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.Configurator;
 using Sameposty.Services.EmailService;
+using Sameposty.Services.FacebookPixel;
 using Sameposty.Services.Hasher;
 using Sameposty.Services.JWTService;
 using Sameposty.Services.REGON;
 
 namespace Sameposty.API.Endpoints.Users.AddUser;
 
-public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IEmailService email, IConfigurator configurator, IRegonService regonService, IJWTBearerProvider jwt) : Endpoint<AddUserRequest>
+public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IEmailService email, IConfigurator configurator, IRegonService regonService, IJWTBearerProvider jwt, IFacebookPixelNotifier pixelNotifier) : Endpoint<AddUserRequest>
 {
     public override void Configure()
     {
@@ -71,6 +72,8 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
         var newToken = jwt.ProvideToken(newUserFromDb.Id.ToString(), newUserFromDb.Email, newUserFromDb.Role.ToString());
 
         await email.SendRegisterConfirmationEmail(req.Email, newToken);
+
+        await pixelNotifier.NotifyNewPurchaseAsync(req.Email);
 
         await SendOkAsync($"{user.Email}", ct);
     }
