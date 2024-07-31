@@ -14,7 +14,7 @@ public class GetUserByIdEndpoint(IQueryExecutor queryExecutor) : Endpoint<GetUse
 
     public override async Task HandleAsync(GetUserByIdRequest req, CancellationToken ct)
     {
-        var getUserFromDbQuery = new GetUserByIdQuery(req.UserId);
+        var getUserFromDbQuery = new GetUserByIdWithAllPostsQuery(req.UserId);
         var user = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
         user.Password = string.Empty;
