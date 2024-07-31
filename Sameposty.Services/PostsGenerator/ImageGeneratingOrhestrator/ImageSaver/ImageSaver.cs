@@ -41,8 +41,8 @@ public class ImageSaver(IConfigurator configurator, HttpClient httpClient) : IIm
         using var imageStream = new MemoryStream(imageBytes);
         using var image = Image.Load(imageStream);
         image.Mutate(x => x
-        .Resize(50, 50, KnownResamplers.Lanczos3)
-        .Crop(new Rectangle(0, 0, 50, 50)));
+        .Resize(150, 150, KnownResamplers.Lanczos3)
+        .Crop(new Rectangle(0, 0, 150, 150)));
 
 
         string fileName = Guid.NewGuid().ToString();
