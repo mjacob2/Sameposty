@@ -9,6 +9,7 @@ public class GetAllUsersEndpoint(IQueryExecutor queryExecutor) : EndpointWithout
     public override void Configure()
     {
         Get("users");
+        Policies("AdminOnly");
     }
 
     public override async Task HandleAsync(CancellationToken ct)

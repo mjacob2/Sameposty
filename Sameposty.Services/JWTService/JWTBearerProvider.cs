@@ -12,7 +12,7 @@ public class JWTBearerProvider(ISecretsProvider secrets) : IJWTBearerProvider
                     o.SigningKey = secrets.JWTBearerTokenSignKey;
                     o.ExpireAt = DateTime.UtcNow.AddDays(10);
                     o.User.Roles.Add(role);
-                    o.User.Claims.Add(("UserName", username));
+                    o.User.Claims.Add(("Username", username));
                     o.User["UserId"] = id;
                 });
 

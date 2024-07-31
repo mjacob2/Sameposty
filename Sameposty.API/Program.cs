@@ -149,7 +149,8 @@ app.Run();
 static void AddFastEndpoints(WebApplicationBuilder builder, string key)
 {
     builder.Services.AddAuthenticationJwtBearer(s => s.SigningKey = key);
-    builder.Services.AddAuthorization();
+    builder.Services.AddAuthorizationBuilder()
+        .AddPolicy("AdminOnly", x => x.RequireRole("Admin"));
     builder.Services.AddFastEndpoints();
     builder.Services.SwaggerDocument();
 }

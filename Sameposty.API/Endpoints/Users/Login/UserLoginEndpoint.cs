@@ -10,7 +10,7 @@ namespace Sameposty.API.Endpoints.Users.Login;
 
 public class UserLoginEndpoint(IQueryExecutor queryExecutor, IJWTBearerProvider jwt, ISecretsProvider secrets) : Endpoint<LoginRequest>
 {
-    private const string AdminName = "admin";
+    private const string AdminName = "Admin";
     private const string AdminId = "0";
 
     public override void Configure()
