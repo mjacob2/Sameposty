@@ -129,7 +129,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<SamepostyDbContext>();
-    await new SeedDatabase(dbContext).Run();
+    await new SeedDatabase(dbContext, scope.ServiceProvider.GetRequiredService<ISecretsProvider>()).Run();
 }
 
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
