@@ -1,10 +1,11 @@
 ﻿using FastEndpoints;
 using Sameposty.DataAccess.Executors;
+using Sameposty.DataAccess.Mappings;
 using Sameposty.DataAccess.Queries.Users;
 
 namespace Sameposty.API.Endpoints.Users.GetAllUsers;
 
-public class GetAllUsersEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequest
+public class GetAllUsersEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequest<GetAllUsersResponse>
 {
     public override void Configure()
     {
@@ -17,12 +18,13 @@ public class GetAllUsersEndpoint(IQueryExecutor queryExecutor) : EndpointWithout
         var getUserFromDbQuery = new GetAllUsersQuery();
         var users = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
-        foreach (var user in users)
-        {
-            user.Password = string.Empty;
-            user.Salt = string.Empty;
-        }
+        var dto = users.Select(u => u.MapToUserBasicInfo()).ToList();
 
-        await SendOkAsync(users, ct);
+        var response = new GetAllUsersResponse
+        {
+            Users = dto
+        };
+
+        await SendOkAsync(response, ct);
     }
 }

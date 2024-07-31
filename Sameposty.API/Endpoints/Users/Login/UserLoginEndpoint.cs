@@ -45,6 +45,7 @@ public class UserLoginEndpoint(IQueryExecutor queryExecutor, IJWTBearerProvider 
             Id = userFromDb.Id,
             Token = token,
             Username = req.Email,
+            Role = userFromDb.Role.ToString()
         }, cancellation: ct);
 
     }
