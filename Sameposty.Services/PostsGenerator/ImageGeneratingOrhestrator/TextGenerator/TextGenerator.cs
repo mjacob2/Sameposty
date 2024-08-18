@@ -6,8 +6,27 @@ namespace Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGener
 public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
 {
     private readonly int maxTokensUsedToGenerateText = 1000;
+    private readonly int maxTokensUsedToGenerateShortText = 300;
     private readonly int maxTokensUsedToGenerateImagePrompt = 1000;
     private readonly int maxCharCount = 500;
+
+    public async Task<string> GenerateCompanyMission(GenerateMissionRequest request)
+    {
+        var text = new ChatCompletionCreateRequest()
+        {
+            Model = Models.Gpt_4_turbo,
+            MaxTokens = maxTokensUsedToGenerateShortText,
+            Messages = new List<ChatMessage>
+            {
+                ChatMessage.FromSystem("Jesteś pracownikiem agencji marketingowej i jesteś specjalistą od marketingu w social media. Twoim zadaniem jest tworzyc misje firm na podstawie podanych informacji."),
+                ChatMessage.FromUser($"Napisz w 2 zdaniach misję dla firmy, która zajmuje się tym: {request.ProductsAndServices}, jej klientami są {request.Audience}, ma takie cele marketingowe: {request.Goals} i tak opisała swoje atuty: {request.Assets}"),
+            }
+        };
+
+        var response = await openAiService.ChatCompletion.CreateCompletion(text);
+
+        return response.Choices.First().Message.Content;
+    }
 
     public async Task<string> ReGeneratePostDescription(ReGeneratePostRequest request)
     {
