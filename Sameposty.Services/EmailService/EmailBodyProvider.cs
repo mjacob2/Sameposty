@@ -16,7 +16,7 @@ internal static class EmailBodyProvider
     {
         return $@"<p style=""margin-top: 20px;"">Cześć!<br>
 <p>Witaj w serwisie sameposty.pl! <br>
-Aby potwierdzić swoje konto i wygenerować pierwsze, wspaniałe posty na social media, kliknij w poniższy przycisk <br><br>
+Aby potwierdzić swoje konto kliknij w poniższy przycisk <br><br>
 <a href={url}/confirm?token={token} style=""background-color: #0042B6; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border-radius: 20px; cursor: pointer;"">Potwierdź e-mail</a>
 <br><br>
 Przycisk nie działa?<br>

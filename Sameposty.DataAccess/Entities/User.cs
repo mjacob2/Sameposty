@@ -15,9 +15,8 @@ public class User : EntityBase
     [MaxLength(20)]
     public string Salt { get; set; }
 
-    [Required]
     [MaxLength(10)]
-    public string NIP { get; set; }
+    public string NIP { get; set; } = string.Empty;
 
     public string Name { get; set; } = string.Empty;
 

@@ -76,7 +76,7 @@ namespace Sameposty.DataAccess.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("BasicInformations");
+                    b.ToTable("BasicInformations", (string)null);
                 });
 
             modelBuilder.Entity("Sameposty.DataAccess.Entities.FacebookConnection", b =>
@@ -110,7 +110,7 @@ namespace Sameposty.DataAccess.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("FacebookConnections");
+                    b.ToTable("FacebookConnections", (string)null);
                 });
 
             modelBuilder.Entity("Sameposty.DataAccess.Entities.InstagramConnection", b =>
@@ -144,7 +144,7 @@ namespace Sameposty.DataAccess.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("InstagramConnections");
+                    b.ToTable("InstagramConnections", (string)null);
                 });
 
             modelBuilder.Entity("Sameposty.DataAccess.Entities.Invoice", b =>
@@ -191,7 +191,7 @@ namespace Sameposty.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Invoices");
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("Sameposty.DataAccess.Entities.Post", b =>
@@ -240,7 +240,7 @@ namespace Sameposty.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("Sameposty.DataAccess.Entities.Privilege", b =>
@@ -274,7 +274,7 @@ namespace Sameposty.DataAccess.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Privileges");
+                    b.ToTable("Privileges", (string)null);
                 });
 
             modelBuilder.Entity("Sameposty.DataAccess.Entities.Prompt", b =>
@@ -297,7 +297,7 @@ namespace Sameposty.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Prompts");
+                    b.ToTable("Prompts", (string)null);
                 });
 
             modelBuilder.Entity("Sameposty.DataAccess.Entities.PublishResult", b =>
@@ -336,7 +336,7 @@ namespace Sameposty.DataAccess.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.ToTable("PublishResults");
+                    b.ToTable("PublishResults", (string)null);
                 });
 
             modelBuilder.Entity("Sameposty.DataAccess.Entities.Subscription", b =>
@@ -379,7 +379,7 @@ namespace Sameposty.DataAccess.Migrations
                         .IsUnique()
                         .HasFilter("[UserId] IS NOT NULL");
 
-                    b.ToTable("Subscriptions");
+                    b.ToTable("Subscriptions", (string)null);
                 });
 
             modelBuilder.Entity("Sameposty.DataAccess.Entities.User", b =>
@@ -471,7 +471,7 @@ namespace Sameposty.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Sameposty.DataAccess.Entities.BasicInformation", b =>
