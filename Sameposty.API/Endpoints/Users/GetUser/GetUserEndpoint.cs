@@ -4,7 +4,7 @@ using Sameposty.DataAccess.Queries.Users;
 
 namespace Sameposty.API.Endpoints.Users.GetLoggedUser;
 
-public class GetLoggedUserEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequest
+public class GetUserEndpoint(IQueryExecutor queryExecutor) : EndpointWithoutRequest
 {
     public override void Configure()
     {
