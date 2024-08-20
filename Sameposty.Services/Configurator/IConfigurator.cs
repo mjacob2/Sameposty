@@ -10,6 +10,7 @@ public interface IConfigurator
     public int ImageTokensPremiumLimit { get; }
     public int TextTokensPremiumLimit { get; }
     public string StripeSubscriptionPriceId { get; }
+    public string StripeCouponId { get; }
     string AngularClientBaseURl { get; }
     string SubscriptionSuccessPaymentUrl { get; }
     string SubscriptionFailedPaymentUrl { get; }

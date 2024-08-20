@@ -22,6 +22,11 @@ public class CreateSubscriptionCheckoutSessionEndpoint(IQueryExecutor queryExecu
         var loggedUserId = int.Parse(id);
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByIdQuery(loggedUserId));
 
+        if (string.IsNullOrEmpty(userFromDb.NIP))
+        {
+            ThrowError("Brak NIP");
+        }
+
         if (userFromDb.Subscription.StripeCustomerId == null)
         {
             var createStripeCustomerRequest = new CreateStripeCustomerRequest()
@@ -45,7 +50,6 @@ public class CreateSubscriptionCheckoutSessionEndpoint(IQueryExecutor queryExecu
             {
                 ThrowError(e.Message);
             }
-
         }
 
         if (userFromDb.FakturowniaClientId == null)

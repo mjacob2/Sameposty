@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Sameposty.API.Endpoints.Users.UpdateNip;
 
-public class UpdateNipRequestValidator : Validator<UpdateNipRequest>
+public class UpdateNipRequestValidator : Validator<AddNipRequest>
 {
     public UpdateNipRequestValidator()
     {
