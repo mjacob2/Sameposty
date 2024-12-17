@@ -26,17 +26,5 @@ public class AddUserRequestValidator : Validator<AddUserRequest>
             .WithMessage("Hasło nie więcej niż 20 znaków")
             .MinimumLength(4)
             .WithMessage("Hasło nie mniej niż 4 znaki");
-
-        RuleFor(x => x.NIP)
-           .NotNull()
-           .WithMessage("NIP nie może być pusty")
-           .NotEmpty()
-           .WithMessage("NIP nie może być pusty")
-           .MaximumLength(10)
-           .WithMessage("NIP nie więcej niż 10 znaków")
-           .MinimumLength(10)
-           .WithMessage("NIP nie mniej niż 10 znaków")
-           .Matches(@"^\d+$")
-           .WithMessage("NIP może zawierać tylko cyfry");
     }
 }

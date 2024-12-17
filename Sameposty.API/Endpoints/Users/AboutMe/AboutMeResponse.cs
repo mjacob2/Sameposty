@@ -29,8 +29,6 @@ public class AboutMeResponse
 
     public bool IsVerified { get; set; }
 
-    public bool CanGenerateInitialPosts { get; set; }
-
     public bool CanGenerateImageAI { get; set; }
 
     public bool CanEditImageAI { get; set; }

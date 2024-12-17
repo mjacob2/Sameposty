@@ -8,11 +8,10 @@ using Sameposty.Services.EmailService;
 using Sameposty.Services.FacebookPixel;
 using Sameposty.Services.Hasher;
 using Sameposty.Services.JWTService;
-using Sameposty.Services.REGON;
 
 namespace Sameposty.API.Endpoints.Users.AddUser;
 
-public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IEmailService email, IConfigurator configurator, IRegonService regonService, IJWTBearerProvider jwt, IFacebookPixelNotifier pixelNotifier) : Endpoint<AddUserRequest>
+public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor queryExecutor, IEmailService email, IConfigurator configurator, IJWTBearerProvider jwt, IFacebookPixelNotifier pixelNotifier) : Endpoint<AddUserRequest>
 {
     public override void Configure()
     {
@@ -36,13 +35,6 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
             ThrowError("Nie można użyć tego adresu e-mail");
         }
 
-        var regonCompany = await regonService.GetCompanyData(req.NIP);
-
-        if (regonCompany.Nazwa == null || regonCompany.Miejscowosc == null || regonCompany.KodPocztowy == null || regonCompany.Nip == null || !string.IsNullOrEmpty(regonCompany.DataZakonczeniaDzialalnosci))
-        {
-            ThrowError($"Dane firmy znalezione w bazie REGON są niekompletne: Nazwa:{regonCompany.Nazwa ?? "brak"}, Miejscowość:{regonCompany.Miejscowosc ?? "brak"}, Poczta:{regonCompany.KodPocztowy ?? "brak"}, NIP: {regonCompany.Nip ?? "brak"}, Data zamknięcia: {regonCompany.DataZakonczeniaDzialalnosci}");
-        }
-
         var salt = Hasher.GetSalt();
         var passwordHashed = Hasher.HashPassword(req.Password, salt);
 
@@ -52,16 +44,8 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
             Email = req.Email,
             Password = passwordHashed,
             Salt = salt,
-            NIP = req.NIP,
             ImageTokensLimit = configurator.ImageTokensDefaultLimit,
             TextTokensLimit = configurator.TextTokensDefaultLimit,
-            REGON = regonCompany.Regon,
-            Name = regonCompany.Nazwa,
-            City = regonCompany.Miejscowosc,
-            Street = regonCompany.Ulica,
-            BuildingNumber = regonCompany.NrNieruchomosci,
-            FlatNumber = regonCompany.NrLokalu,
-            PostCode = regonCompany.KodPocztowy,
             Role = DataAccess.Entities.Roles.FreeUser,
         };
 

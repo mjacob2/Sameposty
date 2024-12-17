@@ -26,7 +26,6 @@ public class AboutMeEndpoint(IQueryExecutor queryExecutor, ISecretsProvider secr
             NIP = userFromDb.NIP,
             Role = GetRoleString(userFromDb.Role),
             IsVerified = userFromDb.IsVerified,
-            CanGenerateInitialPosts = userFromDb.Privilege.CanGenerateInitialPosts,
             CanEditImageAI = userFromDb.Privilege.CanEditImageAI,
             CanGenerateImageAI = userFromDb.Privilege.CanGenerateImageAI,
             CanGenerateTextAI = userFromDb.Privilege.CanGenerateTextAI,

@@ -3,8 +3,6 @@
 namespace Sameposty.DataAccess.Entities;
 public class Privilege : EntityBase
 {
-    public bool CanGenerateInitialPosts { get; set; } = true;
-
     public bool CanGenerateImageAI { get; set; } = true;
 
     public bool CanEditImageAI { get; set; } = true;

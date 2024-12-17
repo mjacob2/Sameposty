@@ -21,11 +21,6 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, IPostGenerati
         var getUserFromDbQuery = new GetUserByIdQuery(id);
         var userFromDb = await queryExecutor.ExecuteQuery(getUserFromDbQuery);
 
-        if (!userFromDb.Privilege.CanGenerateInitialPosts && userFromDb.Role != DataAccess.Entities.Roles.Admin)
-        {
-            ThrowError("Aby wygenerować więcej wspaniałych postów, zapraszamy do skorzystania z abonamentu.");
-        }
-
         if (userFromDb.BasicInformation == null && userFromDb.Role != DataAccess.Entities.Roles.Admin)
         {
             ThrowError("Nie podano informacji o firmie");
@@ -41,7 +36,6 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, IPostGenerati
             ThrowError("Brak wystarczającej ilości tokenów do generowania tekstów!");
         }
 
-        userFromDb.Privilege.CanGenerateInitialPosts = false;
         await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = userFromDb });
 
         var posts = await manager.ManageGeneratingPosts(userFromDb, configurator.NumberFirstPostsGenerated);

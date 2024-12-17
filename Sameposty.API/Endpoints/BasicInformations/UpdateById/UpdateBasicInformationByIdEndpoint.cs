@@ -36,7 +36,7 @@ public class UpdateBasicInformationByIdEndpoint(ICommandExecutor commandExecutor
         basicInformationFromDb.Goals = req.Goals;
         basicInformationFromDb.Assets = req.Assets;
 
-        var updateCommand = new UpdateBasicInformationByIdCommand() { Parameter = basicInformationFromDb };
+        var updateCommand = new UpdateBasicInformationByIdCommand { Parameter = basicInformationFromDb };
 
         await commandExecutor.ExecuteCommand(updateCommand);
 

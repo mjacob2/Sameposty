@@ -1,7 +1,8 @@
 ﻿using Sameposty.DataAccess.Entities;
 using Sameposty.Services.DTOs;
 
-namespace Sameposty.DataAccess.Mappings;
+namespace Sameposty.Services.Mappings;
+
 public static class UserMappings
 {
     public static UserBasicInfo MapToUserBasicInfo(this User user)
@@ -27,7 +28,6 @@ public static class UserMappings
             TextTokensLeft = user.GetTextTokensLeft(),
             FakturowniaClientId = user.FakturowniaClientId,
             HasSubscription = user.Subscription.StipeSubscriptionId != null,
-            FirstPostsGenerated = !user.Privilege.CanGenerateInitialPosts,
         };
     }
 }

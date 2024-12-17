@@ -1,7 +1,7 @@
 ﻿using FastEndpoints;
 using Sameposty.DataAccess.Executors;
-using Sameposty.DataAccess.Mappings;
 using Sameposty.DataAccess.Queries.Users;
+using Sameposty.Services.Mappings;
 
 namespace Sameposty.API.Endpoints.Users.GetAllUsers;
 

@@ -13,5 +13,4 @@ public class UserBasicInfo
     public int TextTokensLeft { get; set; }
     public long? FakturowniaClientId { get; set; }
     public bool HasSubscription { get; set; }
-    public bool FirstPostsGenerated { get; set; }
 }
