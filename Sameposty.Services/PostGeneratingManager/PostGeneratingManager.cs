@@ -11,7 +11,7 @@ using Sameposty.Services.PostsPublishers.Orhestrator.Models;
 namespace Sameposty.Services.PostGeneratingManager;
 public class PostGeneratingManager(IPostsGenerator postsGenerator, ICommandExecutor commandExecutor, IConfigurator configurator, IPostPublishOrchestrator postPublishOrchestrator) : IPostGeneratingManager
 {
-    public async Task<Post> ManageGeneratingSinglePost(User user, DateTime date)
+    public async Task<Post> GenerateSinglePost(User user, DateTime date, bool generateText, bool generateImage)
     {
         var generatePostRequest = new GeneratePostRequest()
         {
@@ -23,7 +23,11 @@ public class PostGeneratingManager(IPostsGenerator postsGenerator, ICommandExecu
             Goals = user.BasicInformation.Goals,
             Assets = user.BasicInformation.Assets,
             ShedulePublishDate = date,
+            GenerateImage = generateImage,
+            GenerateText = generateText,
         };
+
+        UpdateUserTokens(user, generateText, generateImage);
 
         var newPost = await postsGenerator.GenerateSinglePost(generatePostRequest);
 
@@ -43,18 +47,12 @@ public class PostGeneratingManager(IPostsGenerator postsGenerator, ICommandExecu
 
         var response = await commandExecutor.ExecuteCommand(new UpdatePostCommand() { Parameter = addedPost });
 
-        if (user.Role != Roles.Admin)
-        {
-            user.ImageTokensUsed++;
-            user.TextTokensUsed++;
-        }
-
         await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = user });
 
         return response;
     }
 
-    public async Task<List<Post>> ManageGeneratingPosts(User user, int numberOfPostsToGenerate)
+    public async Task<List<Post>> GenerateNumberOfPosts(User user, int numberOfPostsToGenerate)
     {
         var generatePostRequest = new GeneratePostRequest()
         {
@@ -98,5 +96,37 @@ public class PostGeneratingManager(IPostsGenerator postsGenerator, ICommandExecu
         await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = user });
 
         return response;
+    }
+
+
+    private static void UpdateUserTokens(User user, bool generateText, bool generateImage)
+    {
+        if (user.Role != Roles.Admin)
+        {
+            UpdateImageTokens(user, generateImage);
+            UpdateTextTokens(user, generateText);
+            UpdatePostsToGenerate(user);
+        }
+    }
+
+    private static void UpdateImageTokens(User user, bool generateImage)
+    {
+        if (generateImage)
+        {
+            user.DecreaseImageTokens();
+        }
+    }
+
+    private static void UpdateTextTokens(User user, bool generateText)
+    {
+        if (generateText)
+        {
+            user.DecreaseTextTokens();
+        }
+    }
+
+    private static void UpdatePostsToGenerate(User user)
+    {
+        user.DecreasePostsToGenerate();
     }
 }

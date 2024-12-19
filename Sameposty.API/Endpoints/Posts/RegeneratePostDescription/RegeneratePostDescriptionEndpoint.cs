@@ -29,7 +29,7 @@ public class RegeneratePostDescriptionEndpoint(ITextGenerator textGenerator, IQu
 
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserOnlyByIdQuery(loggedUserId));
 
-        if (userFromDb.GetTextTokensLeft() < 1)
+        if (userFromDb.TextTokensLeft < 1)
         {
             ThrowError("Brak wystarczającej ilości tokenów do generowania tekstów!");
         }
@@ -57,7 +57,8 @@ public class RegeneratePostDescriptionEndpoint(ITextGenerator textGenerator, IQu
 
         await commandExecutor.ExecuteCommand(updateDescriptionCommand);
 
-        userFromDb.TextTokensUsed++;
+        userFromDb.DecreaseTextTokens();
+
         await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = userFromDb });
 
         await SendOkAsync(newDescription, ct);

@@ -38,8 +38,9 @@ public class AddUserWithBasicInformationsEndpoint(IQueryExecutor queryExecutor, 
             Email = req.Email,
             Password = passwordHashed,
             Salt = salt,
-            ImageTokensLimit = configurator.ImageTokensDefaultLimit,
-            TextTokensLimit = configurator.TextTokensDefaultLimit,
+            ImageTokensLeft = configurator.ImageTokensDefaultLimit,
+            TextTokensLeft = configurator.TextTokensDefaultLimit,
+            PostsToGenerateLeft = configurator.PostsDefaultLimit,
             Role = DataAccess.Entities.Roles.FreeUser,
             BasicInformation = new BasicInformation()
             {

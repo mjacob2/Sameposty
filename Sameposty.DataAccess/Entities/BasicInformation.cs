@@ -33,9 +33,8 @@ public class BasicInformation : EntityBase
     [JsonIgnore]
     public User User { get; set; }
 
-
-
-    [Required]
-    [MaxLength(200)]
-    public string Branch { get; set; } = string.Empty; // obsolete
+    public bool IsEmpty()
+    {
+        return string.IsNullOrEmpty(BrandName) || string.IsNullOrEmpty(Audience) || string.IsNullOrEmpty(Mission) || string.IsNullOrEmpty(ProductsAndServices) || string.IsNullOrEmpty(Goals) || string.IsNullOrEmpty(Assets);
+    }
 }

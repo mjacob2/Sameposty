@@ -7,10 +7,11 @@ using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.Configurator;
 using Sameposty.Services.FileRemover;
 using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
+using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
 
 namespace Sameposty.API.Endpoints.Posts.RegenerateImage;
 
-public class RegenerateImageEndpoint(IQueryExecutor queryExecutor, IImageGeneratingOrchestrator imageOrchestrator, IConfigurator configurator, ICommandExecutor commandExecutor, IFileRemover fileRemover) : Endpoint<RegenerateImageRequest>
+public class RegenerateImageEndpoint(IQueryExecutor queryExecutor, IImageGeneratingOrchestrator imageOrchestrator, IConfigurator configurator, ICommandExecutor commandExecutor, IFileRemover fileRemover, ITextGenerator textGenerator) : Endpoint<RegenerateImageRequest>
 {
     public override void Configure()
     {
@@ -19,22 +20,27 @@ public class RegenerateImageEndpoint(IQueryExecutor queryExecutor, IImageGenerat
 
     public override async Task HandleAsync(RegenerateImageRequest req, CancellationToken ct)
     {
-        if (string.IsNullOrEmpty(req.Prompt))
-        {
-            ThrowError("Polecenie nie może być puste!");
-        }
-
         var id = User.FindFirst("UserId").Value;
         var loggedUserId = int.Parse(id);
 
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserOnlyByIdQuery(loggedUserId));
 
-        if (userFromDb.GetImageTokensLeft() < 1)
+        if (userFromDb.ImageTokensLeft < 1)
         {
             ThrowError("Brak wystarczającej ilości tokenów do generowania obrazów!");
         }
+        var prompt = string.Empty;
 
-        var newImageName = await imageOrchestrator.GenerateImageFromUserPrompt(req.Prompt);
+        prompt = req.GeneratePrompt
+            ? await textGenerator.GeneratePromptForImageForPost(userFromDb.BasicInformation.ProductsAndServices)
+            : req.Prompt;
+
+        if (!req.GeneratePrompt && string.IsNullOrEmpty(req.Prompt))
+        {
+            ThrowError("Polecenie nie może być puste!");
+        }
+
+        var newImageName = await imageOrchestrator.GenerateImageFromUserPrompt(prompt);
 
         var imageUrl = $"{configurator.ApiBaseUrl}/{newImageName}";
 
@@ -53,7 +59,8 @@ public class RegenerateImageEndpoint(IQueryExecutor queryExecutor, IImageGenerat
 
         await commandExecutor.ExecuteCommand(updatePostCommand);
 
-        userFromDb.ImageTokensUsed++;
+        userFromDb.DecreaseImageTokens();
+
         await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = userFromDb });
 
         await SendOkAsync(imageUrl, ct);

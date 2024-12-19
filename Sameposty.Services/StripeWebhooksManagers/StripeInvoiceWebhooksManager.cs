@@ -28,16 +28,14 @@ public class StripeInvoiceWebhooksManager(IPostGeneratingManager manager, IQuery
         var invoiceCreated = await fakturowniaService.CreateInvoiceAsync(createInvoiceRequest);
         await SaveInvoice(invoiceCreated, userFromDb.Id);
         await fakturowniaService.SendInvoiceToUser(invoiceCreated.Id);
-        await manager.ManageGeneratingPosts(userFromDb, configurator.NumberPremiumPostsGenerated);
+        await manager.GenerateNumberOfPosts(userFromDb, configurator.NumberPremiumPostsGenerated);
         await email.EmailUserNewPostsGenerated(userFromDb.Email);
     }
 
     private async Task UpdateUserTokens(User user)
     {
-        user.ImageTokensLimit = configurator.ImageTokensPremiumLimit;
-        user.TextTokensLimit = configurator.TextTokensPremiumLimit;
-        user.ImageTokensUsed = 0;
-        user.TextTokensUsed = 0;
+        user.ImageTokensLeft = configurator.ImageTokensPremiumLimit;
+        user.TextTokensLeft = configurator.TextTokensPremiumLimit;
 
         await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = user });
     }

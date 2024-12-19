@@ -3,4 +3,8 @@
 public class AddPostRequest
 {
     public DateTime Date { get; set; }
+
+    public bool GenerateImage { get; set; }
+
+    public bool GenerateText { get; set; }
 }

@@ -40,12 +40,12 @@ public class PostsGenerator(ITextGenerator postDescriptionGenerator, IImageGener
     public async Task<Post> GenerateSinglePost(GeneratePostRequest request)
     {
         var descriptionTask = postDescriptionGenerator.GeneratePostDescription(request);
-        var imageTask = imageGenerating.GenerateImage(request.ProductsAndServices, 1);
+        var imageTask = imageGenerating.GenerateImage(request.ProductsAndServices, 1, request.GenerateImage);
 
         await Task.WhenAll(descriptionTask, imageTask);
 
-        var description = await descriptionTask;
-        var imageName = await imageTask;
+        var description = descriptionTask.Result;
+        var imageName = imageTask.Result;
 
         var post = new Post()
         {

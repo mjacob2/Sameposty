@@ -18,5 +18,6 @@ public class Configurator(IConfiguration configuration, IWebHostEnvironment webH
     public string StripeCouponId { get; private set; } = configuration.GetValue<string>("StripeSettings:StripeCouponId") ?? throw new ArgumentNullException("No StripeCouponId provided in sppsettings.json");
     public string SubscriptionSuccessPaymentUrl { get; private set; } = configuration.GetConnectionString("SubscriptionSuccessPaymentUrl") ?? throw new ArgumentNullException("No SubscriptionSuccessPaymentUrl provided in sppsettings.json");
     public string SubscriptionFailedPaymentUrl { get; private set; } = configuration.GetConnectionString("SubscriptionFailedPaymentUrl") ?? throw new ArgumentNullException("No SubscriptionFailedPaymentUrl provided in sppsettings.json");
+    public int PostsDefaultLimit { get; private set; } = configuration.GetValue<int>("Settings:PostsDefaultLimit");
     public bool IsDevelopment => webHostEnvironment.IsDevelopment();
 }

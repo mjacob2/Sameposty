@@ -84,7 +84,13 @@ if (builder.Environment.IsProduction())
 AddFastEndpoints(builder, secrets.JWTBearerTokenSignKey);
 
 builder.Services.AddDbContext<SamepostyDbContext>(options =>
-            options.UseSqlServer(dbConnectionString));
+            options.UseSqlServer(dbConnectionString, options =>
+            {
+                options.EnableRetryOnFailure(
+                    maxRetryCount: 3,
+                    maxRetryDelay: TimeSpan.FromSeconds(10),
+                    errorNumbersToAdd: null);
+            }));
 
 builder.Services.AddSingleton<ISecretsProvider>(_ =>
 {

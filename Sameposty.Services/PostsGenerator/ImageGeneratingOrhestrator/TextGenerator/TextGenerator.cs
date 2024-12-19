@@ -16,11 +16,11 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
         {
             Model = Models.Gpt_4_turbo,
             MaxTokens = maxTokensUsedToGenerateShortText,
-            Messages = new List<ChatMessage>
-            {
+            Messages =
+            [
                 ChatMessage.FromSystem("Jesteś pracownikiem agencji marketingowej i jesteś specjalistą od marketingu w social media. Twoim zadaniem jest tworzyc misje firm na podstawie podanych informacji."),
                 ChatMessage.FromUser($"Napisz w 2 zdaniach misję dla firmy, która zajmuje się tym: {request.ProductsAndServices}, jej klientami są {request.Audience}, ma takie cele marketingowe: {request.Goals} i tak opisała swoje atuty: {request.Assets}"),
-            }
+            ]
         };
 
         var response = await openAiService.ChatCompletion.CreateCompletion(text);
@@ -34,14 +34,14 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
         {
             Model = Models.Gpt_4_turbo,
             MaxTokens = maxTokensUsedToGenerateImagePrompt,
-            Messages = new List<ChatMessage>
-            {
+            Messages =
+            [
                 ChatMessage.FromSystem("$\"Jesteś pracownikiem agencji marketingowej i jesteś specjalistą od marketingu w social media. Twoim zadaniem jest tworzyć świetny tekst do posta na Facebook. Musisz pamiętać, jakie teksty były już tworzone dla tej firmy, żeby teksty się nie powtarzały. Tekst nie może być dłuższy niż {maxCharCount} znaków. Tworzysz sam tekst posta. Bez żanych komentarzy ani dopisków."),
 
                 ChatMessage.FromSystem($"Pracujesz dla firmy, której nazwa marketingowa to {request.BrandName} a jej grupa docelowa to: {request.Audience}"),
 
                 ChatMessage.FromUser($"Napisz post w tym temacie: {request.UserPrompt}"),
-            }
+            ]
         };
 
         var response = await openAiService.ChatCompletion.CreateCompletion(text);
@@ -55,12 +55,12 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
         {
             Model = Models.Gpt_4_turbo,
             MaxTokens = maxTokensUsedToGenerateImagePrompt,
-            Messages = new List<ChatMessage>
-            {
+            Messages =
+            [
                 ChatMessage.FromSystem("Jesteś pomocnym asystentem, który pisze prompty, które potem posłużą do generowania obrazów w nowym modelu sztucznej inteligencji. Weź pod uwagę zasady bezpieczeństwa, które mogą stać na straży takiego generatora obrazów. Czyli nie podawaj nazw zastrzeżonych, obraźliwych słów, niebezpiecznych, itp."),
 
                 ChatMessage.FromUser($"Daj mi jedną, kreatywną propozycję, co może przedstawiać zdjęcie, które będzie opublikowane na social media firmy działającej w Polsce, która tak odpowiedziała na pytanie o to czym się zajmuje: {productsAndServices}. Twoja odpowiedź nie może przekraczać 300 znaków."),
-            }
+            ]
         };
 
         var response = await openAiService.ChatCompletion.CreateCompletion(text);
@@ -71,6 +71,11 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
 
     public async Task<string> GeneratePostDescription(GeneratePostRequest request)
     {
+        if (!request.GenerateText)
+        {
+            return string.Empty;
+        }
+
         var text = new ChatCompletionCreateRequest()
         {
             Model = Models.Gpt_4_turbo,
@@ -115,5 +120,4 @@ public class TextGenerator(IOpenAIService openAiService) : ITextGenerator
 
         return response.Choices.First().Message.Content;
     }
-
 }

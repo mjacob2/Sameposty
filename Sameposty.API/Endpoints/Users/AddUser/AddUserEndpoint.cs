@@ -44,9 +44,10 @@ public class AddUserEndpoint(ICommandExecutor commandExecutor, IQueryExecutor qu
             Email = req.Email,
             Password = passwordHashed,
             Salt = salt,
-            ImageTokensLimit = configurator.ImageTokensDefaultLimit,
-            TextTokensLimit = configurator.TextTokensDefaultLimit,
+            ImageTokensLeft = configurator.ImageTokensDefaultLimit,
+            TextTokensLeft = configurator.TextTokensDefaultLimit,
             Role = DataAccess.Entities.Roles.FreeUser,
+            PostsToGenerateLeft = configurator.PostsDefaultLimit,
         };
 
         var command = new AddUserCommand() { Parameter = user };

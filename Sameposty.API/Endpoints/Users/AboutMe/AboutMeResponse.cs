@@ -35,13 +35,17 @@ public class AboutMeResponse
 
     public bool CanGenerateTextAI { get; set; }
 
-    public int ImageTokensLimit { get; set; }
+    public int ImageTokensLeft { get; set; }
 
     public int ImageTokensUsed { get; set; }
 
-    public int TextTokensLimit { get; set; }
+    public int TextTokensLeft { get; set; }
 
     public int TextTokensUsed { get; set; }
+
+    public int PostsToGenerateLeft { get; set; }
+
+    public int PostsGenerated { get; set; }
 
     public AboutMeResponseSubscription? Subscription { get; set; }
 

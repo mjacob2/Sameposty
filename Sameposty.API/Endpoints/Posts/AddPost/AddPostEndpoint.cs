@@ -18,22 +18,32 @@ public class AddPostEndpoint(IQueryExecutor queryExecutor, IPostGeneratingManage
         var loggedUserId = int.Parse(id);
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByIdQuery(loggedUserId));
 
+        if (userFromDb.PostsToGenerateLeft < 1)
+        {
+            ThrowError("Zużyto wszystkie tokeny do generowania postów. Należy dokupić tokeny.");
+        }
+
         if (userFromDb.BasicInformation == null && userFromDb.Role != DataAccess.Entities.Roles.Admin)
         {
             ThrowError("Nie podano informacji o firmie");
         }
 
-        if (userFromDb.GetImageTokensLeft() < 1)
+        if (userFromDb.BasicInformation.IsEmpty() && (req.GenerateText || req.GenerateImage))
         {
-            ThrowError("Zużyto wszystkie tokeny do generowania obrazów! Tokeny odnawiają się wraz z kolejnym okresem subskrypcji premium.");
+            ThrowError("Aby skorzystać z automatycznego generowania, uzupełnij informacje o firmie");
         }
 
-        if (userFromDb.GetTextTokensLeft() < 1)
+        if (userFromDb.ImageTokensLeft < 1 && req.GenerateImage)
         {
-            ThrowError("Zużyto wszystkie tokeny do generowania tekstów! Tokeny odnawiają się wraz z kolejnym okresem subskrypcji premium.");
+            ThrowError("Zużyto wszystkie tokeny do generowania obrazów. Należy dokupić tokeny.");
         }
 
-        var post = await manager.ManageGeneratingSinglePost(userFromDb, req.Date);
+        if (userFromDb.TextTokensLeft < 1 && req.GenerateText)
+        {
+            ThrowError("Zużyto wszystkie tokeny do generowania tekstów. Należy dokupić tokeny.");
+        }
+
+        var post = await manager.GenerateSinglePost(userFromDb, req.Date, req.GenerateImage, req.GenerateText);
 
         await SendOkAsync(post, ct);
     }

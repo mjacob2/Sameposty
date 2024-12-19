@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sameposty.DataAccess.DatabaseContext;
 
@@ -11,9 +12,11 @@ using Sameposty.DataAccess.DatabaseContext;
 namespace Sameposty.DataAccess.Migrations
 {
     [DbContext(typeof(SamepostyDbContext))]
-    partial class SamepostyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241219193708_UpdateUser")]
+    partial class UpdateUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -437,12 +440,6 @@ namespace Sameposty.DataAccess.Migrations
                     b.Property<string>("PostCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PostsGenerated")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PostsToGenerateLeft")
-                        .HasColumnType("int");
 
                     b.Property<string>("REGON")
                         .IsRequired()

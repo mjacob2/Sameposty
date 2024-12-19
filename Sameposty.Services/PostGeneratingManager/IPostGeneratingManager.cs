@@ -3,6 +3,6 @@
 namespace Sameposty.Services.PostGeneratingManager;
 public interface IPostGeneratingManager
 {
-    Task<Post> ManageGeneratingSinglePost(User user, DateTime date);
-    Task<List<Post>> ManageGeneratingPosts(User user, int numberOfPostsToGenerate);
+    Task<Post> GenerateSinglePost(User user, DateTime date, bool generateText, bool generateImage);
+    Task<List<Post>> GenerateNumberOfPosts(User user, int numberOfPostsToGenerate);
 }

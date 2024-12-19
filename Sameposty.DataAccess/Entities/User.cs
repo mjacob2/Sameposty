@@ -60,23 +60,49 @@ public class User : EntityBase
 
     public bool IsVerified { get; set; }
 
-    public int ImageTokensLimit { get; set; }
+    public int ImageTokensLeft { get; set; }
+
+    public int TextTokensLeft { get; set; }
 
     public int ImageTokensUsed { get; set; }
 
-    public int TextTokensLimit { get; set; }
-
     public int TextTokensUsed { get; set; }
+
+    public int PostsToGenerateLeft { get; set; }
+
+    public int PostsGenerated { get; set; }
 
     public long? FakturowniaClientId { get; set; }
 
-    public int GetImageTokensLeft()
+    public void DecreaseImageTokens()
     {
-        return ImageTokensLimit - ImageTokensUsed;
+        if (ImageTokensLeft - 1 < 0)
+        {
+            throw new InvalidOperationException("Image tokens left cannot be less than zero.");
+        }
+
+        ImageTokensLeft--;
+        ImageTokensUsed++;
     }
 
-    public int GetTextTokensLeft()
+    public void DecreaseTextTokens()
     {
-        return TextTokensLimit - TextTokensUsed;
+        if (TextTokensLeft - 1 < 0)
+        {
+            throw new InvalidOperationException("Text tokens left cannot be less than zero.");
+        }
+
+        TextTokensLeft--;
+        TextTokensUsed++;
+    }
+
+    public void DecreasePostsToGenerate()
+    {
+        if (PostsToGenerateLeft - 1 < 0)
+        {
+            throw new InvalidOperationException("Posts to generate left cannot be less than zero.");
+        }
+        PostsToGenerateLeft--;
+        PostsGenerated++;
     }
 }

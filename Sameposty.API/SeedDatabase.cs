@@ -31,8 +31,8 @@ public class SeedDatabase(SamepostyDbContext db, ISecretsProvider secrets)
                 IsActive = true,
                 Role = Roles.Admin,
                 IsVerified = true,
-                ImageTokensLimit = 10000,
-                TextTokensLimit = 10000,
+                ImageTokensLeft = 10000,
+                TextTokensLeft = 10000,
             };
 
             await db.Users.AddAsync(user);

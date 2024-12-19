@@ -24,8 +24,8 @@ public static class UserMappings
             City = user.City,
             Role = user.Role.ToString(),
             IsVerified = user.IsVerified,
-            ImageTokensLeft = user.GetImageTokensLeft(),
-            TextTokensLeft = user.GetTextTokensLeft(),
+            ImageTokensLeft = user.ImageTokensLeft,
+            TextTokensLeft = user.TextTokensLeft,
             FakturowniaClientId = user.FakturowniaClientId,
             HasSubscription = user.Subscription.StipeSubscriptionId != null,
         };

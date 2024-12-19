@@ -15,4 +15,5 @@ public interface IConfigurator
     string SubscriptionSuccessPaymentUrl { get; }
     string SubscriptionFailedPaymentUrl { get; }
     bool IsDevelopment { get; }
+    int PostsDefaultLimit { get; }
 }

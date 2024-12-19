@@ -16,4 +16,8 @@ public class GeneratePostRequest
     public string Assets { get; set; }
 
     public DateTime ShedulePublishDate { get; set; }
+
+    public bool GenerateImage { get; set; }
+
+    public bool GenerateText { get; set; }
 }
