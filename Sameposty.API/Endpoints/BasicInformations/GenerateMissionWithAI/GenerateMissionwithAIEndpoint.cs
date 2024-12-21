@@ -1,5 +1,5 @@
 ﻿using FastEndpoints;
-using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
+using Sameposty.Services.PostsGeneratorService.ImageGeneratingOrhestrator.TextGenerator;
 
 namespace Sameposty.API.Endpoints.BasicInformations.GenerateMissionWithAI;
 

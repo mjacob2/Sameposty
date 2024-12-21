@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using Sameposty.Services.Secrets;
+using Sameposty.Services.SecretsService;
 
 namespace Sameposty.Services.FacebookPixel;
 

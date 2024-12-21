@@ -1,5 +1,5 @@
 ﻿using Sameposty.Services.FacebookPixel;
-using Sameposty.Services.Secrets;
+using Sameposty.Services.SecretsService;
 
 namespace Integration.Tests;
 public class FacebookPixelNotifierTests : IDisposable

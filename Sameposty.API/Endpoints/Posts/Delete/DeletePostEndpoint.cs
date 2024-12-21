@@ -3,7 +3,7 @@ using Hangfire;
 using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Posts;
-using Sameposty.Services.FileRemover;
+using Sameposty.Services.FileRemoverService;
 
 namespace Sameposty.API.Endpoints.Posts.Delete;
 

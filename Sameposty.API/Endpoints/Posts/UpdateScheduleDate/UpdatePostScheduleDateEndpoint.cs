@@ -4,7 +4,7 @@ using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.DataAccess.Queries.Users;
-using Sameposty.Services.Configurator;
+using Sameposty.Services.ConfiguratorService;
 using Sameposty.Services.PostsPublishers.Orhestrator;
 using Sameposty.Services.PostsPublishers.Orhestrator.Models;
 

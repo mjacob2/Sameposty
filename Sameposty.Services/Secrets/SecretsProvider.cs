@@ -1,4 +1,4 @@
-﻿namespace Sameposty.Services.Secrets;
+﻿namespace Sameposty.Services.SecretsService;
 public class SecretsProvider(Secrets secrets) : ISecretsProvider
 {
     public string AdminPassword { get; private set; } = secrets.AdminPassword;

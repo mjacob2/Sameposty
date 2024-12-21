@@ -1,5 +1,5 @@
 ﻿using FastEndpoints;
-using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageGenerator;
+using Sameposty.Services.PostsGeneratorService.ImageGeneratingOrhestrator.ImageGenerator;
 
 namespace Sameposty.API.Endpoints.TestEndpoints;
 

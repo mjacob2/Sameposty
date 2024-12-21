@@ -3,8 +3,8 @@ using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Posts;
-using Sameposty.Services.FileRemover;
-using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
+using Sameposty.Services.FileRemoverService;
+using Sameposty.Services.PostsGeneratorService.ImageGeneratingOrhestrator.ImageSaver;
 using Sameposty.Services.PostsPublishers.Orhestrator.Models;
 using Sameposty.Services.PostsPublishers.PostsPublisher;
 

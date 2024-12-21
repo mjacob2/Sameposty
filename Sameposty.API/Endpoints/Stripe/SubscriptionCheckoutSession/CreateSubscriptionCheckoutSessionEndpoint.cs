@@ -22,10 +22,10 @@ public class CreateSubscriptionCheckoutSessionEndpoint(IQueryExecutor queryExecu
         var loggedUserId = int.Parse(id);
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByIdQuery(loggedUserId));
 
-        if (string.IsNullOrEmpty(userFromDb.NIP))
-        {
-            ThrowError("Brak NIP");
-        }
+        //if (string.IsNullOrEmpty(userFromDb.NIP))
+        //{
+        //    ThrowError("Brak NIP");
+        //}
 
         if (userFromDb.Subscription.StripeCustomerId == null)
         {
@@ -52,30 +52,30 @@ public class CreateSubscriptionCheckoutSessionEndpoint(IQueryExecutor queryExecu
             }
         }
 
-        if (userFromDb.FakturowniaClientId == null)
-        {
-            var request = new AddFakturowniaClientModel()
-            {
-                City = userFromDb.City,
-                Email = userFromDb.Email,
-                Name = userFromDb.Name,
-                NIP = userFromDb.NIP,
-                PostCode = userFromDb.PostCode,
-                Street = GetStreetNameWithNumbers(userFromDb.Street, userFromDb.BuildingNumber, userFromDb.FlatNumber),
-            };
+        //if (userFromDb.FakturowniaClientId == null)
+        //{
+        //    var request = new AddFakturowniaClientModel()
+        //    {
+        //        City = userFromDb.City,
+        //        Email = userFromDb.Email,
+        //        Name = userFromDb.Name,
+        //        NIP = userFromDb.NIP,
+        //        PostCode = userFromDb.PostCode,
+        //        Street = GetStreetNameWithNumbers(userFromDb.Street, userFromDb.BuildingNumber, userFromDb.FlatNumber),
+        //    };
 
-            try
-            {
-                var fakturowniaClientId = await fakturowniaService.CreateClientAsync(request);
-                userFromDb.FakturowniaClientId = fakturowniaClientId;
-                await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = userFromDb });
-            }
-            catch (Exception e)
-            {
-                ThrowError(e.Message);
-            }
+        //    try
+        //    {
+        //        var fakturowniaClientId = await fakturowniaService.CreateClientAsync(request);
+        //        userFromDb.FakturowniaClientId = fakturowniaClientId;
+        //        await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = userFromDb });
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        ThrowError(e.Message);
+        //    }
 
-        }
+        //}
 
         var session = await stripe.CreateSubscriptionSession(userFromDb.Subscription.StripeCustomerId, userFromDb.Id);
 

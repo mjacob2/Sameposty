@@ -1,5 +1,5 @@
 ﻿using FastEndpoints;
-using Sameposty.Services.EmailService;
+using Sameposty.Services.EmailManager;
 
 namespace Sameposty.API.Endpoints.Utilities.SendEmail;
 

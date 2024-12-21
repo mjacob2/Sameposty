@@ -4,7 +4,7 @@ using Sameposty.DataAccess.Commands.InstagramConenctions;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.InstagramConnections;
-using Sameposty.Services.FacebookTokenManager;
+using Sameposty.Services.FacebookTokenManagerService;
 
 namespace Sameposty.API.Endpoints.InstagramConnections.Add;
 

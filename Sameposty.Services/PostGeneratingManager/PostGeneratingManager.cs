@@ -3,13 +3,13 @@ using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Commands.Users;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
-using Sameposty.Services.Configurator;
-using Sameposty.Services.PostsGenerator;
+using Sameposty.Services.ConfiguratorService;
+using Sameposty.Services.PostsGeneratorService;
 using Sameposty.Services.PostsPublishers.Orhestrator;
 using Sameposty.Services.PostsPublishers.Orhestrator.Models;
 
 namespace Sameposty.Services.PostGeneratingManager;
-public class PostGeneratingManager(IPostsGenerator postsGenerator, ICommandExecutor commandExecutor, IConfigurator configurator, IPostPublishOrchestrator postPublishOrchestrator) : IPostGeneratingManager
+public class PostGeneratingService(IPostsGenerator postsGenerator, ICommandExecutor commandExecutor, IConfigurator configurator, IPostPublishOrchestrator postPublishOrchestrator) : IPostGeneratingManager
 {
     public async Task<Post> GenerateSinglePost(User user, DateTime date, bool generateText, bool generateImage)
     {

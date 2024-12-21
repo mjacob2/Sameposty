@@ -1,7 +1,7 @@
 ﻿using Sameposty.DataAccess.DatabaseContext;
 using Sameposty.DataAccess.Entities;
 using Sameposty.Services.Hasher;
-using Sameposty.Services.Secrets;
+using Sameposty.Services.SecretsService;
 
 namespace Sameposty.API;
 

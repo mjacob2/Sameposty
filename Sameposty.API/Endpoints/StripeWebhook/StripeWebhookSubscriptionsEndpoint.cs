@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
 using Hangfire;
-using Sameposty.Services.Secrets;
+using Sameposty.Services.SecretsService;
 using Sameposty.Services.StripeWebhooksManagers.Subscriptions;
 using Stripe;
 

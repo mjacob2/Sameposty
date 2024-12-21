@@ -3,7 +3,7 @@ using Sameposty.DataAccess.Commands.FacebookConnections;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.FacebookConnections;
-using Sameposty.Services.FacebookTokenManager;
+using Sameposty.Services.FacebookTokenManagerService;
 
 namespace Sameposty.API.Endpoints.FacebookConnections.Add;
 

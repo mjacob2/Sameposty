@@ -1,7 +1,7 @@
 ﻿using FastEndpoints;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
-using Sameposty.Services.Secrets;
+using Sameposty.Services.SecretsService;
 using Stripe;
 using Stripe.BillingPortal;
 

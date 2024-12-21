@@ -1,7 +1,7 @@
 ﻿using FastEndpoints;
 using Moq;
 using Sameposty.Services.JWTService;
-using Sameposty.Services.Secrets;
+using Sameposty.Services.SecretsService;
 
 namespace Sameposty.Services.Tests;
 public class JWTBearerProviderTests

@@ -2,7 +2,7 @@
 using Sameposty.DataAccess.Commands.Users;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
-using Sameposty.Services.Configurator;
+using Sameposty.Services.ConfiguratorService;
 using Sameposty.Services.PostGeneratingManager;
 
 namespace Sameposty.API.Endpoints.Posts.AddInitalPosts;

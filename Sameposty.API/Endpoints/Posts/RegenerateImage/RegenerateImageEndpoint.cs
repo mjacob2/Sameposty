@@ -4,10 +4,10 @@ using Sameposty.DataAccess.Commands.Users;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.DataAccess.Queries.Users;
-using Sameposty.Services.Configurator;
-using Sameposty.Services.FileRemover;
-using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator;
-using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
+using Sameposty.Services.ConfiguratorService;
+using Sameposty.Services.FileRemoverService;
+using Sameposty.Services.PostsGeneratorService.ImageGeneratingOrhestrator;
+using Sameposty.Services.PostsGeneratorService.ImageGeneratingOrhestrator.TextGenerator;
 
 namespace Sameposty.API.Endpoints.Posts.RegenerateImage;
 

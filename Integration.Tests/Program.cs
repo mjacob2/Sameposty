@@ -1,7 +1,7 @@
 ﻿
 using Integration.Tests;
 using Microsoft.Extensions.Configuration;
-using Sameposty.Services.Secrets;
+using Sameposty.Services.SecretsService;
 
 var builder = new ConfigurationBuilder()
     .AddUserSecrets<Program>();

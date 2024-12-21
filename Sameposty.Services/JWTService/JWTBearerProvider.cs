@@ -1,5 +1,5 @@
 ﻿using FastEndpoints.Security;
-using Sameposty.Services.Secrets;
+using Sameposty.Services.SecretsService;
 
 namespace Sameposty.Services.JWTService;
 public class JWTBearerProvider(ISecretsProvider secrets) : IJWTBearerProvider

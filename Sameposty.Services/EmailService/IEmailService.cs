@@ -1,4 +1,4 @@
-﻿namespace Sameposty.Services.EmailService;
+﻿namespace Sameposty.Services.EmailManager;
 public interface IEmailService
 {
     Task SentImageGeneratorErrorEmail(string errorMessage);

@@ -2,7 +2,7 @@
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
-using Sameposty.Services.Secrets;
+using Sameposty.Services.SecretsService;
 
 namespace Sameposty.API.Endpoints.Users.AboutMe;
 

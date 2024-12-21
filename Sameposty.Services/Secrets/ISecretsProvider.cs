@@ -1,4 +1,4 @@
-﻿namespace Sameposty.Services.Secrets;
+﻿namespace Sameposty.Services.SecretsService;
 
 public interface ISecretsProvider
 {

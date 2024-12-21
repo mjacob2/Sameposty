@@ -5,8 +5,8 @@ using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.BasicInformations;
 using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.DataAccess.Queries.Users;
-using Sameposty.Services.PostsGenerator;
-using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.TextGenerator;
+using Sameposty.Services.PostsGeneratorService;
+using Sameposty.Services.PostsGeneratorService.ImageGeneratingOrhestrator.TextGenerator;
 
 namespace Sameposty.API.Endpoints.Posts.RegeneratePostDescription;
 
@@ -18,12 +18,6 @@ public class RegeneratePostDescriptionEndpoint(ITextGenerator textGenerator, IQu
     }
     public override async Task HandleAsync(RegeneratePostDescriptionRequest req, CancellationToken ct)
     {
-
-        if (string.IsNullOrEmpty(req.Prompt))
-        {
-            ThrowError("Polecenie nie może być puste!");
-        }
-
         var id = User.FindFirst("UserId").Value;
         var loggedUserId = int.Parse(id);
 
@@ -34,7 +28,42 @@ public class RegeneratePostDescriptionEndpoint(ITextGenerator textGenerator, IQu
             ThrowError("Brak wystarczającej ilości tokenów do generowania tekstów!");
         }
 
-        var basicInformation = await queryExecutor.ExecuteQuery(new GetBasicInformationByUserIdQuery(loggedUserId));
+        var descriptionRegenerated = string.Empty;
+
+        if (req.GeneratePrompt)
+        {
+            var generateRequest = new GeneratePostRequest()
+            {
+                UserId = loggedUserId,
+                Audience = userFromDb.BasicInformation.Audience,
+                BrandName = userFromDb.BasicInformation.BrandName,
+                Mission = userFromDb.BasicInformation.Mission,
+                ProductsAndServices = userFromDb.BasicInformation.ProductsAndServices,
+                Goals = userFromDb.BasicInformation.Goals,
+                Assets = userFromDb.BasicInformation.Assets,
+                GenerateText = true,
+            };
+
+            descriptionRegenerated = await textGenerator.GeneratePostDescription(generateRequest);
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(req.Prompt))
+            {
+                ThrowError("Polecenie nie może być puste!");
+            }
+
+            var regenerateRequest = new ReGeneratePostRequest()
+            {
+                UserPrompt = req.Prompt,
+                Audience = userFromDb.BasicInformation.Audience,
+                BrandName = userFromDb.BasicInformation.BrandName,
+            };
+
+            descriptionRegenerated = await textGenerator.ReGeneratePostDescription(regenerateRequest);
+
+        }
+
         var postToUpdate = await queryExecutor.ExecuteQuery(new GetPostByIdQuery() { PostId = req.PostId });
 
         if (postToUpdate.IsPublishingInProgress || postToUpdate.IsPublished)
@@ -42,16 +71,7 @@ public class RegeneratePostDescriptionEndpoint(ITextGenerator textGenerator, IQu
             ThrowError("Nie można już edytować tego posta");
         }
 
-        var regenerateRequest = new ReGeneratePostRequest()
-        {
-            UserPrompt = req.Prompt,
-            Audience = basicInformation.Audience,
-            BrandName = basicInformation.BrandName,
-        };
-
-        var newDescription = await textGenerator.ReGeneratePostDescription(regenerateRequest);
-
-        postToUpdate.Description = newDescription;
+        postToUpdate.Description = descriptionRegenerated;
 
         var updateDescriptionCommand = new UpdatePostCommand() { Parameter = postToUpdate };
 
@@ -61,6 +81,6 @@ public class RegeneratePostDescriptionEndpoint(ITextGenerator textGenerator, IQu
 
         await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = userFromDb });
 
-        await SendOkAsync(newDescription, ct);
+        await SendOkAsync(descriptionRegenerated, ct);
     }
 }

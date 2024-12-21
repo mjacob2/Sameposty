@@ -1,9 +1,9 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
-using Sameposty.Services.Configurator;
-using Sameposty.Services.Secrets;
+using Sameposty.Services.ConfiguratorService;
+using Sameposty.Services.SecretsService;
 
-namespace Sameposty.Services.EmailService;
+namespace Sameposty.Services.EmailManager;
 public class EmailService(ISecretsProvider secrets, IConfigurator configurator) : IEmailService
 {
     private async Task SendEmail(string to, string subject, string body)

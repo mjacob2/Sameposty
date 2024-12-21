@@ -1,6 +1,6 @@
 ﻿using FastEndpoints;
 using Hangfire;
-using Sameposty.Services.Secrets;
+using Sameposty.Services.SecretsService;
 using Sameposty.Services.StripeWebhooksManagers;
 using Stripe;
 using Invoice = Stripe.Invoice;

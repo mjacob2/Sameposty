@@ -1,8 +1,8 @@
 ﻿using FastEndpoints;
 using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Executors;
-using Sameposty.Services.FileRemover;
-using Sameposty.Services.PostsGenerator.ImageGeneratingOrhestrator.ImageSaver;
+using Sameposty.Services.FileRemoverService;
+using Sameposty.Services.PostsGeneratorService.ImageGeneratingOrhestrator.ImageSaver;
 
 namespace Sameposty.API.Endpoints.Posts.UploadImage;
 

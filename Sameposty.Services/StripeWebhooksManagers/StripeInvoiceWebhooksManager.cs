@@ -4,8 +4,8 @@ using Sameposty.DataAccess.Commands.Users;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
-using Sameposty.Services.Configurator;
-using Sameposty.Services.EmailService;
+using Sameposty.Services.ConfiguratorService;
+using Sameposty.Services.EmailManager;
 using Sameposty.Services.Fakturownia;
 using Sameposty.Services.PostGeneratingManager;
 
