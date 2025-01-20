@@ -1,7 +1,7 @@
 ﻿using FastEndpoints;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
-using Sameposty.Services.EmailManager;
+using Sameposty.Services.Email;
 using Sameposty.Services.JWTService;
 
 namespace Sameposty.API.Endpoints.Users.ResetPassword;

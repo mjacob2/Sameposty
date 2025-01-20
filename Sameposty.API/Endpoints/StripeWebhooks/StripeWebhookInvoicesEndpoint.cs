@@ -5,7 +5,7 @@ using Sameposty.Services.StripeWebhooksManagers;
 using Stripe;
 using Invoice = Stripe.Invoice;
 
-namespace Sameposty.API.Endpoints.StripeWebhook;
+namespace Sameposty.API.Endpoints.StripeWebhooks;
 
 public class StripeWebhookInvoicesEndpoint(IStripeWebhooksManager manager, ISecretsProvider secrets) : EndpointWithoutRequest
 {

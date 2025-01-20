@@ -1,6 +1,7 @@
 ﻿using FastEndpoints;
 using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Executors;
+using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.DataAccess.Queries.Users;
 
 namespace Sameposty.API.Endpoints.Posts.UpdatePostDescription;
@@ -25,7 +26,11 @@ public class UpdatePostDescriptionEndpoint(ICommandExecutor commandExecutor, IQu
             ThrowError("Brak uprawnień");
         }
 
-        var updateDescriptionCommand = new UpdatePostDescriptionCommand(req.PostId, req.PostDescription);
+        var postToUpdate = await queryExecutor.ExecuteQuery(new GetPostByIdQuery() { PostId = req.PostId });
+
+        postToUpdate.Description = req.PostDescription;
+
+        var updateDescriptionCommand = new UpdatePostCommand() { Parameter = postToUpdate };
 
         var updatedPost = await commandExecutor.ExecuteCommand(updateDescriptionCommand);
 

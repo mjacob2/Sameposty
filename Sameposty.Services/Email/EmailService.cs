@@ -3,7 +3,7 @@ using MimeKit;
 using Sameposty.Services.ConfiguratorService;
 using Sameposty.Services.SecretsService;
 
-namespace Sameposty.Services.EmailManager;
+namespace Sameposty.Services.Email;
 public class EmailService(ISecretsProvider secrets, IConfigurator configurator) : IEmailService
 {
     private async Task SendEmail(string to, string subject, string body)
@@ -47,7 +47,7 @@ public class EmailService(ISecretsProvider secrets, IConfigurator configurator) 
         await SendEmail(to, "Subskrypcja dobiegła końca!", EmailBodyProvider.SubscriptionDeletedBodyEmail());
     }
 
-    public async Task EmailUserNewPostsGenerated(string to)
+    public async Task SubscriptionPaid(string to)
     {
         await SendEmail(to, "Wygenerowaliśmy nowe posty. Sprawdź je koniecznie!", EmailBodyProvider.NewPostsCreatedBodyEmail());
     }

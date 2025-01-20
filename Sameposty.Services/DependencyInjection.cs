@@ -7,7 +7,6 @@ using Sameposty.Services.PostsGeneratorService.ImageGeneratingOrhestrator.ImageS
 using Sameposty.Services.PostsGeneratorService.ImageGeneratingOrhestrator.TextGenerator;
 using Sameposty.Services.PostsGeneratorService.ImageGeneratingOrhestrator;
 using Sameposty.Services.PostsPublishers.Orhestrator;
-using Sameposty.Services.EmailManager;
 using Sameposty.Services.FacebookTokenManagerService;
 using Sameposty.Services.PostsPublishers.FacebookPublisher;
 using Sameposty.Services.PostsPublishers.InstagramPublisher;
@@ -22,6 +21,7 @@ using Sameposty.Services.REGON;
 using Sameposty.Services.StripeServices;
 using Sameposty.Services.SubscriptionManager;
 using Sameposty.Services.SecretsService;
+using Sameposty.Services.Email;
 
 namespace Sameposty.Services;
 public static class DependencyInjection

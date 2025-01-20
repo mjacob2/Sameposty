@@ -43,7 +43,7 @@ public class AddPostEndpoint(IQueryExecutor queryExecutor, IPostGeneratingManage
             ThrowError("Zużyto wszystkie tokeny do generowania tekstów. Należy dokupić tokeny.");
         }
 
-        var post = await manager.GenerateSinglePost(userFromDb, req.Date, req.GenerateImage, req.GenerateText);
+        var post = await manager.GenerateSinglePost(userFromDb, req.Date, req.GenerateText, req.GenerateImage);
 
         await SendOkAsync(post, ct);
     }

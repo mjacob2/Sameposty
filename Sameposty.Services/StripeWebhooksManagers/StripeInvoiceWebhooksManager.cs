@@ -5,7 +5,7 @@ using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.ConfiguratorService;
-using Sameposty.Services.EmailManager;
+using Sameposty.Services.Email;
 using Sameposty.Services.Fakturownia;
 using Sameposty.Services.PostGeneratingManager;
 
@@ -24,18 +24,24 @@ public class StripeInvoiceWebhooksManager(IPostGeneratingManager manager, IQuery
     {
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByEmailQuery(userEmail));
         await UpdateUserTokens(userFromDb);
-        var createInvoiceRequest = new AddFakturowniaInvoiceModel(userFromDb.FakturowniaClientId, price);
-        var invoiceCreated = await fakturowniaService.CreateInvoiceAsync(createInvoiceRequest);
-        await SaveInvoice(invoiceCreated, userFromDb.Id);
-        await fakturowniaService.SendInvoiceToUser(invoiceCreated.Id);
-        await manager.GenerateNumberOfPosts(userFromDb, configurator.NumberPremiumPostsGenerated);
-        await email.EmailUserNewPostsGenerated(userFromDb.Email);
+
+        if (!string.IsNullOrEmpty(userFromDb.NIP))
+        {
+            var createInvoiceRequest = new AddFakturowniaInvoiceModel(userFromDb.FakturowniaClientId, price);
+            var invoiceCreated = await fakturowniaService.CreateInvoiceAsync(createInvoiceRequest);
+            await SaveInvoice(invoiceCreated, userFromDb.Id);
+            await fakturowniaService.SendInvoiceToUser(invoiceCreated.Id);
+        }
+
+        //await manager.GenerateNumberOfPosts(userFromDb, configurator.NumberPremiumPostsGenerated);
+        //await email.SubscriptionPaid(userFromDb.Email);
     }
 
     private async Task UpdateUserTokens(User user)
     {
         user.ImageTokensLeft = configurator.ImageTokensPremiumLimit;
         user.TextTokensLeft = configurator.TextTokensPremiumLimit;
+        user.PostsToGenerateLeft = configurator.PostsToGenerateLimit;
 
         await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = user });
     }

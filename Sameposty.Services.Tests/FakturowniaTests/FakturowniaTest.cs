@@ -4,7 +4,7 @@ public class FakturowniaTest
     [Fact]
     public async Task CreateNewClient()
     {
-        // Arrange
+        //    //Arrange
         //    var fakturowniaService = new FakturowniaService("txN5wuxiAaMPDfjhMoj", new HttpClient());
 
 
@@ -39,4 +39,3 @@ public class FakturowniaTest
         //    await fakturowniaService.SendInvoiceToUser(284935497);
         //}
     }
-}

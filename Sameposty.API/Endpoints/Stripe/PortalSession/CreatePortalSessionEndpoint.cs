@@ -9,8 +9,8 @@ namespace Sameposty.API.Endpoints.Stripe.PortalSession;
 
 public class CreatePortalSessionEndpoint(IQueryExecutor queryExecutor, ISecretsProvider secretsProvider) : EndpointWithoutRequest
 {
-
     private readonly string StripeApiKey = secretsProvider.StripeApiKey;
+
     public override void Configure()
     {
         Get("create-portal-session");

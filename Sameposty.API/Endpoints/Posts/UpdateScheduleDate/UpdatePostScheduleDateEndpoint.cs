@@ -58,7 +58,9 @@ public class UpdatePostScheduleDateEndpoint(ICommandExecutor commandExecutor, IQ
 
         postFromDb.JobPublishId = BackgroundJob.Schedule(() => postPublisher.PublishPostToAll(request), utcDateTimeOffset.UtcDateTime);
 
-        var updateScheduleDateCommand = new UpdatePostScheduleDateCommand(req.PostId, req.Date);
+        postFromDb.ShedulePublishDate = req.Date;
+
+        var updateScheduleDateCommand = new UpdatePostCommand() { Parameter = postFromDb };
 
         var updatedPost = await commandExecutor.ExecuteCommand(updateScheduleDateCommand);
 

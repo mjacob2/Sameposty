@@ -25,6 +25,11 @@ public class RegenerateImageEndpoint(IQueryExecutor queryExecutor, IImageGenerat
 
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserOnlyByIdQuery(loggedUserId));
 
+        if (userFromDb.BasicInformation.IsEmpty())
+        {
+            ThrowError("Nie podano informacji o firmie");
+        }
+
         if (userFromDb.ImageTokensLeft < 1)
         {
             ThrowError("Brak wystarczającej ilości tokenów do generowania obrazów!");

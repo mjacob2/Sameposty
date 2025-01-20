@@ -4,7 +4,7 @@ using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.ConfiguratorService;
-using Sameposty.Services.EmailManager;
+using Sameposty.Services.Email;
 using Sameposty.Services.FacebookPixel;
 using Sameposty.Services.Hasher;
 using Sameposty.Services.JWTService;

@@ -4,7 +4,7 @@ using Sameposty.Services.SecretsService;
 using Sameposty.Services.StripeWebhooksManagers.Subscriptions;
 using Stripe;
 
-namespace Sameposty.API.Endpoints.StripeWebhook;
+namespace Sameposty.API.Endpoints.StripeWebhooks;
 
 public class StripeWebhookSubscriptionsEndpoint(IStripeSubscriptionWebhooksManager manager, ISecretsProvider secrets) : EndpointWithoutRequest
 {

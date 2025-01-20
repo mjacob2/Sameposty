@@ -1,4 +1,4 @@
-﻿using Sameposty.API.Endpoints.StripeWebhook;
+﻿using Sameposty.API.Endpoints.StripeWebhooks;
 
 namespace Sameposty.Services.Tests;
 public class GetStreetNameWithNumbersTests

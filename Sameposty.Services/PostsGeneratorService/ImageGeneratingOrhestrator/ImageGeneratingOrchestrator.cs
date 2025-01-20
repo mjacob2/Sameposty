@@ -6,13 +6,11 @@ using Sameposty.Services.PostsGeneratorService.ImageGeneratingOrhestrator.TextGe
 namespace Sameposty.Services.PostsGeneratorService.ImageGeneratingOrhestrator;
 public class ImageGeneratingOrchestrator(IImageGenerator imageGenerator, IImageSaver imageSaver, ITextGenerator textGenerator, ICommandExecutor commandExecutor) : IImageGeneratingOrchestrator
 {
-    private const string DefaultImageName = "default.png";
-
     public async Task<string> GenerateImage(string productsAndServices, int postId, bool generateImage)
     {
         if (!generateImage)
         {
-            return DefaultImageName;
+            return AppConstants.DefaultImageName;
         }
 
         var prompt = await textGenerator.GeneratePromptForImageForPost(productsAndServices);

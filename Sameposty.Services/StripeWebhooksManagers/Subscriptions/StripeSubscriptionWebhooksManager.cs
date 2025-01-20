@@ -2,7 +2,7 @@
 using Sameposty.DataAccess.Commands.Users;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
-using Sameposty.Services.EmailManager;
+using Sameposty.Services.Email;
 using Stripe;
 
 namespace Sameposty.Services.StripeWebhooksManagers.Subscriptions;

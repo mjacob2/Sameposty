@@ -1,12 +1,13 @@
 ﻿using FastEndpoints;
 using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Executors;
+using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.Services.FileRemoverService;
 using Sameposty.Services.PostsGeneratorService.ImageGeneratingOrhestrator.ImageSaver;
 
 namespace Sameposty.API.Endpoints.Posts.UploadImage;
 
-public class UploadImageEndpoint(IImageSaver imageSaver, IHttpContextAccessor httpContextAccessor, ICommandExecutor commandExecutor, IFileRemover fileRemover) : Endpoint<UploadImageRequest>
+public class UploadImageEndpoint(IImageSaver imageSaver, IHttpContextAccessor httpContextAccessor, ICommandExecutor commandExecutor, IFileRemover fileRemover, IQueryExecutor queryExecutor) : Endpoint<UploadImageRequest>
 {
     public override void Configure()
     {
@@ -29,8 +30,17 @@ public class UploadImageEndpoint(IImageSaver imageSaver, IHttpContextAccessor ht
 
         var baseApiUrl = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}";
         var imageUrl = $"{baseApiUrl}/{imageName}";
-        var command = new UpdatePostImageUrlCommand(req.PostId, imageUrl);
-        await commandExecutor.ExecuteCommand(command);
+
+        var postToUpdate = await queryExecutor.ExecuteQuery(new GetPostByIdQuery() { PostId = req.PostId });
+
+        if (postToUpdate == null)
+        {
+            await SendNotFoundAsync(ct);
+        }
+
+        postToUpdate.ImageUrl = imageUrl;
+
+        await commandExecutor.ExecuteCommand(new UpdatePostCommand() { Parameter = postToUpdate });
 
         if (!string.IsNullOrEmpty(req.OldImageUrl))
         {

@@ -3,7 +3,7 @@ using OpenAI.Interfaces;
 using OpenAI.ObjectModels;
 using OpenAI.ObjectModels.RequestModels;
 using Sameposty.Services.ConfiguratorService;
-using Sameposty.Services.EmailManager;
+using Sameposty.Services.Email;
 
 namespace Sameposty.Services.PostsGeneratorService.ImageGeneratingOrhestrator.ImageGenerator;
 public class ImageGenerator(IOpenAIService openAiService, IConfigurator configurator, ILogger<ImageGenerator> logger, IEmailService email) : IImageGenerator

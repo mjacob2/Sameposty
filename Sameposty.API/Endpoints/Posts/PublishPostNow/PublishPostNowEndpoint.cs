@@ -4,6 +4,7 @@ using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.DataAccess.Queries.Users;
+using Sameposty.Services;
 using Sameposty.Services.ConfiguratorService;
 using Sameposty.Services.PostsPublishers.Orhestrator;
 using Sameposty.Services.PostsPublishers.Orhestrator.Models;
@@ -38,6 +39,11 @@ public class PublishPostNowEndpoint(IQueryExecutor queryExecutor, IPostPublishOr
         }
 
         if (string.IsNullOrEmpty(postToPublish.ImageUrl))
+        {
+            ThrowError("Post nie ma zdjęcia!");
+        }
+
+        if (postToPublish.ImageUrl.Contains(AppConstants.DefaultImageName))
         {
             ThrowError("Post nie ma zdjęcia!");
         }

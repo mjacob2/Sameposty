@@ -23,6 +23,11 @@ public class RegeneratePostDescriptionEndpoint(ITextGenerator textGenerator, IQu
 
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserOnlyByIdQuery(loggedUserId));
 
+        if (userFromDb.BasicInformation.IsEmpty())
+        {
+            ThrowError("Nie podano informacji o firmie");
+        }
+
         if (userFromDb.TextTokensLeft < 1)
         {
             ThrowError("Brak wystarczającej ilości tokenów do generowania tekstów!");

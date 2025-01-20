@@ -1,5 +1,4 @@
-﻿
-namespace Sameposty.Services.EmailManager;
+﻿namespace Sameposty.Services.Email;
 internal static class EmailBodyProvider
 {
     public static string NewPostsCreatedBodyEmail()
@@ -68,9 +67,8 @@ To, że zrezygnowałeś z subskrypcji, nie oznacza, że całe konto zostało anu
 Nawet nie wiesz jak się cieszę! <br><br>
 
 Wierzę, że pozostaniesz subskrybentem na długo! Przed nami setki ekscytujących postów do stworzenia i opublikownia na social mediach Twojej firmy!<br><br>
-Poczekaj jeszcze chwilę na kolejny e-mail. Powinien przyjść za około 2-4 minuty z informacją, że kolejna porcja postów jest już gotowa! <br><br>
 
-Oczekuj również na fakturę, którą także wyślemy mejlowo. Pamiętaj, że wystawcą faktury jest Middlers Sp. z o.o., właściciel serwisu sameposty.pl. <br><br>
+Jeśli na koncie podałeś dane do faktury, oczekuj również na fakturę, którą także wyślemy mejlowo. Pamiętaj, że wystawcą faktury jest Middlers Sp. z o.o., właściciel serwisu sameposty.pl. <br><br>
 
 <p>-- Marek z sameposty.pl<br>";
     }
