@@ -95,14 +95,4 @@ public class User : EntityBase
         TextTokensLeft--;
         TextTokensUsed++;
     }
-
-    public void DecreasePostsToGenerate()
-    {
-        if (PostsToGenerateLeft - 1 < 0)
-        {
-            throw new InvalidOperationException("Posts to generate left cannot be less than zero.");
-        }
-        PostsToGenerateLeft--;
-        PostsGenerated++;
-    }
 }

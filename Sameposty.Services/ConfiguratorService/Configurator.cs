@@ -7,14 +7,12 @@ public class Configurator(IConfiguration configuration, IWebHostEnvironment webH
 {
     public string ApiBaseUrl { get; private set; } = configuration.GetConnectionString("ApiBaseUrl") ?? throw new ArgumentNullException("No ApiBaseUrl provided in appsettings.json");
     public string WwwRoot { get; private set; } = webHostEnvironment.WebRootPath;
-    public int NumberFirstPostsGenerated { get; private set; } = configuration.GetValue<int>("Settings:NumberFirstPostsGenerated");
-    public int NumberPremiumPostsGenerated { get; private set; } = configuration.GetValue<int>("Settings:NumberPremiumPostsGenerated");
     public int ImageTokensDefaultLimit { get; private set; } = configuration.GetValue<int>("Settings:ImageTokensDefaultLimit");
     public int TextTokensDefaultLimit { get; private set; } = configuration.GetValue<int>("Settings:TextTokensDefaultLimit");
     public string AngularClientBaseURl { get; private set; } = configuration.GetConnectionString("AngularClientBaseURl") ?? throw new ArgumentNullException("No AngularClientBaseURl provided in appsettings.json");
     public int ImageTokensPremiumLimit { get; private set; } = configuration.GetValue<int>("Settings:ImageTokensPremiumLimit");
     public int TextTokensPremiumLimit { get; private set; } = configuration.GetValue<int>("Settings:TextTokensPremiumLimit");
-    public int PostsToGenerateLimit { get; private set; } = configuration.GetValue<int>("Settings:PostsToGenerateLimit");
+    public int PostsPremiumLimit { get; private set; } = configuration.GetValue<int>("Settings:PostsPremiumLimit");
     public string StripeSubscriptionPriceId { get; private set; } = configuration.GetValue<string>("StripeSettings:StripeSubscriptionPriceId") ?? throw new ArgumentNullException("No StripeSubscriptionPriceId provided in sppsettings.json");
     public string StripeCouponId { get; private set; } = configuration.GetValue<string>("StripeSettings:StripeCouponId") ?? throw new ArgumentNullException("No StripeCouponId provided in sppsettings.json");
     public string SubscriptionSuccessPaymentUrl { get; private set; } = configuration.GetConnectionString("SubscriptionSuccessPaymentUrl") ?? throw new ArgumentNullException("No SubscriptionSuccessPaymentUrl provided in sppsettings.json");

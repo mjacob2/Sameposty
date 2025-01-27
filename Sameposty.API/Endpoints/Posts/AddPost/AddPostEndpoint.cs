@@ -2,11 +2,12 @@
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
+using Sameposty.Services.ConfiguratorService;
 using Sameposty.Services.PostGeneratingManager;
 
 namespace Sameposty.API.Endpoints.Posts.AddPost;
 
-public class AddPostEndpoint(IQueryExecutor queryExecutor, IPostGeneratingManager manager) : Endpoint<AddPostRequest, Post>
+public class AddPostEndpoint(IQueryExecutor queryExecutor, IPostGeneratingManager manager, IConfigurator config) : Endpoint<AddPostRequest, Post>
 {
     public override void Configure()
     {
@@ -18,29 +19,24 @@ public class AddPostEndpoint(IQueryExecutor queryExecutor, IPostGeneratingManage
         var loggedUserId = int.Parse(id);
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByIdQuery(loggedUserId));
 
-        if (userFromDb.PostsToGenerateLeft < 1)
+        if (userFromDb.Posts.Count >= userFromDb.PostsToGenerateLeft)
         {
-            ThrowError("Zużyto wszystkie tokeny do generowania postów. Należy dokupić tokeny.");
-        }
-
-        if (userFromDb.BasicInformation == null && userFromDb.Role != DataAccess.Entities.Roles.Admin)
-        {
-            ThrowError("Nie podano informacji o firmie");
+            ThrowError($"Osiągnięto limit jednocześnie zaplanowanych postów - {userFromDb.PostsToGenerateLeft}. Opublikuj jakiś post lub usuń, by stworzyć nowy.");
         }
 
         if (userFromDb.BasicInformation.IsEmpty() && (req.GenerateText || req.GenerateImage))
         {
-            ThrowError("Aby skorzystać z automatycznego generowania, uzupełnij informacje o firmie");
+            ThrowError("Aby skorzystać z automatycznego generowania, uzupełnij informacje o stronie");
         }
 
-        if (userFromDb.ImageTokensLeft < 1 && req.GenerateImage)
+        if (req.GenerateImage && userFromDb.ImageTokensLeft < 1)
         {
-            ThrowError("Zużyto wszystkie tokeny do generowania obrazów. Należy dokupić tokeny.");
+            ThrowError("Zużyto wszystkie tokeny do generowania obrazów.");
         }
 
-        if (userFromDb.TextTokensLeft < 1 && req.GenerateText)
+        if (req.GenerateText && userFromDb.TextTokensLeft < 1)
         {
-            ThrowError("Zużyto wszystkie tokeny do generowania tekstów. Należy dokupić tokeny.");
+            ThrowError("Zużyto wszystkie tokeny do generowania tekstów.");
         }
 
         var post = await manager.GenerateSinglePost(userFromDb, req.Date, req.GenerateText, req.GenerateImage);

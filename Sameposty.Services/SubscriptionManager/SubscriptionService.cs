@@ -3,7 +3,6 @@ using Sameposty.DataAccess.Commands.Users;
 using Sameposty.DataAccess.Entities;
 using Sameposty.DataAccess.Executors;
 using Sameposty.Services.ConfiguratorService;
-using Sameposty.Services.Stripe;
 using Sameposty.Services.StripeServices;
 
 namespace Sameposty.Services.SubscriptionManager;

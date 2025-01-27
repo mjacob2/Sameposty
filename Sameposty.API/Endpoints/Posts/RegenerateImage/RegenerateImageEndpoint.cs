@@ -23,9 +23,9 @@ public class RegenerateImageEndpoint(IQueryExecutor queryExecutor, IImageGenerat
         var id = User.FindFirst("UserId").Value;
         var loggedUserId = int.Parse(id);
 
-        var userFromDb = await queryExecutor.ExecuteQuery(new GetUserOnlyByIdQuery(loggedUserId));
+        var userFromDb = await queryExecutor.ExecuteQuery(new GetUserWithBasicInformationsByIdQuery(loggedUserId));
 
-        if (userFromDb.BasicInformation.IsEmpty())
+        if (req.GeneratePrompt && userFromDb.BasicInformation.IsEmpty())
         {
             ThrowError("Nie podano informacji o firmie");
         }

@@ -1,5 +1,4 @@
-﻿
-namespace Sameposty.Services.Stripe;
+﻿namespace Sameposty.Services.StripeServices;
 public class CreateStripeCustomerRequest
 {
     public string Name { get; set; }

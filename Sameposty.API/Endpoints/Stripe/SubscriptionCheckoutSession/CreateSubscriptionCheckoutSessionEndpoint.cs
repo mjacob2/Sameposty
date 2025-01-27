@@ -3,7 +3,6 @@ using Sameposty.DataAccess.Commands.Users;
 using Sameposty.DataAccess.Executors;
 using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.Fakturownia;
-using Sameposty.Services.Stripe;
 using Sameposty.Services.StripeServices;
 using Sameposty.Services.SubscriptionManager;
 

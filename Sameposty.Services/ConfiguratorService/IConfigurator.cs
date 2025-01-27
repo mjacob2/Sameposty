@@ -3,8 +3,6 @@ public interface IConfigurator
 {
     public string ApiBaseUrl { get; }
     public string WwwRoot { get; }
-    public int NumberFirstPostsGenerated { get; }
-    public int NumberPremiumPostsGenerated { get; }
     public int ImageTokensDefaultLimit { get; }
     public int TextTokensDefaultLimit { get; }
     public int ImageTokensPremiumLimit { get; }
@@ -16,5 +14,5 @@ public interface IConfigurator
     string SubscriptionFailedPaymentUrl { get; }
     bool IsDevelopment { get; }
     int PostsDefaultLimit { get; }
-    int PostsToGenerateLimit { get; }
+    int PostsPremiumLimit { get; }
 }

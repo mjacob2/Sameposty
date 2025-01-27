@@ -1,5 +1,4 @@
-﻿using Sameposty.Services.Stripe;
-using Stripe;
+﻿using Stripe;
 using Stripe.Checkout;
 
 namespace Sameposty.Services.StripeServices;

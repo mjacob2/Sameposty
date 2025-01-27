@@ -2,7 +2,6 @@
 using Sameposty.DataAccess.Commands.Posts;
 using Sameposty.DataAccess.Commands.Users;
 using Sameposty.DataAccess.Executors;
-using Sameposty.DataAccess.Queries.BasicInformations;
 using Sameposty.DataAccess.Queries.Posts;
 using Sameposty.DataAccess.Queries.Users;
 using Sameposty.Services.PostsGeneratorService;
@@ -21,9 +20,9 @@ public class RegeneratePostDescriptionEndpoint(ITextGenerator textGenerator, IQu
         var id = User.FindFirst("UserId").Value;
         var loggedUserId = int.Parse(id);
 
-        var userFromDb = await queryExecutor.ExecuteQuery(new GetUserOnlyByIdQuery(loggedUserId));
+        var userFromDb = await queryExecutor.ExecuteQuery(new GetUserWithBasicInformationsByIdQuery(loggedUserId));
 
-        if (userFromDb.BasicInformation.IsEmpty())
+        if (req.GeneratePrompt && userFromDb.BasicInformation.IsEmpty())
         {
             ThrowError("Nie podano informacji o firmie");
         }

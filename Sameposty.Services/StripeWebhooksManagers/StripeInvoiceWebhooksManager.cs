@@ -23,25 +23,22 @@ public class StripeInvoiceWebhooksManager(IPostGeneratingManager manager, IQuery
     public async Task ManageInvoicePaid(string userEmail, double price)
     {
         var userFromDb = await queryExecutor.ExecuteQuery(new GetUserByEmailQuery(userEmail));
-        await UpdateUserTokens(userFromDb);
+        await UpdateUserTokensWhenInvoicePaid(userFromDb);
 
-        if (!string.IsNullOrEmpty(userFromDb.NIP))
-        {
-            var createInvoiceRequest = new AddFakturowniaInvoiceModel(userFromDb.FakturowniaClientId, price);
-            var invoiceCreated = await fakturowniaService.CreateInvoiceAsync(createInvoiceRequest);
-            await SaveInvoice(invoiceCreated, userFromDb.Id);
-            await fakturowniaService.SendInvoiceToUser(invoiceCreated.Id);
-        }
+        var createInvoiceRequest = new AddFakturowniaInvoiceModel(userFromDb.FakturowniaClientId, price);
+        var invoiceCreated = await fakturowniaService.CreateInvoiceAsync(createInvoiceRequest);
+        await SaveInvoice(invoiceCreated, userFromDb.Id);
+        await fakturowniaService.SendInvoiceToUser(invoiceCreated.Id);
 
         //await manager.GenerateNumberOfPosts(userFromDb, configurator.NumberPremiumPostsGenerated);
-        //await email.SubscriptionPaid(userFromDb.Email);
+        await email.SubscriptionPaid(userFromDb.Email);
     }
 
-    private async Task UpdateUserTokens(User user)
+    private async Task UpdateUserTokensWhenInvoicePaid(User user)
     {
         user.ImageTokensLeft = configurator.ImageTokensPremiumLimit;
         user.TextTokensLeft = configurator.TextTokensPremiumLimit;
-        user.PostsToGenerateLeft = configurator.PostsToGenerateLimit;
+        user.PostsToGenerateLeft = configurator.PostsPremiumLimit;
 
         await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = user });
     }

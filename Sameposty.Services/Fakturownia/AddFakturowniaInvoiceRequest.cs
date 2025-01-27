@@ -15,9 +15,6 @@ public class AddFakturowniaInvoiceModel(long? clientId, double price)
     [JsonPropertyName("kind")]
     public string Kind { get; set; } = "vat";
 
-    [JsonPropertyName("income")]
-    public string Income { get; set; } = "1";
-
     [JsonPropertyName("place")]
     public string Place { get; set; } = "Wrocław";
 
@@ -46,7 +43,7 @@ public class FakturowniaPositions(double price)
     public string Name { get; set; } = "SamePosty.pl subskrypcja premium";
 
     [JsonPropertyName("tax")]
-    public int Tax { get; set; } = 0;
+    public string Tax { get; set; } = "zw";
 
     [JsonPropertyName("total_price_gross")]
     public double Price { get; set; } = price;

@@ -1,6 +1,5 @@
 ﻿using Sameposty.Services.ConfiguratorService;
 using Sameposty.Services.SecretsService;
-using Sameposty.Services.Stripe;
 using Stripe;
 using Stripe.Checkout;
 

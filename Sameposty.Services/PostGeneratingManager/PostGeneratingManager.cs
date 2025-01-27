@@ -98,14 +98,12 @@ public class PostGeneratingService(IPostsGenerator postsGenerator, ICommandExecu
         return response;
     }
 
-
     private static void UpdateUserTokens(User user, bool generateText, bool generateImage)
     {
         if (user.Role != Roles.Admin)
         {
             UpdateImageTokens(user, generateImage);
             UpdateTextTokens(user, generateText);
-            UpdatePostsToGenerate(user);
         }
     }
 
@@ -123,10 +121,5 @@ public class PostGeneratingService(IPostsGenerator postsGenerator, ICommandExecu
         {
             user.DecreaseTextTokens();
         }
-    }
-
-    private static void UpdatePostsToGenerate(User user)
-    {
-        user.DecreasePostsToGenerate();
     }
 }

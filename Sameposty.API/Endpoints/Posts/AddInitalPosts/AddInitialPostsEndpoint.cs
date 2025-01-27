@@ -26,19 +26,19 @@ public class AddInitialPostsEndpoint(IQueryExecutor queryExecutor, IPostGenerati
             ThrowError("Nie podano informacji o firmie");
         }
 
-        if (userFromDb.ImageTokensLeft < configurator.NumberFirstPostsGenerated)
+        if (userFromDb.ImageTokensLeft < 1)
         {
             ThrowError("Brak wystarczającej ilości tokenów do generowania obrazów!");
         }
 
-        if (userFromDb.TextTokensLeft < configurator.NumberFirstPostsGenerated)
+        if (userFromDb.TextTokensLeft < 1)
         {
             ThrowError("Brak wystarczającej ilości tokenów do generowania tekstów!");
         }
 
         await commandExecutor.ExecuteCommand(new UpdateUserCommand() { Parameter = userFromDb });
 
-        var posts = await manager.GenerateNumberOfPosts(userFromDb, configurator.NumberFirstPostsGenerated);
+        var posts = await manager.GenerateNumberOfPosts(userFromDb, 1);
 
         await SendOkAsync(posts, ct);
     }
